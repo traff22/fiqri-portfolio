@@ -67,6 +67,41 @@ Visual labels move inside thumbnails; descriptions remain available to modal vie
 
 Styles: `assets/collage.css`. Layout logic: `assets/work-gallery.js`.
 
+## Real video projects / YouTube + native MP4 (V0.9)
+
+The user-supplied portfolio is configured from the links supplied in November 2026:
+
+| Category | Project | YouTube video ID |
+| --- | --- | --- |
+| Long-form | IHSG The Movie | `a4KcABEH4XI` |
+| Long-form | Podtrade — Suli | `CNrT59yeqJo` |
+| Long-form | Cinematic Mancing | `c7GCJP2GcEE` |
+| Long-form | Talking Head — Matarakyat | `GPOzjdHp2xA` |
+| Motion | Logistics 9 — Product Showcase | `kEtoqcHMs1c` |
+| Personal archive (also shown in Motion) | Know More Bout Me — 2024 | `hEhRkIbH-Pg` |
+
+YouTube IDs appear as `data-youtube-id="VIDEO_ID"` on the corresponding `.work-media` element. The thumbnail loads lazily via `https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg`. Clicking the project opens a privacy-enhanced YouTube embed; a fallback **Watch on YouTube** link is available if embedding is restricted. Video titles are the user's labels and have not been independently checked against YouTube.
+
+The **Highlights** default is four existing/linked films (IHSG, Podtrade, Cinematic Mancing, Logistics 9). Additional placeholders for campaign/event/reels assets remain under **All work** until approved footage arrives.
+
+### Add work that is not on YouTube
+
+**Option A — upload to your YouTube channel as Unlisted:** It does not appear in public channel/search listings, but anyone with the URL can watch and share it. In `index.html`, add the video's 11-character ID to `data-youtube-id` and its corresponding thumbnail to `data-poster-src`.
+
+**Option B — native MP4, no YouTube:** Put a *compressed web export* under `assets/videos/` (or use a public media CDN URL). On the intended project card's `.work-media` wrapper, set:
+
+```html
+data-video-src="assets/videos/my-edit.mp4"
+data-poster-src="assets/posters/my-edit.webp"
+data-youtube-id=""
+```
+
+On click, the modal uses the HTML5 player. It does not autoplay/load the full-length gallery videos until clicked. You can use a separate small promotional loop for thumbnails later; avoid auto-loading 30-minute video files for hover.
+
+**GitHub Pages is primarily static hosting:** do not fill the repository with large master files. Browser file uploads are limited to 25 MiB per file, Git CLI up to 100 MiB per file; published Pages sites have a limit of 1 GB and soft bandwidth limits. For heavier footage, use a video hosting provider/CDN rather than the website repository. Don't use Git LFS pointer files directly as video URLs.
+
+You must have permission to publicly show client/employer footage; an Unlisted link or public static site is *not private or access controlled*.
+
 ## Selected Work — gallery, formats and interactions (V0.7)
 
 The **Highlights** filter is the default editorial shortlist. Other filters include All work, Events, Motion, Long-form and Reels. Each project in `index.html` has `data-categories` (space-separated) and `data-featured`. A project can appear in more than one category.
