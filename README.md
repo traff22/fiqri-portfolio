@@ -1,6 +1,6 @@
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
-A lightweight, mobile-friendly GitHub Pages preview of Fiqri's cinematic video editor / motion graphics portfolio. **V0.4** adds a scroll-driven 16:9 showreel stage, three floating video cards, elegant Blue Hour geometry and smoother pointer hover effects.
+A lightweight, mobile-friendly GitHub Pages preview of Fiqri's cinematic video editor / motion graphics portfolio. **V0.5** adds Fiqri's two real portraits, a cinematic hover-tilting photographic hero card, idle floating animation on Chapter One cards, and scroll-driven text entrance and exit. It retains the V0.4 showreel/video slots.
 
 ## Preview website
 
@@ -15,7 +15,7 @@ https://traff22.github.io/fiqri-portfolio/
 3. Set **Branch: main**, folder **/(root)**, then **Save**.
 4. Check the **Actions** tab or return to **Settings → Pages** for the published URL.
 
-This is the staging **preview**. The HTML currently includes `noindex, nofollow` so placeholder art does not get indexed by search engines. Remove this only after the final portfolio assets are approved.
+This is the staging **preview** (photos are public because this is a public repository). The HTML currently includes `noindex, nofollow` so placeholder art does not get indexed by search engines. Remove this only after the final portfolio assets are approved.
 
 ## Local preview
 
@@ -34,6 +34,9 @@ Then open http://localhost:4173 .
 - `assets/main.js` — splash/skip/replay, filters, reveal animations and base parallax.
 - `assets/chapter-one.css` — 16:9 showreel, floating preview cards, geometric shapes, and Blue Hour hover states.
 - `assets/chapter-one.js` — card depth parallax, interactive hover tilt, lazy video loading and optional sound control.
+- `assets/living-motion.css` — elegant floating animation, blue photographic hero card, archive photo overlay and continuous scene motion.
+- `assets/living-motion.js` — pointer-reactive portrait tilt/glare and scroll-driven typography.
+- `assets/fiqri-portrait.svg` and `assets/fiqri-archive.svg` — actual uploaded portraits, embedded and compressed for this preview. Replace with a higher-resolution approved `.webp` for production if desired.
 
 ## Add your own animated splash
 
