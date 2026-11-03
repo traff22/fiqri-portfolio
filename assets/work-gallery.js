@@ -85,7 +85,7 @@ let activeHover=null;
 function stopHoverPreview(card){
  if(!card)return;
  if(card._hoverTimer){clearTimeout(card._hoverTimer);card._hoverTimer=0;}
- $(".work-hover-video",card).forEach(frame=>{
+ $$(".work-hover-video",card).forEach(frame=>{
   // Unload and remove the browsing context; merely hiding an iframe doesn't stop media.
   frame.setAttribute("src","about:blank");
   frame.remove();
