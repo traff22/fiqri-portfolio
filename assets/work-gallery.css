@@ -1,0 +1,156 @@
+/* Portfolio gallery V0.7 — aspect-aware edits and event case studies.
+   Landscape film 16:9; reels 9:16; event KV exact 1760:761. */
+
+/* The chapter copy arrives first, then yields visual priority to the cinema frame. */
+.cinema-wrap .cinema-copy{z-index:2!important;top:7%;filter:none!important;transform:translateX(-50%)!important}
+.has-motion-js .cinema-wrap.is-inview .cinema-copy{opacity:var(--chapter-depth-opacity,1)!important;transition:opacity .24s ease-out!important}
+.cinema-stick .cinema-frame.showreel-shell{z-index:10;isolation:isolate}
+.cinema-atmosphere{z-index:1}
+.cinema-wrap .cinema-copy-line,.cinema-wrap .cinema-deck{transform:none!important;opacity:1!important;filter:none!important}
+@media(prefers-reduced-motion:reduce){.cinema-wrap.is-inview .cinema-copy{opacity:1!important}}
+
+/* Distinct editorial grid; no forced universal card ratio. */
+.selected-work .section-header{margin-bottom:28px}
+.selected-work .filterbar{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 12px;padding:3px 0;align-items:center}
+.selected-work .filter{
+  border:1px solid #9cc4f43b;background:#14243a92;color:#c0d2e7;
+  border-radius:999px;font-size:12px;line-height:1.25;
+  padding:12px 18px;transition:background .27s ease,color .27s ease,transform .27s ease,border-color .27s ease,box-shadow .27s ease;
+  cursor:pointer;
+}
+.selected-work .filter:hover{background:#28466c9e;color:#f4f9ff;border-color:#a2c9f37b;transform:translateY(-2px)}
+.selected-work .filter[aria-pressed="true"]{background:#afd7ff;color:#0c1b30;border-color:#c2e1ff;box-shadow:0 8px 27px #598fe431}
+.selected-work .filter:focus-visible{outline:2px solid #bedfff;outline-offset:3px}
+.work-filter-status{font-size:11px;color:#8fa8c5;letter-spacing:.12em;text-transform:uppercase;margin:13px 0 31px;font-family:"Space Grotesk",sans-serif}
+.selected-work .work-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:42px 25px;grid-auto-flow:row dense;align-items:start}
+.selected-work .work-card{grid-column:span 8;min-width:0}
+.selected-work .work-card[data-format="portrait"]{grid-column:span 4}
+.selected-work .work-card[data-format="event"]{grid-column:span 12}
+.selected-work .work-card[hidden]{display:none!important}
+.selected-work .work-card .work-media{
+  width:100%;height:auto;aspect-ratio:16/9;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:18px;border:1px solid #a7c7f52e;
+  overflow:hidden;position:relative;isolation:isolate;
+  transition:border-color .35s ease,box-shadow .4s ease,transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.selected-work .work-card[data-format="portrait"] .work-media{aspect-ratio:9/16}
+.selected-work .work-card[data-format="event"] .work-media{aspect-ratio:1760/761;border-radius:22px}
+.selected-work .work-card .work-media:hover,.selected-work .work-card:focus-within .work-media{
+  border-color:#9accffb3;
+  box-shadow:0 25px 60px #020713bb,0 0 65px #4787d52b;
+}
+.selected-work .work-card .work-media .art{font:700 clamp(38px,6.7vw,104px)/.95 "Space Grotesk",sans-serif;letter-spacing:-.09em}
+.selected-work .work-card[data-format="portrait"] .work-media .art{font-size:clamp(42px,4.9vw,77px)}
+.selected-work .work-card[data-format="event"] .work-media .art{font-size:clamp(60px,11vw,174px);letter-spacing:-.085em}
+.selected-work .work-card .work-media .art small{font-size:20%;letter-spacing:.12em}
+.selected-work .work-card .work-media.book{background:radial-gradient(circle at 50% 25%,#a2c4fe68,#27436e 49%,#081525 100%)}
+.selected-work .work-card .work-media.story{background:radial-gradient(circle at 61% 35%,#648eaf85,#162c48 52%,#09101d)}
+.selected-work .work-card .work-media.event{background:radial-gradient(ellipse at 58% 34%,#8177bb8a,#222b4b 54%,#080f1e)}
+.selected-work .work-card .work-media.logistics{background:radial-gradient(circle at 56% 35%,#6baab79a,#14334b 52%,#09182a)}
+.selected-work .work-card .work-media.premiere{background:radial-gradient(ellipse at 52% 45%,#7f9dd286,#24304b 48%,#090f1b)}
+.selected-work .work-card .work-media.shorts{background:radial-gradient(circle at 60% 35%,#a3b3ef94,#29355d 52%,#111627)}
+.selected-work .work-card .serial{
+  top:22px;left:22px;z-index:7;font-size:10px;
+  background:#0715255c;padding:8px 10px;border:1px solid #ffffff26;border-radius:999px;
+}
+.selected-work .work-card .work-media-action{
+  position:absolute;right:20px;bottom:18px;z-index:7;
+  border:1px solid #d0e6ff8c;color:#eef6ff;
+  background:#0e1c32ad;backdrop-filter:blur(15px);
+  border-radius:999px;padding:11px 15px;font:600 11px "Space Grotesk",sans-serif;letter-spacing:.02em;
+  pointer-events:none;
+  transition:transform .3s ease,background .3s ease;
+}
+.selected-work .work-card:hover .work-media-action,.selected-work .work-card:focus-within .work-media-action{transform:translateY(-4px);background:#386397b0}
+.selected-work .work-card .work-trigger{position:absolute;inset:0;width:100%;height:100%;z-index:8;background:transparent;border:0;cursor:pointer;padding:0;color:transparent}
+.selected-work .work-card .work-trigger:focus-visible{outline:3px solid #c0e3ff;outline-offset:-7px;border-radius:18px}
+.selected-work .work-meta{margin:20px 0 9px;gap:8px;font-size:10px}
+.selected-work .work-titleline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.selected-work .work-titleline h3{margin:0;font-size:clamp(22px,2.4vw,31px);line-height:1.1}
+.selected-work .work-card[data-format="event"] .work-titleline h3{font-size:clamp(25px,3vw,39px)}
+.selected-work .work-featured{font:600 9px "Space Grotesk",sans-serif;letter-spacing:.10em;text-transform:uppercase;color:#b9d9ff;border:1px solid #9ac8ff6b;border-radius:999px;padding:7px 9px;background:#b9d9ff0e}
+.selected-work .work-card>p{color:#aab9ce;line-height:1.66;margin:11px 0 0;font-size:13px;max-width:580px}
+.selected-work .work-card[data-format="event"]>p{max-width:820px}
+.selected-work .work-card .project-video{z-index:4}
+.selected-work .work-card .work-media.has-video .art{opacity:0}
+
+/* Accessible native dialogs: a full case-study and an independent video player. */
+.portfolio-dialog{
+  width:min(1040px,calc(100% - 36px));max-width:none;max-height:calc(100dvh - 48px);
+  padding:0;margin:auto;overflow:auto;overscroll-behavior:contain;
+  border-radius:24px;border:1px solid #8cb9ec70;
+  color:#eef5ff;background:linear-gradient(150deg,#101c30,#080f1b 70%);
+  box-shadow:0 30px 150px #000e,0 0 75px #508bd626;
+}
+.portfolio-dialog::backdrop{background:#020610d9;backdrop-filter:blur(9px)}
+.portfolio-dialog[open]{animation:dialog-arrive .28s cubic-bezier(.16,.8,.2,1) both}
+@keyframes dialog-arrive{from{opacity:0;transform:translateY(15px) scale(.98)}to{opacity:1;transform:none}}
+.portfolio-dialog .dialog-layout{padding:clamp(20px,3.5vw,42px)}
+.portfolio-dialog .dialog-bar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:28px}
+.portfolio-dialog .dialog-close{
+  background:#19304c;color:#e6f2ff;border:1px solid #9bc1ee61;border-radius:999px;
+  padding:10px 17px;font-size:12px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:12px;
+  transition:background .25s,transform .25s
+}
+.portfolio-dialog .dialog-close:hover{background:#33557d;transform:translateY(-2px)}
+.portfolio-dialog .dialog-close span{font-size:20px;line-height:12px}
+.portfolio-dialog .dialog-intro{display:flex;justify-content:space-between;align-items:end;gap:28px;margin-bottom:30px}
+.portfolio-dialog h2{font:600 clamp(32px,5vw,65px)/1.06 "Space Grotesk",sans-serif;letter-spacing:-.065em;margin:8px 0 0}
+.portfolio-dialog .dialog-intro p{max-width:370px;color:#b7c8dc;line-height:1.65;font-size:14px}
+.event-detail-banner{aspect-ratio:1760/761;position:relative;overflow:hidden;border-radius:16px;border:1px solid #a7c8f747;background:radial-gradient(ellipse at 55% 25%,#53709ac9,#1c2946 52%,#090f1c)}
+.event-detail-banner img{width:100%;height:100%;object-fit:cover}
+.event-banner-concept{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px}
+.event-banner-concept span{color:#bfd9ff;font:600 10px "Space Grotesk";letter-spacing:.2em}
+.event-banner-concept strong{font:700 clamp(35px,9vw,120px)/.85 "Space Grotesk";letter-spacing:-.09em;color:#e7f3ff;text-transform:uppercase}
+.event-banner-concept small{font:600 10px "Space Grotesk";letter-spacing:.12em;color:#b3c9e9}
+.event-detail-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:43px 0 20px}
+.event-detail-heading h3,.event-project-context h3{font:600 clamp(22px,2.9vw,33px) "Space Grotesk";letter-spacing:-.05em;margin:0}
+.event-detail-heading p{max-width:390px;font-size:13px;line-height:1.6;color:#a9bcd3;margin:0}
+.event-asset-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.event-asset{margin:0}
+.event-asset-media{position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1b3a5e,#0c192c);overflow:hidden;border:1px solid #b0d0ff30;border-radius:14px}
+.event-asset-media.is-motion{aspect-ratio:16/9}
+.event-asset-media.is-documentation{aspect-ratio:4/3;background:linear-gradient(145deg,#283d61,#10192c)}
+.event-asset-media img{width:100%;height:100%;object-fit:cover}
+.event-asset-placeholder{display:flex;flex-direction:column;gap:10px;text-align:center;font:600 clamp(20px,3vw,31px) "Space Grotesk";letter-spacing:-.045em;color:#e7f2ff}
+.event-asset-placeholder small{font:600 9px "Space Grotesk";letter-spacing:.13em;color:#aac9ec}
+.event-asset figcaption{padding:13px 0;color:#b6cadf;font-size:13px}
+.event-project-context{border-top:1px solid #92beef32;margin-top:26px;padding-top:25px}
+.event-project-context p{color:#b8cadf;max-width:750px;line-height:1.75}
+.video-dialog{width:min(920px,calc(100% - 32px))}
+.video-dialog h2{margin:10px 0 26px}
+.video-player-frame{aspect-ratio:16/9;display:grid;place-items:center;background:#02060d;overflow:hidden;border:1px solid #8cb5ef47;border-radius:15px;position:relative}
+.video-player-frame.is-portrait{aspect-ratio:9/16;width:min(420px,100%);margin-inline:auto}
+.video-player-frame video{width:100%;height:100%;object-fit:contain}
+.video-awaiting{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:25px}
+.video-awaiting span{color:#9dbef3;font-size:11px;letter-spacing:.15em;text-transform:uppercase}
+.video-awaiting strong{font:600 clamp(26px,4vw,41px) "Space Grotesk";letter-spacing:-.05em}
+.video-awaiting p,.video-dialog-description{color:#b1c4d9;line-height:1.65;font-size:14px}
+.modal-open{overflow:hidden}
+@media(max-width:900px){
+  .selected-work .work-card{grid-column:span 12}
+  .selected-work .work-card[data-format="portrait"]{grid-column:span 6}
+  .selected-work .work-card[data-format="portrait"] .work-media{max-width:400px}
+  .selected-work .work-card[data-format="event"] .work-media{aspect-ratio:1760/761}
+}
+@media(max-width:620px){
+  .selected-work .work-grid{gap:33px}
+  .selected-work .work-card,.selected-work .work-card[data-format="portrait"],.selected-work .work-card[data-format="event"]{grid-column:span 12}
+  .selected-work .work-card[data-format="portrait"] .work-media{width:min(75%,320px);margin:auto}
+  .selected-work .work-card[data-format="event"] .work-media{aspect-ratio:1760/761}
+  .selected-work .work-card[data-format="event"] .work-media .art{font-size:clamp(34px,8vw,72px)}
+  .selected-work .work-card .work-media-action{right:10px;bottom:10px;padding:8px 10px;font-size:10px}
+  .selected-work .work-card .serial{left:10px;top:10px;font-size:8px}
+  .selected-work .work-filter-status{margin-bottom:24px}
+  .portfolio-dialog{width:calc(100% - 14px);max-height:calc(100dvh - 14px);border-radius:15px}
+  .portfolio-dialog .dialog-layout{padding:16px}
+  .portfolio-dialog .dialog-intro{flex-direction:column;align-items:start;gap:9px}
+  .portfolio-dialog .event-detail-heading{display:block;margin-top:26px}
+  .portfolio-dialog .event-detail-heading p{margin-top:8px}
+  .event-asset-grid{grid-template-columns:1fr}
+  .event-banner-concept span,.event-banner-concept small{font-size:7px}
+  .video-dialog .video-player-frame.is-portrait{width:min(270px,100%)}
+}
+@media(prefers-reduced-motion:reduce){.portfolio-dialog[open]{animation:none}.selected-work .filter,.selected-work .work-media{transition:none}}
