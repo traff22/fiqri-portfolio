@@ -85,11 +85,12 @@
 .cinema-wrap .cinema-copy{
   position:absolute;z-index:35;top:7%;left:50%;
   transform:translateX(-50%)!important;
-  opacity:0!important;
+  opacity:1!important;
   text-align:center;width:94%;max-width:920px;
   filter:none!important;pointer-events:none;
   transition:opacity .38s ease!important;
 }
+.has-motion-js .cinema-wrap:not(.is-inview) .cinema-copy{opacity:0!important}
 .cinema-wrap.is-inview .cinema-copy{opacity:1!important}
 .cinema-wrap .cinema-copy-line,
 .cinema-wrap .cinema-deck{
