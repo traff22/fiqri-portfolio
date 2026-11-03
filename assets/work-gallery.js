@@ -61,9 +61,9 @@ function onModalClosed(){
 });
 function configureImage(img,src,placeholder){
  if(!img)return;
- img.hidden=!src;if(placeholder)placeholder.hidden=false;
+ img.hidden=true;if(placeholder)placeholder.hidden=false;
  if(src){
-  img.addEventListener("load",()=>{if(placeholder)placeholder.hidden=true},{once:true});
+  img.addEventListener("load",()=>{img.hidden=false;if(placeholder)placeholder.hidden=true},{once:true});
   img.addEventListener("error",()=>{img.hidden=true;if(placeholder)placeholder.hidden=false},{once:true});
   img.src=src;
  }else img.removeAttribute("src");
