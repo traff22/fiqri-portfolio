@@ -59,7 +59,7 @@
   transform:translate3d(0,var(--showreel-message-y,0px),0);opacity:var(--showreel-message-opacity,1);will-change:transform,opacity}
 .showreel-message .mini-label{color:#a9cfff;font-size:clamp(7px,.7vw,10px)}
 .cinema-frame .showreel-message strong{font:600 clamp(20px,3vw,48px)/1.05 "Space Grotesk",sans-serif;
-  letter-spacing:-.055em;color:#f0f6ff;text-shadow:0 8px 25px #030a1a}
+  letter-spacing:-.055em;color:#f0f6ff;text-shadow:0 8px 25px #030a1a;opacity:1;transform:none;will-change:auto}
 .showreel-asset-note{position:absolute;right:5%;bottom:7%;font:600 9px "Space Grotesk",sans-serif;letter-spacing:.12em;
   color:#c6deff9d;z-index:4}
 .showreel-vignette{position:absolute;inset:0;z-index:4;pointer-events:none;
