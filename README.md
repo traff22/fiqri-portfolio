@@ -1,6 +1,6 @@
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
-A lightweight, mobile-friendly GitHub Pages preview of Fiqri's cinematic video editor / motion graphics portfolio. **V0.5** adds Fiqri's two real portraits, a cinematic hover-tilting photographic hero card, idle floating animation on Chapter One cards, and scroll-driven text entrance and exit. It retains the V0.4 showreel/video slots.
+A responsive creative portfolio for Fiqri Apriandi. **V0.6** uses the latest single black-and-white portrait, purposeful camera/edit/motion icons, restrained copy, and a Chapter One heading that appears as soon as the scene enters the viewport and remains stationary and readable. Floating cards and the showreel frame retain independent motion.
 
 ## Preview website
 
@@ -34,9 +34,10 @@ Then open http://localhost:4173 .
 - `assets/main.js` — splash/skip/replay, filters, reveal animations and base parallax.
 - `assets/chapter-one.css` — 16:9 showreel, floating preview cards, geometric shapes, and Blue Hour hover states.
 - `assets/chapter-one.js` — card depth parallax, interactive hover tilt, lazy video loading and optional sound control.
-- `assets/living-motion.css` — elegant floating animation, blue photographic hero card, archive photo overlay and continuous scene motion.
-- `assets/living-motion.js` — pointer-reactive portrait tilt/glare and scroll-driven typography.
-- `assets/fiqri-portrait.svg` and `assets/fiqri-archive.svg` — actual uploaded portraits, embedded and compressed for this preview. Replace with a higher-resolution approved `.webp` for production if desired.
+- `assets/living-motion.css` — original floating motion and interactive photographic card styling.
+- `assets/living-motion.js` — pointer-reactive portrait tilt/glare plus early, stationary Chapter One heading reveal.
+- `assets/refinement.css` — single-portrait editorial layout, accessible film iconography, and static chapter typography.
+- `assets/fiqri-portrait-bw.svg` — Fiqri's newest black-and-white portrait embedded as a compact WebP inside SVG, verified against the supplied photo before publishing.
 
 ## Add your own animated splash
 
