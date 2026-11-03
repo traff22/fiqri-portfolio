@@ -2,7 +2,30 @@
 (()=>{"use strict";
 const $=(q,r=document)=>r.querySelector(q);
 const $$=(q,r=document)=>[...r.querySelectorAll(q)];
-const cards=$$(".selected-work .work-card"),filters=$$(".selected-work .filter"),count=$("#work-count");
+const cards=$(".selected-work .work-card"),filters=$(".selected-work .filter"),count=$("#work-count");
+const gallerySection=$(".selected-work");
+const galleryGrid=$(".selected-work .work-grid");
+// The collage pairs complementary media ratios. Slots are assigned to visible cards
+// automatically on every filter change; added projects fall back to an even grid.
+const collageColumns=[6,18,14,10,19,5,12,12];
+function setGalleryMode(kind){
+ const collage=kind==="highlights"||kind==="all";
+ gallerySection?.classList.toggle("gallery-collage",collage);
+ if(gallerySection)gallerySection.dataset.galleryMode=kind;
+ const visible=cards.filter(card=>!card.hidden);
+ visible.forEach((card,i)=>{
+  if(collage){
+   card.dataset.collageSlot=String(i+1);
+   const isUnpaired=i===visible.length-1 && i%2===0;
+   card.style.setProperty("--collage-span",String(isUnpaired?24:(collageColumns[i]||12)));
+  }else{
+   card.removeAttribute("data-collage-slot");
+   card.style.removeProperty("--collage-span");
+  }
+ });
+ if(galleryGrid)galleryGrid.setAttribute("aria-label",collage?"Curated project collage":"Filtered project gallery");
+}
+
 function filterWork(kind){
  filters.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.filter===kind)));
  let shown=0;
@@ -13,7 +36,8 @@ function filterWork(kind){
   if(visible){shown++;card.classList.add("visible");}
  });
  if(count)count.textContent=String(shown);
- const status=$(".work-filter-status");if(status)status.lastChild.textContent=shown===1?" project":" projects";
+ const status=$(".work-filter-status");if(status)status.lastChild.textContent=kind==="highlights"?(shown===1?" highlighted project":" highlighted projects"):(shown===1?" project":" projects");
+ setGalleryMode(kind);
 }
 filters.forEach(button=>button.addEventListener("click",()=>filterWork(button.dataset.filter)));
 filterWork("highlights");
