@@ -36,7 +36,7 @@ function filterWork(kind){
   if(visible){shown++;card.classList.add("visible");}
  });
  if(count)count.textContent=String(shown);
- const status=$(".work-filter-status");if(status)status.lastChild.textContent=kind==="highlights"?(shown===1?" highlighted project":" highlighted projects"):(shown===1?" project":" projects");
+ const status=$(".work-filter-status");if(status){status.setAttribute("data-active-filter",kind);const suffix=kind==="highlights"?(shown===1?" highlighted project":" highlighted projects"):(shown===1?" project":" projects");const label=status.querySelector("[data-count-label]");if(label)label.textContent=suffix;else status.replaceChildren(count||document.createTextNode(String(shown)),document.createTextNode(suffix));}
  setGalleryMode(kind);
 }
 filters.forEach(button=>button.addEventListener("click",()=>filterWork(button.dataset.filter)));
