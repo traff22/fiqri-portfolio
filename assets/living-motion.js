@@ -41,6 +41,9 @@ function updateVisibility(){
   const r=chapter.getBoundingClientRect();
   // Reveal at the first hint of the section, not halfway through its parallax.
   chapter.classList.toggle("is-inview",reduced.matches||(r.top<vh*.95&&r.bottom>vh*.08));
+  // Copy lives behind the expanding frame; fade naturally as the film takes over.
+  const progress=clamp(-r.top/Math.max(1,chapter.offsetHeight-vh));
+  root.style.setProperty("--chapter-depth-opacity",String(clamp((.52-progress)*3.8)));
  }
  if(hero&&!reduced.matches){
   const r=hero.getBoundingClientRect(),p=clamp(-r.top/Math.max(vh,hero.offsetHeight));
