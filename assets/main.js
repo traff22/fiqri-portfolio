@@ -12,7 +12,7 @@ one("#enter")?.addEventListener("click",enter);one("#skip-intro")?.addEventListe
 one("#replay")?.addEventListener("click",()=>{try{sessionStorage.removeItem(key)}catch{}window.scrollTo({top:0,behavior:reduced.matches?"instant":"smooth"});startIntro(true)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")enter()});
 reduced.addEventListener?.("change",()=>{if(reduced.matches)enter();schedule()});
-all(".filter").forEach(b=>b.addEventListener("click",()=>{all(".filter").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));const kind=b.dataset.filter;all(".work-card").forEach(x=>x.hidden=kind!=="all"&&x.dataset.kind!==kind);schedule()}));
+/* Filter handling moved to work-gallery.js for multi-category projects. */
 const io=("IntersectionObserver"in window)?new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");io.unobserve(e.target)}}),{threshold:.08}):null;
 all(".reveal").forEach(el=>io?io.observe(el):el.classList.add("visible"));
 const doc=document.documentElement,hero=one(".hero"),poster=one(".poster"),cinema=one("#cinema-wrap"),frame=one(".cinema-frame"),cards=all(".work-card");
