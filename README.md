@@ -48,6 +48,43 @@ Then open http://localhost:4173 .
 
 **Important:** Project artworks and work descriptions are preview placeholders. Replace with authorized real case-study materials before using the website in job applications.
 
+## Selected Work — gallery, formats and interactions (V0.7)
+
+The **Highlights** filter is the default editorial shortlist. Other filters include All work, Events, Motion, Long-form and Reels. Each project in `index.html` has `data-categories` (space-separated) and `data-featured`. A project can appear in more than one category.
+
+- **Reels / vertical social**: set `data-format="portrait"`, media is **9:16**.
+- **Long-form / films / motion**: set `data-format="landscape"`, media is **16:9**.
+- **Events / key visuals**: set `data-format="event"`, media is **1760:761** (aspect ratio ~2.313).
+- Prefer optimized WebP/AVIF thumbnails, MP4/WebM web exports, and only footage approved for public display.
+
+To attach a playable video to a normal card, find its `.work-media` wrapper in `index.html` and change its empty attribute:
+
+```html
+<div class="work-media story" data-video-src="assets/videos/astronacci-longform.mp4">
+```
+
+The **Watch video** action opens a real HTML5 player if there is a file. With no file, the same dialog shows an honest placeholder.
+
+For event projects, click **Explore event** to open the event case-study overlay. Asset paths are configured in `assets/work-gallery.js`, in the `events` object. Set the `banner`, `motion`, and `documentation` image paths for each event, for example:
+
+```js
+"age-of-chaos": {
+  title: "Age of Chaos 2025",
+  year: "2025",
+  summary: "...",
+  contribution: "...",
+  banner: "assets/events/age-of-chaos/banner.webp", // 1760 x 761 recommended
+  motion: "assets/events/age-of-chaos/motion-still.webp", // 16:9
+  documentation: "assets/events/age-of-chaos/documentation.webp" // 4:3
+}
+```
+
+The case study is a native, keyboard-accessible `<dialog>` with Escape/backdrop/close support, including the event banner, two additional asset slots and contribution notes. Assets are placeholders until uploaded; no project results or client metrics have been invented.
+
+To expand an event into a full image gallery later, add more asset entries to its configuration and update the event-dialog template. The gallery CSS is in `assets/work-gallery.css`, and interactive logic is in `assets/work-gallery.js`.
+
+**Chapter One text layering:** the headline appears when the section first enters view, stays motionless so it is readable, then fades behind the enlarging showreel rather than overlapping in front.
+
 ## Chapter One — add actual videos (V0.4)
 
 All video slots have a genuine **16:9 landscape viewport** and intentionally start as art-directed placeholders. **No broken files are requested while `data-video-src` is empty.**
