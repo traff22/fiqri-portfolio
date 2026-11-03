@@ -37,7 +37,7 @@ Then open http://localhost:4173 .
 - `assets/living-motion.css` — original floating motion and interactive photographic card styling.
 - `assets/living-motion.js` — pointer-reactive portrait tilt/glare plus early, stationary Chapter One heading reveal.
 - `assets/refinement.css` — single-portrait editorial layout, accessible film iconography, and static chapter typography.
-- `assets/fiqri-portrait-bw.svg` — Fiqri's newest black-and-white portrait embedded as a compact WebP inside SVG, verified against the supplied photo before publishing.
+- `assets/fiqri-portrait-bw.webp` — Fiqri's newest black-and-white portrait optimized as a self-hosted WebP, verified against the supplied photo before publishing.
 
 ## Add your own animated splash
 
