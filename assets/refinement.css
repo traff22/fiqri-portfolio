@@ -1,0 +1,145 @@
+/* Fiqri Portfolio · refinement 0.6
+   One archival B&W portrait, meaningful film typography, readable Chapter One. */
+
+/* The photographic portrait is the entire visual hero: no duplicate photos or promo badges. */
+.poster.hero-photo-stage{
+  position:relative;isolation:isolate;overflow:visible;
+  width:min(100%,490px);max-width:490px;aspect-ratio:0.87;
+  margin-left:auto;background:transparent;border:0;box-shadow:none;
+  perspective:1000px;
+}
+.poster.hero-photo-stage::before,.poster.hero-photo-stage::after{display:none}
+.portrait-halo--a{background:#568fe82b}
+.portrait-halo--b{background:#a7c6f918}
+.portrait-card{
+  inset:0 7% 10% 7%;
+  border-radius:25px;
+  overflow:hidden;
+  background:#101723;
+  border:1px solid #b6d5ff60;
+  box-shadow:0 35px 110px #010716cb,0 0 70px #4a88d725;
+  transform:perspective(1000px) rotateX(var(--hero-tilt-x,0deg)) rotateY(var(--hero-tilt-y,0deg)) rotateZ(-1.5deg);
+  animation:portrait-idle 8s ease-in-out infinite;
+}
+.portrait-card:hover{box-shadow:0 48px 115px #010716e5,0 0 90px #68a3f541}
+.portrait-card__photo{
+  inset:0;background:#222830;
+}
+.portrait-card__photo img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center center;
+  filter:grayscale(1) contrast(1.04) brightness(.96);
+  transform:scale(1.015);
+}
+.portrait-card__photo::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,#0309136a 0%,transparent 21%,transparent 53%,#010713d6 100%);
+}
+.portrait-card__glare{
+  background:radial-gradient(ellipse 45% 34% at var(--hover-x,50%) var(--hover-y,50%),#e0efff8c,transparent 70%);
+  opacity:var(--glare-amount,.1);
+}
+.portrait-card__outline{inset:14px;border-color:#c9e0ff38;border-radius:17px}
+.portrait-card__grain{display:none}
+.portrait-card__heading{
+  position:absolute;top:28px;left:29px;right:29px;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font:600 10px/1.35 "Space Grotesk",sans-serif;
+  letter-spacing:.2em;color:#f1f7ff;text-shadow:0 2px 15px #000;
+}
+.portrait-card__heading svg{color:#d1e5ff;flex:none}
+.portrait-card__foot{
+  left:29px;right:28px;bottom:43px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:11px;
+  text-shadow:0 3px 20px #000;
+}
+.portrait-card__foot span{
+  font-size:10px;letter-spacing:.16em;color:#c2d7ec;
+}
+.portrait-card__foot strong{
+  font:600 clamp(23px,2.9vw,40px)/1.04 "Space Grotesk",sans-serif;
+  letter-spacing:-.065em;color:#f1f7ff;max-width:330px;
+}
+.portrait-skills{
+  position:absolute;bottom:3%;left:2%;right:2%;z-index:6;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  pointer-events:none;
+}
+.portrait-skill{
+  display:flex;align-items:center;gap:9px;padding:11px 14px;
+  color:#eff6ff;background:#0d1a2ee6;
+  border:1px solid #a2c9f559;
+  border-radius:999px;
+  box-shadow:0 12px 33px #0206109c;
+  backdrop-filter:blur(18px);
+  font:600 11px/1 "Space Grotesk",sans-serif;
+  letter-spacing:.02em;
+  animation:living-card-float 7s ease-in-out infinite;
+}
+.portrait-skill:nth-child(2){animation-delay:-2.3s;animation-duration:8.5s}
+.portrait-skill:nth-child(3){animation-delay:-4.1s;animation-duration:7.6s}
+.portrait-skill svg{width:19px;height:19px;color:#a5d0ff;flex:none}
+.portrait-side-card,.portrait-corner-label,.hero-side-label{display:none!important}
+
+/* Headline is editorial copy, not a scroll-coupled decoration. */
+.cinema-wrap .cinema-copy{
+  position:absolute;z-index:35;top:7%;left:50%;
+  transform:translateX(-50%)!important;
+  opacity:0!important;
+  text-align:center;width:94%;max-width:920px;
+  filter:none!important;pointer-events:none;
+  transition:opacity .38s ease!important;
+}
+.cinema-wrap.is-inview .cinema-copy{opacity:1!important}
+.cinema-wrap .cinema-copy-line,
+.cinema-wrap .cinema-deck{
+  opacity:1!important;transform:none!important;filter:none!important;
+  transition:none!important;will-change:auto!important;
+}
+.cinema-wrap .cinema-copy h2{
+  font-size:clamp(43px,6vw,88px);line-height:1.02;margin:10px 0 10px;
+  text-shadow:0 6px 35px #030817ed;
+}
+.cinema-wrap .cinema-copy .eyebrow{color:#a6cef9}
+.cinema-wrap .cinema-deck{color:#cfdded;font-size:14px;max-width:520px;margin:0 auto;line-height:1.55}
+.cinema-stick{isolation:isolate}
+.cinema-frame.showreel-shell{top:48%}
+.cinema-footer{justify-content:center;gap:0}
+.cinema-view-work{background:#b0d6ff15;border-color:#aacffb78}
+.float-reel-card__icon,.showreel-asset-note,.float-reel-card__tag{display:none!important}
+
+/* Subtle hover never takes the eye away from words. */
+.portrait-card__heading,.portrait-card__foot{pointer-events:none}
+.portrait-skill{transition:border-color .25s ease,background .25s ease}
+.poster.hero-photo-stage:hover .portrait-skill{border-color:#b5d8ff88;background:#112541ee}
+@media(max-width:980px){
+  .poster.hero-photo-stage{width:min(95%,440px);margin:42px auto 0}
+  .portrait-card{inset:0 8% 10% 8%}
+  .portrait-card__foot strong{font-size:clamp(23px,4.1vw,34px)}
+}
+@media(max-width:620px){
+  .poster.hero-photo-stage{
+    width:min(90vw,380px);aspect-ratio:.86;
+    margin:35px auto 35px;
+  }
+  .portrait-card{inset:1% 6% 9% 6%;border-radius:20px}
+  .portrait-card__heading{top:22px;left:19px;right:19px;font-size:9px}
+  .portrait-card__foot{left:21px;right:21px;bottom:38px}
+  .portrait-card__foot strong{font-size:26px}
+  .portrait-card__foot span{font-size:9px}
+  .portrait-skills{left:1%;right:1%;bottom:2%;gap:5px}
+  .portrait-skill{font-size:9px;gap:6px;padding:9px 10px}
+  .portrait-skill svg{width:15px;height:15px}
+  .cinema-wrap .cinema-copy{top:6%}
+  .cinema-wrap .cinema-copy h2{font-size:clamp(38px,9vw,58px);margin:8px 0}
+  .cinema-wrap .cinema-copy .eyebrow{font-size:10px}
+  .cinema-wrap .cinema-deck{font-size:12px;max-width:330px}
+  .cinema-frame.showreel-shell{top:47%}
+}
+@media(prefers-reduced-motion:reduce){
+  .portrait-card,.portrait-skill{animation:none!important}
+  .cinema-wrap .cinema-copy,.cinema-wrap .cinema-copy-line{
+    transform:translateX(-50%)!important;opacity:1!important;transition:none!important;
+  }
+  .cinema-wrap .cinema-copy-line{transform:none!important}
+}
