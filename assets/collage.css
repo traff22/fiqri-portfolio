@@ -1,0 +1,197 @@
+/* Portfolio V0.8 — compact editorial collage for Highlights and All Work.
+   Ratios pair automatically: vertical 9:16 / film 16:9 / event 1760:761.
+   Other category filters keep their original full-size card layouts. */
+
+.selected-work{padding-top:92px;padding-bottom:84px}
+.selected-work.gallery-collage .section-header{margin-bottom:24px}
+.selected-work.gallery-collage .work-filter-status{margin:11px 0 19px;color:#97b1cd}
+
+/* The six-slot repeatable packing sequence balances adjacent card heights:
+   vertical 6 / film 18, event 14 / film 10, event 19 / vertical 5. */
+.selected-work.gallery-collage .work-grid{
+ display:grid;
+ grid-template-columns:repeat(24,minmax(0,1fr));
+ grid-auto-flow:row dense;
+ grid-auto-rows:auto;
+ gap:14px;
+ align-items:stretch;
+}
+.selected-work.gallery-collage .work-card{
+ position:relative;
+ display:block;
+ grid-column:span var(--collage-span,12);
+ width:100%;
+ min-width:0;
+ min-height:0;
+ align-self:stretch;
+ margin:0;
+ padding:0;
+ overflow:hidden;
+ border:1px solid #aecffb35;
+ border-radius:18px;
+ background:#0b1628;
+ box-shadow:0 16px 38px #02081372;
+ isolation:isolate;
+ aspect-ratio:var(--tile-aspect,16/9);
+ transition:transform .45s cubic-bezier(.18,.7,.25,1),box-shadow .45s,border-color .45s;
+}
+.selected-work.gallery-collage .work-card[data-format="portrait"]{--tile-aspect:9/16}
+.selected-work.gallery-collage .work-card[data-format="event"]{--tile-aspect:1760/761}
+.selected-work.gallery-collage .work-card[hidden]{display:none!important}
+.selected-work.gallery-collage .work-card:hover,
+.selected-work.gallery-collage .work-card:focus-within{
+ transform:translateY(-4px);
+ border-color:#a9d5ff96;
+ box-shadow:0 29px 60px #020714b5,0 0 45px #6699eb19;
+}
+.selected-work.gallery-collage .work-card::after{
+ content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
+ background:linear-gradient(180deg,#02081445 0%,transparent 26%,transparent 48%,#020814a6 81%,#020713e6 100%);
+ transition:background .3s;
+}
+.selected-work.gallery-collage .work-card .work-media,
+.selected-work.gallery-collage .work-card[data-format="portrait"] .work-media,
+.selected-work.gallery-collage .work-card[data-format="event"] .work-media{
+ position:absolute;inset:0;
+ width:100%;height:100%;
+ min-height:0;
+ border:0;border-radius:inherit;
+ aspect-ratio:auto;
+ margin:0;
+ transform:none;
+ box-shadow:none;
+ background-clip:padding-box;
+}
+.selected-work.gallery-collage .work-card .work-media:hover,
+.selected-work.gallery-collage .work-card:hover .work-media,
+.selected-work.gallery-collage .work-card:focus-within .work-media{
+ transform:none;
+ box-shadow:none;
+}
+.selected-work.gallery-collage .work-media::after{background:none}
+.selected-work.gallery-collage .work-card .work-media .art{
+ font-size:clamp(36px,5.2vw,75px);
+ transition:transform .55s cubic-bezier(.2,.7,.25,1),filter .55s,opacity .3s;
+ filter:drop-shadow(0 12px 26px #040b18);
+ max-width:90%;
+}
+.selected-work.gallery-collage .work-card:hover .work-media .art,
+.selected-work.gallery-collage .work-card:focus-within .work-media .art{
+ transform:translateY(-9px) scale(1.045);
+ filter:drop-shadow(0 17px 36px #7ebdff48);
+}
+.selected-work.gallery-collage .work-card[data-format="portrait"] .work-media .art{font-size:clamp(31px,4.2vw,64px)}
+.selected-work.gallery-collage .work-card[data-format="event"] .work-media .art{font-size:clamp(46px,7.2vw,116px)}
+.selected-work.gallery-collage .work-card .work-media .art small{font-size:20%}
+.selected-work.gallery-collage .work-card .work-media .serial{display:none}
+.selected-work.gallery-collage .work-card .work-media-action{
+ top:14px;right:14px;bottom:auto;z-index:7;
+ padding:9px 13px;
+ border-color:#d7e9ff5a;
+ background:#0817289f;
+ font-size:10px;
+}
+.selected-work.gallery-collage .work-card .work-trigger{z-index:9}
+.selected-work.gallery-collage .work-card .work-meta{
+ position:absolute;left:21px;right:21px;bottom:69px;z-index:7;
+ display:flex;align-items:center;gap:12px;
+ margin:0;padding:0;
+ color:#abc9eb;
+ font-size:9px;letter-spacing:.1em;
+ text-shadow:0 3px 12px #01050b;
+ pointer-events:none;
+}
+.selected-work.gallery-collage .work-card .work-meta span:last-child{display:none}
+.selected-work.gallery-collage .work-card .work-titleline{
+ position:absolute;left:21px;right:20px;bottom:21px;z-index:7;
+ display:flex;align-items:end;gap:9px;
+ pointer-events:none;
+}
+.selected-work.gallery-collage .work-card .work-titleline h3,
+.selected-work.gallery-collage .work-card[data-format="event"] .work-titleline h3{
+ margin:0;max-width:90%;
+ color:#f2f8ff;
+ font-size:clamp(19px,2.65vw,34px);
+ line-height:1.07;
+ letter-spacing:-.048em;
+ text-shadow:0 5px 22px #000e;
+ transform:none;
+}
+.selected-work.gallery-collage .work-card[data-format="portrait"] .work-titleline h3{font-size:clamp(18px,2vw,25px)}
+.selected-work.gallery-collage .work-card .work-featured{display:none}
+.selected-work.gallery-collage .work-card>p{display:none}
+
+/* Display real supplied poster artwork at the slot's editorial crop.
+   The video dialog still preserves the video's native 9:16 or 16:9 playback. */
+.selected-work .work-media .work-poster{
+ position:absolute;inset:0;width:100%;height:100%;z-index:2;
+ object-fit:cover;object-position:center;
+ pointer-events:none;
+}
+.selected-work .work-media .work-poster[hidden]{display:none!important}
+.selected-work.gallery-collage .work-card .work-media.has-poster .art{opacity:0}
+.selected-work.gallery-collage .work-card .work-media .project-video{
+ inset:0;width:100%;height:100%;object-fit:cover;
+}
+
+/* 630–900px: preserve the efficient paired layout, only compact the labels. */
+@media(max-width:900px){
+ .selected-work.gallery-collage .work-grid{gap:10px}
+ .selected-work.gallery-collage .work-card{border-radius:14px}
+ .selected-work.gallery-collage .work-card .work-titleline{left:14px;right:12px;bottom:13px}
+ .selected-work.gallery-collage .work-card .work-meta{left:14px;right:14px;bottom:48px;font-size:8px}
+ .selected-work.gallery-collage .work-card .work-titleline h3,
+ .selected-work.gallery-collage .work-card[data-format="event"] .work-titleline h3{font-size:clamp(15px,2.8vw,26px)}
+ .selected-work.gallery-collage .work-card .work-media-action{top:10px;right:10px;padding:7px 10px}
+}
+
+/* Small screens: balanced masonry (two newspaper columns), no blank grid cells.
+   Event key visual is still presented at exact 1760:761 inside the event modal. */
+@media(max-width:620px){
+ .selected-work{padding-top:68px;padding-bottom:61px}
+ .selected-work.gallery-collage .work-grid{
+  display:block;
+  columns:2;
+  column-gap:10px;
+ }
+ .selected-work.gallery-collage .work-card{
+  display:inline-block;
+  width:100%;
+  margin:0 0 10px;
+  break-inside:avoid;
+  -webkit-column-break-inside:avoid;
+  page-break-inside:avoid;
+  vertical-align:top;
+  aspect-ratio:var(--tile-aspect,16/9);
+  border-radius:12px;
+ }
+ .selected-work.gallery-collage .work-card[data-format="event"]{--tile-aspect:16/9}
+ .selected-work.gallery-collage .work-card .work-meta{display:none}
+ .selected-work.gallery-collage .work-card .work-titleline{left:10px;right:9px;bottom:11px}
+ .selected-work.gallery-collage .work-card .work-titleline h3,
+ .selected-work.gallery-collage .work-card[data-format="event"] .work-titleline h3,
+ .selected-work.gallery-collage .work-card[data-format="portrait"] .work-titleline h3{
+  font-size:clamp(13px,3.5vw,18px);
+  max-width:100%;
+  line-height:1.09;
+ }
+ .selected-work.gallery-collage .work-card .work-media .art,
+ .selected-work.gallery-collage .work-card[data-format="event"] .work-media .art,
+ .selected-work.gallery-collage .work-card[data-format="portrait"] .work-media .art{
+  font-size:clamp(25px,5.5vw,42px);
+ }
+ .selected-work.gallery-collage .work-card .work-media-action{
+  top:8px;right:8px;bottom:auto;
+  padding:5px 7px;font-size:0;
+  border-radius:999px;
+ }
+ .selected-work.gallery-collage .work-card .work-media-action::after{
+  content:"↗";font:600 15px/1 "Space Grotesk",sans-serif;
+ }
+ .selected-work.gallery-collage .work-filter-status{margin-bottom:13px}
+}
+@media(prefers-reduced-motion:reduce){
+ .selected-work.gallery-collage .work-card,
+ .selected-work.gallery-collage .work-card .art{transition:none!important}
+ .selected-work.gallery-collage .work-card:hover{transform:none!important}
+}
