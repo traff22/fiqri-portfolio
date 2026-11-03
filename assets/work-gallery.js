@@ -273,7 +273,7 @@ function openVideo(card,trigger){
   openModal(videoDialog,trigger);
  }
 }
-$(".work-trigger").forEach(trigger=>trigger.addEventListener("click",()=>{
+$$(".work-trigger").forEach(trigger=>trigger.addEventListener("click",()=>{
  const card=trigger.closest(".work-card");if(!card)return;
  if(trigger.dataset.open==="event")openEvent(card,trigger);else openVideo(card,trigger);
 }));
