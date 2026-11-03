@@ -7,7 +7,7 @@ const gallerySection=$(".selected-work");
 const galleryGrid=$(".selected-work .work-grid");
 // The collage pairs complementary media ratios. Slots are assigned to visible cards
 // automatically on every filter change; added projects fall back to an even grid.
-const collageColumns=[6,18,14,10,19,5,12,12];
+const collageColumns=[12,12,12,12,12,12,5,19,19,5];
 function setGalleryMode(kind){
  const collage=kind==="highlights"||kind==="all";
  gallerySection?.classList.toggle("gallery-collage",collage);
@@ -59,7 +59,7 @@ cards.forEach(card=>{
  image.src=src;
 });
 
-const eventDialog=$("#event-dialog"),videoDialog=$("#video-dialog"),player=$("#video-player"),waiting=$("#video-awaiting");
+const eventDialog=$("#event-dialog"),videoDialog=$("#video-dialog"),player=$("#video-player"),youtube=$("#youtube-player"),externalLink=$("#video-external-link"),waiting=$("#video-awaiting");
 let priorFocus=null;
 const events={
  "age-of-chaos":{
@@ -92,7 +92,11 @@ function closeModal(dialog){
 }
 function onModalClosed(){
  if(!eventDialog?.open&&!videoDialog?.open)document.body.classList.remove("modal-open");
- if(videoDialog&&!videoDialog.open&&player){player.pause();player.removeAttribute("src");player.load();}
+ if(videoDialog&&!videoDialog.open){
+  if(player){player.pause();player.removeAttribute("src");player.load();}
+  if(youtube){youtube.removeAttribute("src");youtube.hidden=true;}
+  if(externalLink){externalLink.hidden=true;externalLink.removeAttribute("href");}
+ }
  if(priorFocus?.isConnected){priorFocus.focus({preventScroll:true});priorFocus=null;}
 }
 [eventDialog,videoDialog].filter(Boolean).forEach(dialog=>{
@@ -131,14 +135,33 @@ function openVideo(card,trigger){
  $("#video-dialog-description").textContent=note?.textContent||"";
  const wrapper=$(".video-player-frame",videoDialog);
  wrapper?.classList.toggle("is-portrait",card.dataset.format==="portrait");
- const media=$(".work-media",card),src=(media?.dataset.videoSrc||"").trim();
- player.pause();player.removeAttribute("src");player.load();
- if(src){
-  player.src=src;player.hidden=false;if(waiting)waiting.hidden=true;
+ const media=$(".work-media",card);
+ const src=(media?.dataset.videoSrc||"").trim();
+ const ytId=(media?.dataset.youtubeId||"").trim();
+ const start=Math.max(0,Math.min(36000,Number(media?.dataset.youtubeStart)||0));
+ player.pause();player.hidden=true;player.removeAttribute("src");player.load();
+ if(youtube){youtube.hidden=true;youtube.removeAttribute("src");}
+ if(externalLink){externalLink.hidden=true;externalLink.removeAttribute("href");}
+ if(waiting)waiting.hidden=true;
+ // User-supplied YouTube links play only on click. No heavyweight iframe before opening.
+ if(/^[A-Za-z0-9_-]{11}$/.test(ytId)&&youtube){
+  const embed=new URL("https://www.youtube-nocookie.com/embed/"+ytId);
+  embed.searchParams.set("autoplay","1");
+  embed.searchParams.set("rel","0");
+  if(start>0)embed.searchParams.set("start",String(start));
+  youtube.src=embed.toString();youtube.hidden=false;
+  if(externalLink){
+   externalLink.href="https://www.youtube.com/watch?v="+ytId+(start>0?"&t="+start+"s":"");
+   externalLink.hidden=false;
+   externalLink.textContent="Watch on YouTube ↗";
+  }
+  openModal(videoDialog,trigger);
+ }else if(src){
+  player.src=src;player.hidden=false;
   openModal(videoDialog,trigger);
   player.play().catch(()=>{});
  }else{
-  player.hidden=true;if(waiting)waiting.hidden=false;
+  if(waiting)waiting.hidden=false;
   openModal(videoDialog,trigger);
  }
 }
