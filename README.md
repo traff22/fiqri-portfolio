@@ -34,6 +34,7 @@ Then open http://localhost:4173 .
 - `assets/main.js` — splash/skip/replay, filters, reveal animations and base parallax.
 - `assets/chapter-one.css` — 16:9 showreel, floating preview cards, geometric shapes, and Blue Hour hover states.
 - `assets/chapter-one.js` — card depth parallax, interactive hover tilt, lazy video loading and optional sound control.
+- `assets/collage.css` — compact ratio-aware collage and mobile masonry for Highlights / All work.
 - `assets/living-motion.css` — original floating motion and interactive photographic card styling.
 - `assets/living-motion.js` — pointer-reactive portrait tilt/glare plus early, stationary Chapter One heading reveal.
 - `assets/refinement.css` — single-portrait editorial layout, accessible film iconography, and static chapter typography.
@@ -47,6 +48,24 @@ Then open http://localhost:4173 .
 4. The splash is skippable and automatically bypassed for returning visitors within the current browser tab or users with reduced-motion preferences.
 
 **Important:** Project artworks and work descriptions are preview placeholders. Replace with authorized real case-study materials before using the website in job applications.
+
+## Editorial auto-collage — Highlights + All work (V0.8)
+
+**Highlights** (4 hand-picked projects) and **All work** (6 projects) now switch automatically into a compact, gap-minimized gallery. On desktop, the 24-track CSS Grid balances complementary visual ratios in pairs:
+
+- Reels portrait **9:16** beside long-form **16:9**
+- Event key visual **1760:761** beside product motion **16:9**
+- Another event key visual beside portrait reels (All work)
+
+The existing DOM order stays intact for keyboard/screen-reader navigation. `assets/work-gallery.js` assigns a collage slot to each visible card automatically on each filter change; other category filters keep the existing full-width aspect-aware presentation. Adding more projects works with an even-column fallback.
+
+On small screens the gallery switches to a compact **two-column masonry layout** using CSS columns, with tighter titles and gently cropped event thumbnails for readability. Event case studies themselves still show the **full 1760×761** banner, and video player playback keeps the original ratio. Collage mode is only an editorial *thumbnail view*.
+
+Visual labels move inside thumbnails; descriptions remain available to modal views rather than producing rows of text underneath every tile.
+
+**Adding real thumbnails:** change a card's `data-poster-src=""` in `index.html` to an optimized image path such as `assets/posters/bitcoin-almanac.webp`. This is loaded lazily. If empty, the designed artwork placeholder remains, and the site does not fetch missing assets.
+
+Styles: `assets/collage.css`. Layout logic: `assets/work-gallery.js`.
 
 ## Selected Work — gallery, formats and interactions (V0.7)
 
