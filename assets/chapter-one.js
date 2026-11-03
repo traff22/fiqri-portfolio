@@ -22,6 +22,8 @@ function setVideoReady(slot,video){
  const placeholder=$(".showreel-placeholder, .float-reel-card__placeholder",slot);
  if(placeholder)placeholder.hidden=true;
  slot.classList.add("has-video");
+ const box=slot.getBoundingClientRect();
+ if(!reduced.matches && box.bottom>0 && box.top<window.innerHeight)video.play().catch(()=>{});
  const sound=$(".showreel-sound",slot);
  if(sound){
   sound.hidden=false;
