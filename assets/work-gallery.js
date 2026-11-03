@@ -79,13 +79,17 @@ cards.forEach(card=>{
    always opens the independent player dialog with full controls. */
 const finePointer=window.matchMedia("(hover: hover) and (pointer: fine)");
 const reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)");
-const canHoverPreview=()=>finePointer.matches&&!reducedMotion.matches&&!navigator.connection?.saveData;
+const canHoverPreview=()=>finePointer.matches&&!reducedMotion.matches&&!navigator.connection?.saveData&&!videoDialog?.open&&!eventDialog?.open&&Date.now()>hoverCooldownUntil;
+let hoverCooldownUntil=0;
 let activeHover=null;
 function stopHoverPreview(card){
  if(!card)return;
  if(card._hoverTimer){clearTimeout(card._hoverTimer);card._hoverTimer=0;}
- const frame=$(".work-hover-video",card);
- if(frame){frame.remove();}
+ $(".work-hover-video",card).forEach(frame=>{
+  // Unload and remove the browsing context; merely hiding an iframe doesn't stop media.
+  frame.setAttribute("src","about:blank");
+  frame.remove();
+ });
  const media=$(".work-media",card);
  media?.classList.remove("is-previewing");
  if(activeHover===card)activeHover=null;
@@ -98,7 +102,7 @@ function queueHoverPreview(card){
  activeHover=card;
  card._hoverTimer=setTimeout(()=>{
   card._hoverTimer=0;
-  if(activeHover!==card||card.hidden)return;
+  if(activeHover!==card||card.hidden||!canHoverPreview())return;
   const iframe=document.createElement("iframe");
   iframe.className="work-hover-video";
   iframe.title="Muted preview";
@@ -129,7 +133,33 @@ cards.forEach(card=>{
  card.addEventListener("focusout",()=>stopHoverPreview(card));
 });
 
-const eventDialog=$("#event-dialog"),videoDialog=$("#video-dialog"),player=$("#video-player"),youtube=$("#youtube-player"),externalLink=$("#video-external-link"),waiting=$("#video-awaiting");
+const eventDialog=$("#event-dialog"),videoDialog=$("#video-dialog"),player=$("#video-player"),externalLink=$("#video-external-link"),waiting=$("#video-awaiting");
+let youtube=$("#youtube-player");
+const youtubeTemplate=youtube?.cloneNode(false)||null;
+const youtubeContainer=$(".video-player-frame",videoDialog);
+function stopAllHoverPreviews(){
+ cards.forEach(stopHoverPreview);
+ activeHover=null;
+}
+function stopVideoPlayback(){
+ // Stop native MP4 AND destroy YouTube's embedded player browsing context.
+ if(player){player.pause();player.removeAttribute("src");player.load();player.hidden=true;}
+ if(youtube){
+  youtube.setAttribute("src","about:blank");
+  youtube.remove();
+  youtube=null;
+ }
+ if(externalLink){externalLink.hidden=true;externalLink.removeAttribute("href");}
+}
+function newYoutubePlayer(){
+ if(!youtubeTemplate||!youtubeContainer)return null;
+ const frame=youtubeTemplate.cloneNode(false);
+ frame.id="youtube-player";
+ frame.hidden=true;
+ youtubeContainer.appendChild(frame);
+ youtube=frame;
+ return frame;
+}
 let priorFocus=null;
 const events={
  "age-of-chaos":{
@@ -147,7 +177,7 @@ const events={
 };
 function openModal(dialog,origin){
  if(!dialog)return;
- if(videoDialog?.open&&dialog!==videoDialog)videoDialog.close();
+ if(videoDialog?.open&&dialog!==videoDialog)closeModal(videoDialog);
  if(eventDialog?.open&&dialog!==eventDialog)eventDialog.close();
  priorFocus=origin||document.activeElement;
  if(typeof dialog.showModal==="function")dialog.showModal();
@@ -157,22 +187,30 @@ function openModal(dialog,origin){
 }
 function closeModal(dialog){
  if(!dialog)return;
+ stopAllHoverPreviews();
+ hoverCooldownUntil=Date.now()+900;
+ if(dialog===videoDialog)stopVideoPlayback(); // synchronous, before the close animation/event
  if(dialog.open&&typeof dialog.close==="function")dialog.close();
  else{dialog.removeAttribute("open");onModalClosed();}
 }
 function onModalClosed(){
  if(!eventDialog?.open&&!videoDialog?.open)document.body.classList.remove("modal-open");
  if(videoDialog&&!videoDialog.open){
-  if(player){player.pause();player.removeAttribute("src");player.load();}
-  if(youtube){youtube.removeAttribute("src");youtube.hidden=true;}
-  if(externalLink){externalLink.hidden=true;externalLink.removeAttribute("href");}
+  stopVideoPlayback(); // also covers native Escape or external calls to dialog.close()
+  stopAllHoverPreviews();
+  hoverCooldownUntil=Date.now()+900;
  }
  if(priorFocus?.isConnected){priorFocus.focus({preventScroll:true});priorFocus=null;}
 }
 [eventDialog,videoDialog].filter(Boolean).forEach(dialog=>{
  dialog.addEventListener("close",onModalClosed);
  dialog.addEventListener("click",e=>{if(e.target===dialog)closeModal(dialog)});
- $$("[data-close-dialog]",dialog).forEach(btn=>btn.addEventListener("click",()=>closeModal(dialog)));
+ dialog.addEventListener("cancel",()=>{ // Escape: stop audio before the native close event
+  stopAllHoverPreviews();
+  hoverCooldownUntil=Date.now()+900;
+  if(dialog===videoDialog)stopVideoPlayback();
+ });
+ $("[data-close-dialog]",dialog).forEach(btn=>btn.addEventListener("click",()=>closeModal(dialog)));
 });
 function configureImage(img,src,placeholder){
  if(!img)return;
@@ -200,7 +238,7 @@ function openEvent(card,trigger){
 }
 function openVideo(card,trigger){
  if(!videoDialog||!player)return;
- if(activeHover)stopHoverPreview(activeHover);
+ stopAllHoverPreviews();
  $("#video-dialog-title").textContent=card.dataset.title||"Video project";
  const note=card.querySelector(":scope > p");
  $("#video-dialog-description").textContent=note?.textContent||"";
@@ -210,17 +248,16 @@ function openVideo(card,trigger){
  const src=(media?.dataset.videoSrc||"").trim();
  const ytId=(media?.dataset.youtubeId||"").trim();
  const start=Math.max(0,Math.min(36000,Number(media?.dataset.youtubeStart)||0));
- player.pause();player.hidden=true;player.removeAttribute("src");player.load();
- if(youtube){youtube.hidden=true;youtube.removeAttribute("src");}
- if(externalLink){externalLink.hidden=true;externalLink.removeAttribute("href");}
+ stopVideoPlayback();
  if(waiting)waiting.hidden=true;
  // User-supplied YouTube links play only on click. No heavyweight iframe before opening.
- if(/^[A-Za-z0-9_-]{11}$/.test(ytId)&&youtube){
+ if(/^[A-Za-z0-9_-]{11}$/.test(ytId)&&youtubeTemplate){
   const embed=new URL("https://www.youtube-nocookie.com/embed/"+ytId);
   embed.searchParams.set("autoplay","1");
   embed.searchParams.set("rel","0");
   if(start>0)embed.searchParams.set("start",String(start));
-  youtube.src=embed.toString();youtube.hidden=false;
+  const frame=newYoutubePlayer();
+  if(frame){frame.src=embed.toString();frame.hidden=false;}
   if(externalLink){
    externalLink.href="https://www.youtube.com/watch?v="+ytId+(start>0?"&t="+start+"s":"");
    externalLink.hidden=false;
@@ -236,8 +273,14 @@ function openVideo(card,trigger){
   openModal(videoDialog,trigger);
  }
 }
-$$(".work-trigger").forEach(trigger=>trigger.addEventListener("click",()=>{
+$(".work-trigger").forEach(trigger=>trigger.addEventListener("click",()=>{
  const card=trigger.closest(".work-card");if(!card)return;
  if(trigger.dataset.open==="event")openEvent(card,trigger);else openVideo(card,trigger);
 }));
+// Never leave embedded audio running when the tab is hidden or navigated away.
+document.addEventListener("visibilitychange",()=>{if(document.hidden){
+ stopAllHoverPreviews();stopVideoPlayback();
+ if(videoDialog?.open)closeModal(videoDialog);
+}});
+window.addEventListener("pagehide",()=>{stopAllHoverPreviews();stopVideoPlayback();});
 })();
