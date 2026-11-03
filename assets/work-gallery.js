@@ -42,21 +42,91 @@ function filterWork(kind){
 filters.forEach(button=>button.addEventListener("click",()=>filterWork(button.dataset.filter)));
 filterWork("highlights");
 
-// Optional thumbnail images: add a real file path in data-poster-src.
-// Full-frame collage crops are only for thumbnails; native video format is preserved in the player.
+// Youtube posters are present in HTML, so thumbnails render even before this JS runs.
+// This is progressive enhancement for loading state and optional external image posters.
 cards.forEach(card=>{
- const media=$(".work-media",card),src=(media?.dataset.posterSrc||"").trim();
- if(!media||!src)return;
- const image=document.createElement("img");
- image.className="work-poster";
- image.alt="";
- image.loading="lazy";
- image.decoding="async";
- image.hidden=true;
- image.addEventListener("load",()=>{image.hidden=false;media.classList.add("has-poster")},{once:true});
- image.addEventListener("error",()=>{image.remove();media.classList.remove("has-poster")},{once:true});
- media.prepend(image);
- image.src=src;
+ const media=$(".work-media",card);
+ if(!media)return;
+ const src=(media.dataset.posterSrc||"").trim();
+ let image=$(".work-poster",media);
+ if(!image&&src){
+  image=document.createElement("img");
+  image.className="work-poster";image.alt="";
+  image.loading="lazy";image.decoding="async";
+  media.prepend(image);image.src=src;
+ }
+ if(!image)return;
+ let triedFallback=false;
+ const ready=()=>{
+  if(image.naturalWidth>1&&image.naturalHeight>1){image.hidden=false;media.classList.add("has-poster");}
+ };
+ const failed=()=>{
+  const id=(media.dataset.youtubeId||"").trim();
+  if(!triedFallback&&/^[A-Za-z0-9_-]{11}$/.test(id)){
+   triedFallback=true;
+   image.src="https://img.youtube.com/vi/"+id+"/mqdefault.jpg";
+   return;
+  }
+  image.hidden=true;media.classList.remove("has-poster");
+ };
+ image.addEventListener("load",ready);
+ image.addEventListener("error",failed);
+ if(image.complete){if(image.naturalWidth>1)ready();else failed();}
+});
+
+/* Desktop hover: muted YouTube video preview after a deliberate pause.
+   Touch/reduced-motion/save-data never loads a hovering iframe. Clicking
+   always opens the independent player dialog with full controls. */
+const finePointer=window.matchMedia("(hover: hover) and (pointer: fine)");
+const reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)");
+const canHoverPreview=()=>finePointer.matches&&!reducedMotion.matches&&!navigator.connection?.saveData;
+let activeHover=null;
+function stopHoverPreview(card){
+ if(!card)return;
+ if(card._hoverTimer){clearTimeout(card._hoverTimer);card._hoverTimer=0;}
+ const frame=$(".work-hover-video",card);
+ if(frame){frame.remove();}
+ const media=$(".work-media",card);
+ media?.classList.remove("is-previewing");
+ if(activeHover===card)activeHover=null;
+}
+function queueHoverPreview(card){
+ const media=$(".work-media",card);
+ const id=(media?.dataset.youtubeId||"").trim();
+ if(!canHoverPreview()||!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+ if(activeHover&&activeHover!==card)stopHoverPreview(activeHover);
+ activeHover=card;
+ card._hoverTimer=setTimeout(()=>{
+  card._hoverTimer=0;
+  if(activeHover!==card||card.hidden)return;
+  const iframe=document.createElement("iframe");
+  iframe.className="work-hover-video";
+  iframe.title="Muted preview";
+  iframe.tabIndex=-1;
+  iframe.setAttribute("aria-hidden","true");
+  iframe.setAttribute("allow","autoplay; encrypted-media; picture-in-picture");
+  const url=new URL("https://www.youtube-nocookie.com/embed/"+id);
+  url.searchParams.set("autoplay","1");
+  url.searchParams.set("mute","1");
+  url.searchParams.set("controls","0");
+  url.searchParams.set("playsinline","1");
+  url.searchParams.set("rel","0");
+  url.searchParams.set("loop","1");
+  url.searchParams.set("playlist",id);
+  const start=Math.max(0,Math.min(36000,Number(media.dataset.youtubeStart)||0));
+  if(start)url.searchParams.set("start",String(start));
+  iframe.src=url.toString();
+  media.appendChild(iframe);
+  iframe.addEventListener("load",()=>{
+   if(activeHover===card)media.classList.add("is-previewing");
+  },{once:true});
+ },650);
+}
+cards.forEach(card=>{
+ if(!$(".work-media[data-youtube-id]",card))return;
+ card.addEventListener("pointerenter",()=>queueHoverPreview(card));
+ card.addEventListener("pointerleave",()=>stopHoverPreview(card));
+ card.addEventListener("focusout",()=>stopHoverPreview(card));
 });
 
 const eventDialog=$("#event-dialog"),videoDialog=$("#video-dialog"),player=$("#video-player"),youtube=$("#youtube-player"),externalLink=$("#video-external-link"),waiting=$("#video-awaiting");
@@ -130,6 +200,7 @@ function openEvent(card,trigger){
 }
 function openVideo(card,trigger){
  if(!videoDialog||!player)return;
+ if(activeHover)stopHoverPreview(activeHover);
  $("#video-dialog-title").textContent=card.dataset.title||"Video project";
  const note=card.querySelector(":scope > p");
  $("#video-dialog-description").textContent=note?.textContent||"";
