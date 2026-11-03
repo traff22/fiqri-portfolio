@@ -210,7 +210,7 @@ function onModalClosed(){
   hoverCooldownUntil=Date.now()+900;
   if(dialog===videoDialog)stopVideoPlayback();
  });
- $("[data-close-dialog]",dialog).forEach(btn=>btn.addEventListener("click",()=>closeModal(dialog)));
+ $$("[data-close-dialog]",dialog).forEach(btn=>btn.addEventListener("click",()=>closeModal(dialog)));
 });
 function configureImage(img,src,placeholder){
  if(!img)return;
