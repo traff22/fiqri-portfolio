@@ -2,6 +2,7 @@
    The portrait tilts gently; Chapter One's headline is pinned and readable. */
 (()=>{"use strict";
 const root=document.documentElement;
+root.classList.add("has-motion-js");
 const portrait=document.querySelector(".portrait-card");
 const photoZone=document.querySelector(".hero-photo-stage");
 const hero=document.querySelector(".hero");
