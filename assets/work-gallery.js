@@ -2,7 +2,7 @@
 (()=>{"use strict";
 const $=(q,r=document)=>r.querySelector(q);
 const $$=(q,r=document)=>[...r.querySelectorAll(q)];
-const cards=$(".selected-work .work-card"),filters=$(".selected-work .filter"),count=$("#work-count");
+const cards=$$(".selected-work .work-card"),filters=$$(".selected-work .filter"),count=$("#work-count");
 const gallerySection=$(".selected-work");
 const galleryGrid=$(".selected-work .work-grid");
 // The collage pairs complementary media ratios. Slots are assigned to visible cards
