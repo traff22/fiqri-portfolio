@@ -154,3 +154,6 @@
   .video-dialog .video-player-frame.is-portrait{width:min(270px,100%)}
 }
 @media(prefers-reduced-motion:reduce){.portfolio-dialog[open]{animation:none}.selected-work .filter,.selected-work .work-media{transition:none}}
+
+/* Explicitly honor hidden placeholders even where layout rules use flex/grid. */
+.portfolio-dialog [hidden],.selected-work [hidden]{display:none!important}
