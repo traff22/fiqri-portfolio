@@ -42,6 +42,23 @@ function filterWork(kind){
 filters.forEach(button=>button.addEventListener("click",()=>filterWork(button.dataset.filter)));
 filterWork("highlights");
 
+// Optional thumbnail images: add a real file path in data-poster-src.
+// Full-frame collage crops are only for thumbnails; native video format is preserved in the player.
+cards.forEach(card=>{
+ const media=$(".work-media",card),src=(media?.dataset.posterSrc||"").trim();
+ if(!media||!src)return;
+ const image=document.createElement("img");
+ image.className="work-poster";
+ image.alt="";
+ image.loading="lazy";
+ image.decoding="async";
+ image.hidden=true;
+ image.addEventListener("load",()=>{image.hidden=false;media.classList.add("has-poster")},{once:true});
+ image.addEventListener("error",()=>{image.remove();media.classList.remove("has-poster")},{once:true});
+ media.prepend(image);
+ image.src=src;
+});
+
 const eventDialog=$("#event-dialog"),videoDialog=$("#video-dialog"),player=$("#video-player"),waiting=$("#video-awaiting");
 let priorFocus=null;
 const events={
