@@ -193,3 +193,16 @@
 @media(prefers-reduced-motion:reduce){
  #cinema-wrap .showreel-shell .montage-stream{transition:none!important}
 }
+
+/* Avoid suggesting a still picture is real video before playback starts. */
+#cinema-wrap .showreel-shell .showreel-montage .montage-overlay{
+ opacity:0;
+ transition:opacity .24s ease;
+}
+#cinema-wrap .showreel-shell .showreel-montage[data-playback="playing"] .montage-overlay,
+#cinema-wrap .showreel-shell .showreel-montage[data-playback="unavailable"] .montage-overlay{
+ opacity:1;
+}
+#cinema-wrap .showreel-shell .showreel-montage[data-playback="unavailable"] .montage-title{
+ font-size:clamp(16px,2.2vw,25px)!important;
+}
