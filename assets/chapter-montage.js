@@ -1,185 +1,311 @@
-/* Chapter One v1.4 — minimalist native HTML5 showreel.
-   No YouTube iframe, channel overlays, titles, pause buttons, end cards, or logos.
-   Current teasers are lightweight motion treatments of user-provided event photos;
-   replace the src paths below with approved footage clips when available. */
+/* Chapter One V1.5 — actual video excerpts from published portfolio films.
+   Source: the existing YouTube video IDs in Selected Work (+ event extras).
+   No photo-animation assets are used. The official IFrame API remains inside
+   YouTube's player and its branding cannot be disabled in every browser. */
 (()=>{"use strict";
-const scene=document.querySelector("#cinema-wrap");
+const scene=document.getElementById("cinema-wrap");
 const shell=scene?.querySelector(".showreel-shell");
-const montage=shell?.querySelector(".showreel-montage");
-const videos=montage?[...montage.querySelectorAll("video.montage-clip")]:[];
-const skip=montage?.querySelector(".montage-skip");
-const title=montage?.querySelector(".montage-title");
-const clock=montage?.querySelector(".montage-timestamp");
-const timeline=montage?.querySelector(".montage-progress");
-if(!scene||!shell||!montage||videos.length!==2||!skip||!title||!clock||!timeline)return;
+const stage=shell?.querySelector(".showreel-montage");
+const panels=stage?[...stage.querySelectorAll(".montage-stream")]:[];
+const title=stage?.querySelector(".montage-title");
+const clock=stage?.querySelector(".montage-timestamp");
+const bar=stage?.querySelector(".montage-progress");
+const skip=stage?.querySelector(".montage-skip");
+if(!scene||!stage||panels.length!==2||!title||!clock||!bar||!skip)return;
 
-const DURATION=5000,FADE=500;
-const reduced=window.matchMedia("(prefers-reduced-motion: reduce)");
-const saveData=()=>!!navigator.connection?.saveData;
-const clips=[
- {title:"Age of Chaos",base:"assets/showreel/age-of-chaos-stage"},
- {title:"Counter Trend",base:"assets/showreel/counter-trend-venue"},
- {title:"Behind the Scenes",base:"assets/showreel/age-of-chaos-crew"}
+const ID=/^[A-Za-z0-9_-]{11}$/;
+const FIVE_SECONDS=5000, FADE_MS=580, REVEAL_TIMEOUT=11000;
+const extraFilms=[
+ {id:"ytYOsh3ZcWc",title:"Counter Trend — Speaker",category:"event",format:"event"},
+ {id:"AH1l-VdQj1I",title:"Counter Trend — Talkshow",category:"event",format:"event"},
+ {id:"Vk4Me3JrLng",title:"Heavenly Whisper — Tuhan Pengharapanku",category:"event",format:"landscape"}
 ];
-let visible=false,running=false,started=false,currentIndex=-1,current=null;
-let queued=null,queueIndex=-1,lastTitle="",queue=[],generation=0,raf=0,frameStart=0;
-let pauseTimeout=0,retryTimeout=0;
+const fromCards=[...document.querySelectorAll("#work .work-card[data-status='published']")].map(card=>{
+ const media=card.querySelector(".work-media[data-youtube-id]");
+ const id=media?.dataset.youtubeId||"";
+ if(!ID.test(id))return null;
+ const c=card.dataset.categories||"";
+ return {
+  id,
+  title:card.dataset.title||"Selected work",
+  category:c.includes("reels")?"reels":c.includes("event")?"event":c.includes("motion")?"motion":"longform",
+  format:card.dataset.format||"landscape",
+  earliest:Math.max(0,Number(media.dataset.youtubeStart)||0)
+ };
+}).filter(Boolean);
+const catalog=[...new Map([...fromCards,...extraFilms].map(x=>[x.id,x])).values()];
+if(!catalog.length)return;
+stage.dataset.sourceCount=String(catalog.length);
+stage.dataset.previewMode="original-video-embed";
 
-const selectNext=()=>{
- if(queue.length===0)queue=[...clips];
- const notSame=queue.filter(x=>x.title!==lastTitle);
- const available=notSame.length?notSame:queue;
- const selected=available[Math.floor(Math.random()*available.length)];
- queue.splice(queue.indexOf(selected),1);
- return selected;
-};
-function timecode(ms){
- return "00:"+String(Math.min(5,Math.floor(ms/1000))).padStart(2,"0");
+const slots=panels.map(()=>({player:null,ready:false,request:null}));
+const failed=new Set();
+let visible=false,enabled=false,apiReady=false,apiLoading=false,blocked=false;
+let activeIndex=-1,current=null,bag=[],lastId="",lastCategory="";
+let currentTimer=0,preloadTimer=0,watchdog=0,fadeTimer=0,clockRaf=0;
+let timeStart=0,playhead=0,requestId=0,pendingPreload=null;
+
+function safe(fn){try{return fn()}catch(_){return undefined}}
+function clearTime(){
+ clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);clearTimeout(fadeTimer);
+ cancelAnimationFrame(clockRaf);clockRaf=0;
+ currentTimer=preloadTimer=watchdog=fadeTimer=0;
 }
-function showProgress(ms){
- const value=Math.min(DURATION,Math.max(0,ms));
- timeline.style.setProperty("--segment-progress",(value/DURATION).toFixed(4));
- timeline.setAttribute("aria-valuenow",String(Math.round(value/1000)));
- clock.textContent=timecode(value)+" / 00:05";
-}
-function cancelFrame(){if(raf)cancelAnimationFrame(raf);raf=0}
-function prepare(index,item){
- const v=videos[index];
- v.muted=true;v.volume=0;v.defaultMuted=true;
- v.playsInline=true;v.loop=true;v.autoplay=false;
- const webm=!!v.canPlayType('video/webm; codecs="vp9"');
- const url=item.base+(webm?".webm":".mp4");
- if(v.dataset.clip!==url){
-  v.dataset.clip=url;
-  v.src=url;
-  v.preload="auto";
-  v.load();
- }
-}
-function ready(video,seq){
- if(video.readyState>=HTMLMediaElement.HAVE_CURRENT_DATA)return Promise.resolve();
- return new Promise((resolve,reject)=>{
-  const timeout=setTimeout(()=>finish(false),2800);
-  const finish=ok=>{
-   clearTimeout(timeout);
-   video.removeEventListener("loadeddata",onReady);
-   video.removeEventListener("error",onFail);
-   if(seq!==generation)return reject(Error("stale load"));
-   ok?resolve():reject(Error("video not ready"));
-  };
-  const onReady=()=>finish(true),onFail=()=>finish(false);
-  video.addEventListener("loadeddata",onReady,{once:true});
-  video.addEventListener("error",onFail,{once:true});
- });
-}
-function prebuffer(){
- if(!running||reduced.matches||saveData())return;
- const inactive=currentIndex===0?1:0;
- queued=selectNext();queueIndex=inactive;
- prepare(inactive,queued);
+function setProgress(ms){
+ playhead=Math.max(0,Math.min(FIVE_SECONDS,ms));
+ bar.style.setProperty("--segment-progress",(playhead/FIVE_SECONDS).toFixed(4));
+ bar.setAttribute("aria-valuenow",String(Math.round(playhead/1000)));
+ clock.textContent="00:"+String(Math.floor(playhead/1000)).padStart(2,"0")+" / 00:05";
 }
 function tick(now){
- if(!running||!current)return;
- const elapsed=Math.min(DURATION,now-frameStart);
- showProgress(elapsed);
- if(elapsed>=DURATION){
-  cancelFrame();
-  changeClip();
- }else{
-  raf=requestAnimationFrame(tick);
+ if(!enabled||activeIndex<0)return;
+ setProgress(now-timeStart);
+ if(playhead>=FIVE_SECONDS){clockRaf=0;return}
+ clockRaf=requestAnimationFrame(tick);
+}
+function reshuffle(){
+ bag=catalog.filter(x=>!failed.has(x.id));
+ for(let i=bag.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [bag[i],bag[j]]=[bag[j],bag[i]];
  }
 }
-async function changeClip(force=false){
- if(!running)return;
- cancelFrame();
- clearTimeout(retryTimeout);retryTimeout=0;
- const seq=++generation;
- const next=currentIndex===0?1:0;
- let item=queued&&queueIndex===next?queued:(!started?clips[0]:selectNext());
- queued=null;queueIndex=-1;
- if(!started){started=true;item=clips[0]}
- const nextVideo=videos[next];
- const oldIndex=currentIndex;
- try{
-  prepare(next,item);
-  await ready(nextVideo,seq);
-  if(!running||seq!==generation)return;
-  nextVideo.currentTime=0;
-  await nextVideo.play();
-  if(!running||seq!==generation){nextVideo.pause();return}
-  currentIndex=next;
-  current=item;
-  lastTitle=item.title;
-  nextVideo.classList.add("is-current");
-  nextVideo.style.visibility="visible";
-  if(oldIndex>=0){
-   const old=videos[oldIndex];
-   old.classList.remove("is-current");
-   clearTimeout(pauseTimeout);
-   // Do not change the outgoing source until its dissolve is fully complete.
-   pauseTimeout=setTimeout(()=>{
-    if(currentIndex===oldIndex||!running)return;
-    old.pause();
-    prebuffer();
-   },FADE+100);
+function pick(){
+ if(!bag.length)reshuffle();
+ if(!bag.length)return null;
+ const preferred=bag.find(x=>x.id!==lastId&&x.category!==lastCategory);
+ const distinct=bag.find(x=>x.id!==lastId);
+ const result=preferred||distinct||bag[0];
+ bag.splice(bag.indexOf(result),1);
+ lastId=result.id;lastCategory=result.category;
+ return result;
+}
+function offsetFor(item,duration){
+ if(!Number.isFinite(duration)||duration<=10)return Math.max(0,item.earliest||0);
+ const minimum=Math.min(duration-6,Math.max(2,item.earliest||0));
+ const upper=Math.max(minimum,duration-6.25);
+ return Math.round(minimum+Math.random()*(upper-minimum));
+}
+function safePause(index){
+ const player=slots[index]?.player;
+ if(player)safe(()=>{player.mute();player.pauseVideo()});
+}
+function onFailure(index,error){
+ const req=slots[index]?.request;
+ if(!req)return;
+ failed.add(req.item.id);
+ if(pendingPreload?.index===index)pendingPreload=null;
+ slots[index].request=null;
+ if(req.mode==="activate"){
+  clearTimeout(watchdog);
+  if(failed.size>=catalog.length){
+   enabled=false;
+   title.textContent="Preview unavailable";
+   clock.textContent="View selected work below";
+   stage.dataset.playback="unavailable";
+   skip.setAttribute("aria-label","Retry video previews");
+   return;
   }
-  shell.classList.add("is-montage-active");
-  title.textContent=item.title;
-  showProgress(0);
-  frameStart=performance.now();
-  if(!reduced.matches&&!saveData())raf=requestAnimationFrame(tick);
-  if(oldIndex<0)prebuffer();
- }catch(_){
-  // Never display a broken player or branding. Keep the existing film if loaded;
-  // otherwise use the clean blue placeholder while trying another local clip.
-  if(running&&seq===generation)retryTimeout=setTimeout(()=>changeClip(),1600);
+  if(enabled)nextVideo();
  }
 }
-function stop(){
- running=false;generation++;
- cancelFrame();
- clearTimeout(pauseTimeout);clearTimeout(retryTimeout);
- videos.forEach(v=>{if(!v.paused)v.pause()});
+function show(index,req){
+ if(!enabled||slots[index].request!==req||req.shown)return;
+ req.shown=true;req.mode="current";
+ clearTimeout(watchdog);
+ const previous=activeIndex;
+ activeIndex=index;
+ current=req.item;
+ stage.dataset.playback="playing";
+ stage.classList.add("is-playing");
+ title.textContent=req.item.title;
+ panels[index].dataset.format=req.item.format;
+ panels[index].classList.add("is-current");
+ if(previous>=0&&previous!==index){
+  panels[previous].classList.remove("is-current");
+  fadeTimer=setTimeout(()=>safePause(previous),FADE_MS+75);
+ }
+ setProgress(0);
+ timeStart=performance.now();
+ cancelAnimationFrame(clockRaf);
+ clockRaf=requestAnimationFrame(tick);
+ clearTimeout(currentTimer);clearTimeout(preloadTimer);
+ currentTimer=setTimeout(switchToNext,FIVE_SECONDS);
+ preloadTimer=setTimeout(prebufferNext,1400);
+}
+function handlePlaying(index){
+ if(!enabled)return;
+ const slot=slots[index],req=slot.request;
+ if(!req||!slot.player)return;
+ safe(()=>{slot.player.mute();slot.player.setVolume(0)});
+ if(!req.seeked){
+  req.seeked=true;
+  const seconds=offsetFor(req.item,Number(safe(()=>slot.player.getDuration()))||0);
+  if(seconds>0){
+   req.seekValue=seconds;
+   safe(()=>slot.player.seekTo(seconds,true));
+   // Some players continue PLAYING without another state event after seek.
+   setTimeout(()=>settle(index,req),450);
+   return;
+  }
+ }
+ settle(index,req);
+}
+function settle(index,req){
+ if(!enabled||slots[index].request!==req||req.settled)return;
+ req.settled=true;
+ if(req.mode==="preload"){
+  req.mode="prepared";
+  safePause(index);
+  if(pendingPreload?.index===index)pendingPreload.ready=true;
+ }else if(req.mode==="activate"){
+  show(index,req);
+ }
+}
+function prepare(index,item,mode){
+ const slot=slots[index];
+ if(!slot.ready||!slot.player)return false;
+ const req={id:++requestId,item,mode,seeked:false,settled:false,shown:false};
+ slot.request=req;
+ panels[index].dataset.format=item.format;
+ safe(()=>slot.player.mute());
+ safe(()=>slot.player.setVolume(0));
+ safe(()=>slot.player.loadVideoById({videoId:item.id,startSeconds:Math.max(0,item.earliest||0),suggestedQuality:"hd1080"}));
+ if(mode==="activate"){
+  clearTimeout(watchdog);
+  watchdog=setTimeout(()=>{
+   if(enabled&&slot.request===req&&!req.shown)onFailure(index,"timeout");
+  },REVEAL_TIMEOUT);
+ }
+ return true;
+}
+function prebufferNext(){
+ if(!enabled||activeIndex<0||pendingPreload||catalog.length<2)return;
+ const other=1-activeIndex;
+ const candidate=pick();
+ if(!candidate)return;
+ pendingPreload={index:other,item:candidate,ready:false};
+ if(!prepare(other,candidate,"preload"))pendingPreload=null;
+}
+function switchToNext(){
+ clearTimeout(currentTimer);clearTimeout(preloadTimer);
+ if(!enabled)return;
+ const next=activeIndex<0?0:1-activeIndex;
+ const queued=pendingPreload;
+ pendingPreload=null;
+ if(queued&&queued.index===next&&slots[next].request?.item===queued.item){
+  const req=slots[next].request;
+  req.mode="activate";
+  if(req.settled){
+   req.settled=false;
+   safe(()=>slots[next].player.playVideo());
+   watchdog=setTimeout(()=>{
+    if(enabled&&slots[next].request===req&&!req.shown)onFailure(next,"resume blocked");
+   },REVEAL_TIMEOUT);
+  }
+ }else{
+  const item=pick();
+  if(item)prepare(next,item,"activate");
+ }
+}
+function nextVideo(){
+ if(!enabled)return;
+ clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);
+ const next=activeIndex<0?0:1-activeIndex;
+ const item=pick();
+ pendingPreload=null;
+ if(item)prepare(next,item,"activate");
+}
+function initAPI(){
+ if(apiReady||!window.YT?.Player)return;
+ apiReady=true;
+ for(let i=0;i<2;i++){
+  const root=document.getElementById(i===0?"montage-real-a":"montage-real-b");
+  if(!root)continue;
+  try{
+   slots[i].player=new window.YT.Player(root,{
+    host:"https://www.youtube-nocookie.com",
+    width:"100%",height:"100%",
+    playerVars:{
+     controls:0,autoplay:0,mute:1,playsinline:1,rel:0,disablekb:1,fs:0,
+     iv_load_policy:3,cc_load_policy:0,origin:location.origin
+    },
+    events:{
+     onReady:e=>{
+      slots[i].ready=true;
+      safe(()=>{e.target.mute();e.target.setVolume(0)});
+      if(enabled&&slots.every(s=>s.ready))nextVideo();
+     },
+     onStateChange:e=>{
+      if(e.data===window.YT.PlayerState.PLAYING)handlePlaying(i);
+      else if(e.data===window.YT.PlayerState.ENDED&&slots[i].request?.mode==="current")switchToNext();
+     },
+     onError:()=>onFailure(i,"embedding or playback unavailable"),
+     onAutoplayBlocked:()=>{
+      blocked=true;
+      stage.dataset.playback="blocked";
+      skip.setAttribute("aria-label","Click to enable previews");
+     }
+    }
+   });
+  }catch(_){stage.dataset.playback="unavailable"}
+ }
+}
+function loadAPI(){
+ if(apiLoading)return;
+ apiLoading=true;
+ if(window.YT?.Player){initAPI();return}
+ const prior=window.onYouTubeIframeAPIReady;
+ window.onYouTubeIframeAPIReady=()=>{
+  if(typeof prior==="function")safe(()=>prior());
+  initAPI();
+ };
+ const script=document.createElement("script");
+ script.src="https://www.youtube.com/iframe_api";
+ script.async=true;
+ script.onerror=()=>{stage.dataset.playback="unavailable";title.textContent="Preview unavailable"};
+ document.head.appendChild(script);
 }
 function start(){
- if(running||!visible||document.hidden)return;
- running=true;
- if(currentIndex>=0){
-  const v=videos[currentIndex];
-  v.play().then(()=>{
-   if(!running)return;
-   frameStart=performance.now();
-   if(!reduced.matches&&!saveData())raf=requestAnimationFrame(tick);
-  }).catch(()=>changeClip());
- }else changeClip();
+ if(enabled||!visible||document.hidden)return;
+ enabled=true;stage.dataset.playback="loading";
+ if(apiReady){
+  if(slots.every(s=>s.ready))nextVideo();
+ }else loadAPI();
 }
-skip.addEventListener("click",event=>{
- event.preventDefault();
- event.stopPropagation();
- if(!running){visible=true;start();return}
- changeClip(true);
+function stop(){
+ if(!enabled)return;
+ enabled=false;clearTime();pendingPreload=null;
+ slots.forEach((s,i)=>{safePause(i);s.request=null});
+ activeIndex=-1;
+ panels.forEach(p=>p.classList.remove("is-current"));
+ stage.dataset.playback="paused";
+}
+skip.addEventListener("click",e=>{
+ e.preventDefault();e.stopPropagation();
+ if(blocked){blocked=false;stage.dataset.playback="loading"}
+ if(!enabled){visible=true;start()}
+ else nextVideo();
 });
-// Preload immediately: these are 43–46 KB MP4 previews, not remote embeds.
-prepare(0,clips[0]);
-if("IntersectionObserver" in window){
- const observer=new IntersectionObserver(entries=>{
+if("IntersectionObserver"in window){
+ const io=new IntersectionObserver(entries=>{
   visible=entries.some(e=>e.isIntersecting);
   if(visible)start();else stop();
- },{rootMargin:"90px 0px",threshold:.08});
- observer.observe(shell);
+ },{threshold:.04,rootMargin:"180px 0px"});
+ io.observe(shell);
+ // Prewarm the official player API during the preceding hero section.
+ const preloader=new IntersectionObserver(entries=>{
+  if(entries.some(e=>e.isIntersecting)){loadAPI();preloader.disconnect()}
+ },{rootMargin:"950px 0px"});
+ preloader.observe(scene);
 }else{
- function onScroll(){
-  const r=shell.getBoundingClientRect();
-  visible=r.bottom>0&&r.top<window.innerHeight;
+ const onScroll=()=>{
+  const b=shell.getBoundingClientRect();
+  visible=b.bottom>0&&b.top<innerHeight;
   if(visible)start();else stop();
- }
- window.addEventListener("scroll",onScroll,{passive:true});
- onScroll();
+ };
+ window.addEventListener("scroll",onScroll,{passive:true});onScroll();loadAPI();
 }
 document.addEventListener("visibilitychange",()=>document.hidden?stop():start());
 window.addEventListener("pagehide",stop);
-reduced.addEventListener?.("change",()=>{
- if(reduced.matches){cancelFrame();showProgress(0)}
- else if(running&&current){frameStart=performance.now();raf=requestAnimationFrame(tick)}
-});
 })();
