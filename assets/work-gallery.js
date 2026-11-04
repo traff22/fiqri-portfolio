@@ -46,7 +46,7 @@ function setThumbnailWithFallback(img,id){
  const choices=["maxresdefault","sddefault","hqdefault"];
  let choice=0;
  function next(){
-  if(choice>=choices.length-1){img.hidden=false;return;}
+  if(choice>=choices.length-1){img.hidden=true;img.closest(".work-media")?.classList.remove("has-poster");return;}
   choice++;
   img.src=thumbnailFor(id,choices[choice]);
  }
@@ -57,7 +57,10 @@ function setThumbnailWithFallback(img,id){
   img.closest(".work-media")?.classList.add("has-poster");
  };
  img.src=thumbnailFor(id);
- if(img.complete&&img.naturalWidth>=480)img.closest(".work-media")?.classList.add("has-poster");
+ if(img.complete){
+  if(img.naturalWidth>=480){img.hidden=false;img.closest(".work-media")?.classList.add("has-poster")}
+  else next();
+ }
 }
 cards.forEach(card=>{
  const media=$(".work-media",card);if(!media)return;
