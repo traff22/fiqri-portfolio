@@ -131,3 +131,11 @@
   #cinema-wrap .showreel-shell .montage-fallback::after{animation:none}
   #cinema-wrap .showreel-shell video.montage-clip{transition:none!important}
 }
+
+/* Display the project name at all times, including before pointer hover. */
+#cinema-wrap .showreel-shell .montage-title{
+ position:relative;z-index:9!important;
+ display:block!important;visibility:visible!important;opacity:1!important;
+ color:#ffffff!important;text-shadow:0 3px 19px #000e!important;
+ white-space:normal!important;
+}
