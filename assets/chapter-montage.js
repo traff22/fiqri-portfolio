@@ -42,7 +42,7 @@ const players=[null,null];
 const slots=[{ready:false,turn:0,seeked:false,video:""},{ready:false,turn:0,seeked:false,video:""}];
 let started=false,active=false,visible=false,turn=0,picture=-1,current=null,order=[],last=null;
 let timer=0,booting=false,apiReady=false,videoStarted=false,apiFailed=false;
-let settleTimer=0;
+let settleTimer=0,introTimer=0;
 const pick=()=>{
  if(!started){started=true;return projects.find(x=>x.slug==="cinematic-mancing")||projects[0]}
  if(!order.length)order=[...projects].sort(()=>Math.random()-.5);
@@ -53,7 +53,10 @@ const pick=()=>{
  return choice;
 };
 function safe(fn){try{fn()}catch(_){}}
-function clearTime(){clearTimeout(timer);clearTimeout(settleTimer);timer=settleTimer=0}
+function clearTime(){
+ clearTimeout(timer);clearTimeout(settleTimer);clearTimeout(introTimer);
+ timer=settleTimer=introTimer=0;
+}
 function restartProgress(){
  progress?.classList.remove("is-running");
  if(!active||reduceMotion.matches||saveData())return;
@@ -146,7 +149,7 @@ function onError(i){
  }
 }
 function initPlayers(){
- if(apiReady||apiFailed||!window.YT?.Player||!active)return;
+ if(apiReady||apiFailed||!window.YT?.Player)return;
  apiReady=true;
  for(let i=0;i<2;i++){
   const root=document.getElementById("montage-youtube-"+(i===0?"a":"b"));
@@ -234,7 +237,7 @@ function resume(){
  if(active||!visible||document.hidden||shell.classList.contains("has-video"))return;
  active=true;
  if(!started){
-  setTimeout(()=>{if(active)advance()},550);
+  introTimer=setTimeout(()=>{introTimer=0;if(active)advance()},550);
  }else{
   advance(true);
  }
