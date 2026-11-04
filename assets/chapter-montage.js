@@ -25,18 +25,24 @@ const fromCards=[...document.querySelectorAll("#work .work-card[data-status='pub
  const media=card.querySelector(".work-media[data-youtube-id]");
  const id=media?.dataset.youtubeId||"";
  if(!ID.test(id))return null;
- const c=card.dataset.categories||"";
+ const categories=(card.dataset.categories||"").split(/\s+/);
+ // Chapter One uses cinematic widescreen footage only. Reels (even motion
+ // projects cross-tagged as Reels) remain available in their gallery filter.
+ if(card.dataset.format==="portrait"||categories.includes("reels"))return null;
  return {
   id,
   title:card.dataset.title||"Selected work",
-  category:c.includes("reels")?"reels":c.includes("event")?"event":c.includes("motion")?"motion":"longform",
+  category:categories.includes("event")?"event":categories.includes("motion")?"motion":"longform",
   format:card.dataset.format||"landscape",
   earliest:Math.max(0,Number(media.dataset.youtubeStart)||0)
  };
 }).filter(Boolean);
-const catalog=[...new Map([...fromCards,...extraFilms].map(x=>[x.id,x])).values()];
+const catalog=[...new Map([...fromCards,...extraFilms].map(x=>[x.id,x])).values()]
+ .filter(item=>item.format!=="portrait"&&item.category!=="reels");
 if(!catalog.length)return;
 stage.dataset.sourceCount=String(catalog.length);
+stage.dataset.sourceFormat="landscape-only";
+stage.dataset.sourceIds=catalog.map(item=>item.id).join(",");
 stage.dataset.previewMode="original-video-embed";
 
 const slots=panels.map(()=>({player:null,ready:false,request:null}));
