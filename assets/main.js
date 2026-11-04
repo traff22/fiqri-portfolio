@@ -23,7 +23,7 @@ const scroll=window.scrollY||0,vh=window.innerHeight||1,max=Math.max(1,doc.scrol
 const progress=one("#progress");if(progress)progress.style.transform="scaleX("+clamp(scroll/max)+")";
 if(isReduced){
  ["--hero-back-y","--hero-mid-y","--hero-content-y","--poster-y","--poster-orbit-y","--poster-letter-y","--cinema-copy-y","--scene-back-y","--scene-front-y","--frame-y","--scene-rotation","--work-card-shift","--work-art-y","--work-ambient-shift"].forEach(k=>doc.style.removeProperty(k));
- doc.style.setProperty("--cinema-scale",".93");doc.style.setProperty("--cinema-copy-opacity","1");doc.style.setProperty("--cinema-phrase-opacity","0");doc.style.setProperty("--cinema-logo-opacity","1");return;
+ doc.style.setProperty("--cinema-scale","1");doc.style.setProperty("--cinema-copy-opacity","1");doc.style.setProperty("--cinema-phrase-opacity","0");doc.style.setProperty("--cinema-logo-opacity","1");return;
 }
 if(hero){const h=hero.offsetHeight,amount=clamp(scroll/Math.max(h,1));
  doc.style.setProperty("--hero-back-y",(-scroll*.11).toFixed(1)+"px");
@@ -38,12 +38,14 @@ if(cinema&&frame){
  const rect=cinema.getBoundingClientRect(),span=Math.max(1,cinema.offsetHeight-vh),p=clamp(-rect.top/span),active=rect.bottom>0&&rect.top<vh;
  if(active){
  const easing=p*p*(3-2*p);
- doc.style.setProperty("--cinema-scale",(0.98-easing*(small?.15:.23)).toFixed(3));
+ doc.style.setProperty("--cinema-scale",(1.00+easing*(small?.07:.18)).toFixed(3));
  doc.style.setProperty("--cinema-copy-y",(-easing*90).toFixed(1)+"px");
  doc.style.setProperty("--cinema-copy-opacity",clamp(1-p*1.65).toFixed(3));
  doc.style.setProperty("--scene-back-y",(-p*65).toFixed(1)+"px");
  doc.style.setProperty("--scene-front-y",(p*42).toFixed(1)+"px");
  doc.style.setProperty("--frame-y",(-p*34).toFixed(1)+"px");
+ doc.style.setProperty("--chapter-card-depth",(1-easing*.28).toFixed(3));
+ doc.style.setProperty("--chapter-card-fade",(1-easing*.32).toFixed(3));
  doc.style.setProperty("--scene-rotation",(p*25).toFixed(1)+"deg");
  doc.style.setProperty("--frame-radius",(26-p*20).toFixed(1)+"px");
  doc.style.setProperty("--cinema-logo-opacity",clamp(1-p*2.0).toFixed(3));
