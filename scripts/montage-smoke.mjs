@@ -42,7 +42,11 @@ try{
  const stage=await page.locator(".showreel-montage").evaluate(el=>({
   sourceCount:Number(el.dataset.sourceCount),mode:el.dataset.previewMode,playback:el.dataset.playback
  }));
- if(stage.sourceCount!==18)throw Error("Expected 18 genuine YouTube videos, got "+stage.sourceCount);
+ if(stage.sourceCount!==13)throw Error("Expected 13 landscape-only YouTube videos, got "+stage.sourceCount);
+ const allowed=await page.locator(".showreel-montage").getAttribute("data-source-ids");
+ const excluded=["DkounxK31EU","E2D5KPuhug0","wvAc12hybog","9IurjSDUGdQ","XWBZalMYO-A"];
+ const ids=(allowed||"").split(",");
+ if(ids.length!==13||excluded.some(id=>ids.includes(id)))throw Error("Portrait/Reels leaked into video playlist: "+allowed);
  if(stage.mode!=="original-video-embed")throw Error("Still using fabricated photo montage");
  if(await page.locator(".showreel-montage .montage-clip").count())throw Error("Synthetic native photo videos remain");
  await page.waitForTimeout(1180);
@@ -55,13 +59,14 @@ try{
  const data=await page.evaluate(()=>structuredClone(window.__ytQA));
  if(data.loads.length<2||data.seeks.length<2||data.mutes<2)throw Error("Player did not load and seek real videos: "+JSON.stringify(data));
  if(data.loads.some(v=>!/^[A-Za-z0-9_-]{11}$/.test(v)))throw Error("Invalid video ID in shuffle");
+ if(data.loads.some(id=>excluded.includes(id)))throw Error("Shorts/Reels video loaded in landscape montage: "+data.loads.join(","));
  await page.waitForFunction(previous=>document.querySelector(".montage-title")?.textContent!==previous,second,{timeout:7400});
  const third=await page.locator(".montage-title").textContent();
  if(third===first)throw Error("Shuffle immediately repeated the same previous project");
  if(errors.length)throw Error("JS errors: "+errors.join("|"));
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/chapter-original-video-montage.png"});
  console.log("MONTAGE_SMOKE_REPORT="+JSON.stringify({
-  sources:stage.sourceCount,mode:stage.mode,playing:true,first,second,third,
+  sources:stage.sourceCount,excludedReels:excluded.length,mode:stage.mode,playing:true,first,second,third,
   clock:timer,loads:data.loads,seeks:data.seeks,mutedCalls:data.mutes,
   clickSkip:true,autoNext:true,syntheticPhotoClips:false,jsErrors:errors
  }));
