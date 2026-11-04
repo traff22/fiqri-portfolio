@@ -4,7 +4,7 @@ const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] }
 const origin = "http://127.0.0.1:4173";
 const report = [];
 const filters = {
-  highlights: 4, all: 14, event: 3, motion: 6, longform: 5, reels: 4
+  highlights: 4, all: 15, event: 3, motion: 7, longform: 5, reels: 5
 };
 function check(ok, reason) { if (!ok) throw new Error(reason); }
 function intersection(a,b){
@@ -24,7 +24,7 @@ for (const [viewport, device] of [
    document.body.classList.remove("intro-active");
  });
 
- // Validate the Chapter One depth animation at real scroll positions,
+ // Validate the Chapter One gentle forward zoom without colliding with text,
  // not merely the CSS string. It must recede, with no collision into copy.
  await page.emulateMedia({reducedMotion:"no-preference"});
  const sceneStart=await page.locator("#cinema-wrap").evaluate(el=>el.offsetTop);
@@ -34,16 +34,21 @@ for (const [viewport, device] of [
  const stageStart=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
  const chapterCopy=await page.locator("#cinema-wrap .cinema-copy").boundingBox();
  check(stageStart.width>200,device+": Chapter One main frame missing");
+ const firstCard=await page.locator("#cinema-wrap .float-reel-card--one .float-reel-card__media").evaluate(el=>({
+   width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height
+ }));
+ if(device==="desktop")check(Math.abs(firstCard.width/firstCard.height-9/16)<.08,device+": portrait depth card must be 9:16");
+
  check(intersection(stageStart,chapterCopy)<20,device+": Chapter One copy overlaps main frame at start");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-start.png"});
  await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart+sceneSpan*.82);
  await page.waitForTimeout(650);
  const stageAfter=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
- check(stageAfter.width<stageStart.width*.90,
-   device+": main frame grew toward the viewer, start "+stageStart.width+" end "+stageAfter.width);
+ check(stageAfter.width>stageStart.width*1.05&&stageAfter.width<stageStart.width*1.23,
+   device+": main frame scale not in the restrained zoom range, start "+stageStart.width+" end "+stageAfter.width);
  check(intersection(stageAfter,chapterCopy)<20,device+": Chapter One copy overlaps frame during scroll");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-depth.png"});
- report.push({device,chapter:"depth zoom backward",initialWidth:Math.round(stageStart.width),endWidth:Math.round(stageAfter.width)});
+ report.push({device,chapter:"restrained zoom forward",initialWidth:Math.round(stageStart.width),endWidth:Math.round(stageAfter.width)});
  await page.emulateMedia({reducedMotion:"reduce"});
 
  await page.locator("#work").scrollIntoViewIfNeeded();
