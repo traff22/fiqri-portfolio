@@ -23,6 +23,29 @@ for (const [viewport, device] of [
    if(intro) intro.hidden=true;
    document.body.classList.remove("intro-active");
  });
+
+ // Validate the Chapter One depth animation at real scroll positions,
+ // not merely the CSS string. It must recede, with no collision into copy.
+ await page.emulateMedia({reducedMotion:"no-preference"});
+ const sceneStart=await page.locator("#cinema-wrap").evaluate(el=>el.offsetTop);
+ const sceneSpan=await page.locator("#cinema-wrap").evaluate(el=>Math.max(1,el.offsetHeight-innerHeight));
+ await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart);
+ await page.waitForTimeout(450);
+ const stageStart=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
+ const chapterCopy=await page.locator("#cinema-wrap .cinema-copy").boundingBox();
+ check(stageStart.width>200,device+": Chapter One main frame missing");
+ check(intersection(stageStart,chapterCopy)<20,device+": Chapter One copy overlaps main frame at start");
+ await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-start.png"});
+ await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart+sceneSpan*.82);
+ await page.waitForTimeout(650);
+ const stageAfter=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
+ check(stageAfter.width<stageStart.width*.90,
+   device+": main frame grew toward the viewer, start "+stageStart.width+" end "+stageAfter.width);
+ check(intersection(stageAfter,chapterCopy)<20,device+": Chapter One copy overlaps frame during scroll");
+ await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-depth.png"});
+ report.push({device,chapter:"depth zoom backward",initialWidth:Math.round(stageStart.width),endWidth:Math.round(stageAfter.width)});
+ await page.emulateMedia({reducedMotion:"reduce"});
+
  await page.locator("#work").scrollIntoViewIfNeeded();
  for(const [filter,n] of Object.entries(filters)){
    await page.locator('.filter[data-filter="'+filter+'"]').click();
