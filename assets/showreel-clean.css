@@ -1,0 +1,133 @@
+/* Chapter One v1.4 — video-only visual treatment.
+   Deliberately no YouTube embeds, frame numbers, channel labels, pause icons,
+   external branding, tiny status copy or redundant film labels. */
+#cinema-wrap .showreel-shell{
+  background:#07152b!important;
+  border:1px solid #8baedc83!important;
+  box-shadow:0 30px 90px #020916a1,0 0 65px #76b7ff19!important;
+}
+#cinema-wrap .showreel-shell .showreel-visual{isolation:isolate}
+#cinema-wrap .showreel-shell .showreel-montage{
+  inset:0!important;
+  position:absolute!important;
+  opacity:1!important;
+  z-index:12!important;
+  pointer-events:auto;
+  background:#081527;
+  border-radius:inherit;
+}
+#cinema-wrap .showreel-shell .montage-fallback{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse at 48% 42%,#36578078,transparent 65%),
+    linear-gradient(135deg,#172b49,#081326 75%);
+  overflow:hidden;
+}
+#cinema-wrap .showreel-shell .montage-fallback::after{
+  content:"";
+  position:absolute;inset:-60%;
+  background:linear-gradient(100deg,transparent 36%,#9bbfff0d 45%,transparent 53%);
+  animation:fiqri-clean-glow 8s ease-in-out infinite alternate;
+}
+@keyframes fiqri-clean-glow{from{transform:translateX(-17%)}to{transform:translateX(17%)}}
+#cinema-wrap .showreel-shell video.montage-clip{
+  position:absolute!important;inset:0!important;
+  z-index:2!important;
+  display:block!important;
+  width:100%!important;height:100%!important;
+  object-fit:cover!important;object-position:center;
+  pointer-events:none;user-select:none;
+  opacity:0!important;
+  visibility:visible!important;
+  filter:brightness(.87) saturate(.98);
+  transition:opacity .5s ease!important;
+}
+#cinema-wrap .showreel-shell video.montage-clip.is-current{opacity:1!important;z-index:3!important}
+#cinema-wrap .showreel-shell .showreel-montage::after{
+  position:absolute;inset:0;z-index:5;
+  content:"";pointer-events:none;
+  background:linear-gradient(180deg,transparent 52%,#02091600 66%,#020b19b8 100%);
+}
+#cinema-wrap .showreel-shell .montage-overlay{
+  position:absolute;z-index:8;
+  left:clamp(15px,3.5%,36px);right:clamp(15px,3.5%,36px);
+  bottom:clamp(17px,5.5%,42px);
+  display:flex;align-items:end;justify-content:space-between;gap:18px;
+  pointer-events:none;
+  color:#f7fbff;
+}
+#cinema-wrap .showreel-shell .montage-title{
+  display:block!important;
+  max-width:75%;
+  font:650 clamp(18px,2.4vw,33px)/1.12 "Space Grotesk",sans-serif!important;
+  letter-spacing:-.05em!important;
+  text-shadow:0 2px 15px #000c;
+  margin:0;padding:0;min-height:1.15em;
+}
+#cinema-wrap .showreel-shell .montage-timestamp{
+  flex:none;
+  color:#d3e6ff;
+  font:600 clamp(9px,.77vw,12px)/1.2 "Space Grotesk",sans-serif!important;
+  letter-spacing:.06em;
+  text-shadow:0 2px 12px #000;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+#cinema-wrap .showreel-shell .montage-progress{
+  position:absolute!important;
+  left:0!important;right:0!important;bottom:0!important;
+  z-index:13!important;width:100%!important;height:3px!important;
+  background:#e3f2ff36!important;border:0!important;
+  overflow:hidden;margin:0;padding:0;
+}
+#cinema-wrap .showreel-shell .montage-progress>span{
+  display:block!important;width:100%!important;height:100%!important;
+  background:#b4d7ff!important;
+  transform:scaleX(var(--segment-progress,0))!important;
+  transform-origin:left!important;
+  animation:none!important;
+  transition:none!important;
+}
+#cinema-wrap .showreel-shell .montage-skip{
+  position:absolute!important;z-index:11!important;inset:0!important;
+  width:100%!important;height:100%!important;padding:0!important;
+  background:transparent!important;border:0!important;cursor:pointer;
+  display:flex!important;align-items:flex-start!important;justify-content:flex-end!important;
+  font-size:0;opacity:1!important;
+}
+#cinema-wrap .showreel-shell .montage-skip span{
+  display:block;
+  margin:13px 16px;
+  padding:7px 11px;
+  color:#eaf5ff;
+  background:#091a32b6;
+  border:1px solid #aacffb5c;border-radius:999px;
+  font:600 11px/1.2 "Space Grotesk",sans-serif;
+  letter-spacing:0!important;text-shadow:none;
+  opacity:0;transform:translateY(5px);
+  transition:opacity .18s,transform .18s;
+}
+#cinema-wrap .showreel-shell:hover .montage-skip span,
+#cinema-wrap .showreel-shell:focus-within .montage-skip span{opacity:1;transform:none}
+#cinema-wrap .showreel-shell .montage-skip:focus-visible{outline:3px solid #d2e8ff;outline-offset:-5px}
+#cinema-wrap .showreel-shell .montage-skip:active span{transform:scale(.97)}
+/* Even if old CSS survives a stale browser cache, no YouTube UI is visible. */
+#cinema-wrap .showreel-shell .showreel-topline,
+#cinema-wrap .showreel-shell .showreel-bottomline,
+#cinema-wrap .showreel-shell .showreel-vignette,
+#cinema-wrap .showreel-shell .showreel-frame-lines,
+#cinema-wrap .showreel-shell .showreel-placeholder,
+#cinema-wrap .showreel-shell .montage-credit,
+#cinema-wrap .showreel-shell .montage-youtube-panel,
+#cinema-wrap .showreel-shell .montage-shot{display:none!important}
+@media(max-width:700px){
+  #cinema-wrap .showreel-shell .montage-title{font-size:clamp(15px,4vw,21px)!important;max-width:70%}
+  #cinema-wrap .showreel-shell .montage-overlay{left:13px;right:13px;bottom:17px;gap:8px}
+  #cinema-wrap .showreel-shell .montage-timestamp{font-size:9px!important}
+  #cinema-wrap .showreel-shell .montage-skip span{font-size:9px;margin:7px;padding:6px 9px}
+  #cinema-wrap .showreel-shell .montage-progress{height:2px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #cinema-wrap .showreel-shell .montage-fallback::after{animation:none}
+  #cinema-wrap .showreel-shell video.montage-clip{transition:none!important}
+}
