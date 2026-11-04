@@ -67,7 +67,8 @@ try{
  const movie=await page.locator("#cinema-wrap .showreel-visual").boundingBox();
  if(caption.y < movie.y+movie.height-3)throw new Error("Own title overlaps YouTube player");
  const data=await page.evaluate(()=>structuredClone(window.__ytQA));
- if(data.loads.length<2||data.seeks.length<2||data.mutes<2)throw Error("Player did not load and seek real videos: "+JSON.stringify(data));
+ // The fixed introduction starts at 00:00; random seeking begins with the next film.
+ if(data.loads.length<2||data.seeks.length<1||data.mutes<2)throw Error("Player did not load and seek real videos: "+JSON.stringify(data));
  if(data.loads.some(v=>!/^[A-Za-z0-9_-]{11}$/.test(v)))throw Error("Invalid video ID in shuffle");
  if(data.loads.some(id=>excluded.includes(id)))throw Error("Shorts/Reels video loaded in landscape montage: "+data.loads.join(","));
  await page.waitForFunction(previous=>document.querySelector(".montage-title")?.textContent!==previous,second,{timeout:7400});
