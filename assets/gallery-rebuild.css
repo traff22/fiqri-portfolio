@@ -494,3 +494,52 @@ body.modal-open{overflow:hidden!important}
  #work[data-gallery-mode="longform"] .work-grid{gap:9px!important}
  #work .work-grid .gallery-column{gap:9px}
 }
+
+
+/* V1.1.2 Motion collage: composition is balanced to the actual 9:16 + 16:9
+   media. A wide story frame and two landscape cards complete the first row,
+   then two wide cards create an even full-width editorial finish. */
+#work[data-gallery-mode="motion"] .work-grid{
+ display:grid!important;
+ columns:auto!important;
+ grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ grid-template-areas:
+  "reel reel age age age age"
+  "reel reel logistics logistics counter counter"
+  "heaven heaven heaven archive archive archive";
+ grid-template-rows:auto auto auto!important;
+ grid-auto-flow:row!important;
+ gap:12px!important;
+ align-items:start!important
+}
+#work[data-gallery-mode="motion"] .work-grid > .work-card{
+ position:relative;
+ display:block!important;
+ width:100%!important;
+ margin:0!important;
+ grid-column:auto!important;
+ grid-row:auto!important;
+ aspect-ratio:var(--ratio)!important;
+ align-self:start!important
+}
+#work[data-gallery-mode="motion"] .work-card[data-project="bitcoin-almanac"]{grid-area:reel!important}
+#work[data-gallery-mode="motion"] .work-card[data-project="age-of-chaos"]{grid-area:age!important}
+#work[data-gallery-mode="motion"] .work-card[data-project="logistics-nine"]{grid-area:logistics!important}
+#work[data-gallery-mode="motion"] .work-card[data-project="counter-trend"]{grid-area:counter!important}
+#work[data-gallery-mode="motion"] .work-card[data-project="heavenly-whisper"]{grid-area:heaven!important}
+#work[data-gallery-mode="motion"] .work-card[data-project="know-more-about-me-2024"]{grid-area:archive!important}
+#work[data-gallery-mode="motion"] .work-grid > .work-card[hidden]{display:none!important}
+@media(max-width:920px){
+ #work[data-gallery-mode="motion"] .work-grid{
+  grid-template-columns:1fr 1fr!important;
+  grid-template-areas:
+   "reel age"
+   "reel logistics"
+   "reel counter"
+   "heaven archive";
+  gap:10px!important
+ }
+}
+@media(max-width:640px){
+ #work[data-gallery-mode="motion"] .work-grid{gap:9px!important}
+}
