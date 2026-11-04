@@ -4,7 +4,7 @@ const browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] }
 const origin = "http://127.0.0.1:4173";
 const report = [];
 const filters = {
-  highlights: 4, all: 15, event: 3, motion: 7, longform: 5, reels: 5
+  highlights: 4, all: 15, event: 3, motion: 6, longform: 6, reels: 5
 };
 function check(ok, reason) { if (!ok) throw new Error(reason); }
 function intersection(a,b){
@@ -32,6 +32,15 @@ for (const [viewport, device] of [
  await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart);
  await page.waitForTimeout(450);
  const stageStart=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
+ const screen=await page.locator("#cinema-wrap .showreel-visual").boundingBox();
+ const caption=await page.locator("#cinema-wrap .showreel-shell > .montage-overlay").boundingBox();
+ check(Math.abs(screen.width/screen.height-16/9)<.03,device+": video player not in widescreen 16:9");
+ check(caption.y>=screen.y+screen.height-3,
+   device+": title strip overlaps YouTube video instead of sitting underneath");
+ check(caption.height>24&&caption.height<62,
+   device+": title strip is too tall: "+caption.height);
+ report.push({device,filmBox:{width:Math.round(screen.width),height:Math.round(screen.height)},captionBelow:true});
+
  const chapterCopy=await page.locator("#cinema-wrap .cinema-copy").boundingBox();
  check(stageStart.width>200,device+": Chapter One main frame missing");
  const firstCard=await page.locator("#cinema-wrap .float-reel-card--one .float-reel-card__media").evaluate(el=>({
