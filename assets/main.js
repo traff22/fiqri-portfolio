@@ -38,12 +38,12 @@ if(cinema&&frame){
  const rect=cinema.getBoundingClientRect(),span=Math.max(1,cinema.offsetHeight-vh),p=clamp(-rect.top/span),active=rect.bottom>0&&rect.top<vh;
  if(active){
  const easing=p*p*(3-2*p);
- doc.style.setProperty("--cinema-scale",(1.00+easing*(small?.07:.18)).toFixed(3));
+ doc.style.setProperty("--cinema-scale",(1.00+easing*(small?.05:.13)).toFixed(3));
  doc.style.setProperty("--cinema-copy-y",(-easing*90).toFixed(1)+"px");
  doc.style.setProperty("--cinema-copy-opacity",clamp(1-p*1.65).toFixed(3));
  doc.style.setProperty("--scene-back-y",(-p*65).toFixed(1)+"px");
  doc.style.setProperty("--scene-front-y",(p*42).toFixed(1)+"px");
- doc.style.setProperty("--frame-y",(-p*34).toFixed(1)+"px");
+ doc.style.setProperty("--frame-y",(-p*10).toFixed(1)+"px");
  doc.style.setProperty("--chapter-card-depth",(1-easing*.28).toFixed(3));
  doc.style.setProperty("--chapter-card-fade",(1-easing*.32).toFixed(3));
  doc.style.setProperty("--scene-rotation",(p*25).toFixed(1)+"deg");
