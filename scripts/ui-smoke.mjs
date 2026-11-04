@@ -39,11 +39,46 @@ for (const [viewport, device] of [
  }));
  if(device==="desktop")check(Math.abs(firstCard.width/firstCard.height-9/16)<.08,device+": portrait depth card must be 9:16");
 
+ if(device==="desktop"){
+  const planes=await page.locator("#cinema-wrap").evaluate(scene=>{
+    return [1,2,3].map(i=>{
+     const el=scene.querySelector(".float-reel-card--"+["one","two","three"][i-1]);
+     const rect=el.getBoundingClientRect();
+     const style=getComputedStyle(el);
+     return {card:i,width:rect.width,height:rect.height,x:rect.x,y:rect.y,
+      z:Number(style.zIndex),opacity:Number(style.opacity),
+      visible:style.display!=="none",scale:style.scale};
+    });
+  });
+  const [far,near,mid]=planes;
+  check(planes.every(x=>x.visible),device+": satellite card is not visible "+JSON.stringify(planes));
+  check(near.width>mid.width*1.25&&mid.width>far.width*1.50,
+   device+": expected large / medium / small depth hierarchy: "+JSON.stringify(planes));
+  check(near.z>mid.z&&mid.z>far.z,
+   device+": cards do not have near/mid/far stacking order: "+JSON.stringify(planes));
+  check(near.x>mid.x&&far.x<near.x,
+   device+": depth cards not distributed on both sides: "+JSON.stringify(planes));
+  check(intersection(far,mid)<45,
+   device+": left-side cards physically overlap: "+JSON.stringify(planes));
+  report.push({device,depthCards:planes});
+ }
+
+
  check(intersection(stageStart,chapterCopy)<20,device+": Chapter One copy overlaps main frame at start");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-start.png"});
  await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart+sceneSpan*.82);
  await page.waitForTimeout(650);
  const stageAfter=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
+ if(device==="desktop"){
+  const transforms=await page.locator("#cinema-wrap").evaluate(scene=>["one","two","three"].map(name=>{
+    const el=scene.querySelector(".float-reel-card--"+name);
+    const r=el.getBoundingClientRect();
+    return {name,width:r.width,opacity:Number(getComputedStyle(el).opacity)};
+  }));
+  check(transforms.every(x=>x.width>40),device+": one of the 3 depth cards collapsed after scroll");
+  report.push({device,depthScroll:transforms});
+ }
+
  check(stageAfter.width>stageStart.width*(device==="mobile"?1.03:1.07)&&stageAfter.width<stageStart.width*1.23,
    device+": main frame scale not in the restrained zoom range, start "+stageStart.width+" end "+stageAfter.width);
  check(intersection(stageAfter,chapterCopy)<20,device+": Chapter One copy overlaps frame during scroll");
