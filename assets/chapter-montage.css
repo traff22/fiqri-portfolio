@@ -175,3 +175,36 @@
 }
 #cinema-wrap .montage-clip.is-current{opacity:1}
 #cinema-wrap .montage-clip[hidden]{display:none!important}
+
+
+/* V1.2.1 — keep project credits legible above the poster vignette. */
+#cinema-wrap .showreel-montage{z-index:6}
+#cinema-wrap .showreel-frame-lines{z-index:7!important;pointer-events:none}
+#cinema-wrap .montage-credit{
+  left:5.5%;right:12%;bottom:12%;
+  width:fit-content;max-width:75%;
+  padding:9px 13px 10px;
+  border-radius:7px;
+  background:linear-gradient(90deg,#031022d9,#031022b4 75%,#03102251);
+  backdrop-filter:blur(3px);
+}
+#cinema-wrap .montage-credit__name{font-size:clamp(17px,2vw,28px)}
+#cinema-wrap .montage-credit__category{font-size:9px}
+@media(max-width:700px){
+  /* The editorial heading already tells the story. Dense internal placeholder
+     copy and two footer lines collide in a genuine 16:9 mobile frame. */
+  #cinema-wrap .showreel-message{display:none!important}
+  #cinema-wrap .showreel-bottomline{display:none!important}
+  #cinema-wrap .cinema-frame.showreel-shell{top:45%}
+  #cinema-wrap .cinema-footer{bottom:14%}
+  #cinema-wrap .montage-credit{
+    bottom:9%;left:6%;right:6%;
+    width:auto;max-width:88%;
+    padding:6px 8px;
+    gap:2px;
+  }
+  #cinema-wrap .montage-credit__number{font-size:7px}
+  #cinema-wrap .montage-credit__name{font-size:clamp(12px,3.2vw,17px)}
+  #cinema-wrap .montage-credit__category{font-size:7px;margin-top:0}
+  #cinema-wrap .montage-progress{bottom:5%}
+}
