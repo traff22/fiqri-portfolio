@@ -24,7 +24,7 @@ for(const img of scene?.querySelectorAll(".float-reel-card__poster")||[]){
 const panels=stage?[...stage.querySelectorAll(".montage-stream")]:[];
 const title=shell?.querySelector(".montage-title");
 const clock=shell?.querySelector(".montage-timestamp");
-const bar=stage?.querySelector(".montage-progress");
+const bar=shell?.querySelector(".montage-progress");
 const skip=shell?.querySelector(".montage-skip");
 const skipText=skip?.querySelector("span");
 if(!scene||!stage||panels.length!==2||!title||!clock||!bar||!skip)return;
