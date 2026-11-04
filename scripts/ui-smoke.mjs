@@ -98,17 +98,21 @@ for (const [viewport, device] of [
  check(intersection(stageAfter,navigation)<20,device+": chapter navigation CTA intersects the preview frame");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-depth.png"});
  const currentTitle=await page.locator("#cinema-wrap .montage-title").evaluate(el=>{
-  const r=el.getBoundingClientRect(),f=el.closest(".showreel-shell").getBoundingClientRect();
+  const r=el.getBoundingClientRect();
+  const shell=el.closest(".showreel-shell");
+  const footer=el.closest(".montage-overlay").getBoundingClientRect();
+  const film=shell.querySelector(".showreel-visual").getBoundingClientRect();
   const st=getComputedStyle(el);
-  const stage=el.closest(".showreel-montage");
+  const stage=shell.querySelector(".showreel-montage");
   return {text:el.textContent,playback:stage?.dataset.playback||"pending",
     display:st.display,visibility:st.visibility,opacity:st.opacity,width:r.width,height:r.height,
-    inside:r.left>=f.left-2&&r.right<=f.right+2&&r.top>=f.top-2&&r.bottom<=f.bottom+2};
+    inside:r.left>=footer.left-2&&r.right<=footer.right+2&&r.top>=footer.top-2&&r.bottom<=footer.bottom+2,
+    belowFilm:footer.top>=film.bottom-3};
  });
- check(currentTitle.display!=="none"&&currentTitle.visibility==="visible"&&currentTitle.inside,
-  device+": chapter title holder is outside the frame: "+JSON.stringify(currentTitle));
- if(currentTitle.playback==="playing")check(currentTitle.width>40&&currentTitle.text.length>2,
-  device+": real video is playing without a project title");
+ check(currentTitle.display!=="none"&&currentTitle.inside&&currentTitle.belowFilm,
+  device+": project title must remain in its own footer below the film: "+JSON.stringify(currentTitle));
+ if(currentTitle.playback==="playing")check(currentTitle.visibility==="visible"&&currentTitle.width>40&&currentTitle.text.length>2,
+  device+": video is playing without a visible project title");
  else check(!currentTitle.text||currentTitle.playback==="unavailable",
   device+": a static title appeared before genuine video playback: "+JSON.stringify(currentTitle));
  report.push({device,titleVisibility:currentTitle});
