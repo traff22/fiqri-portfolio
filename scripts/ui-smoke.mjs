@@ -42,6 +42,17 @@ for (const [viewport, device] of [
      if(intersection(tiles[i],tiles[j])>25)overlap.push(tiles[i].id+" overlaps "+tiles[j].id);
    }
    check(overlap.length===0,device+" "+filter+": "+overlap.join(", "));
+   if(filter==="all"||filter==="motion"){
+     const cols=await page.locator("#work .work-grid > .gallery-column").evaluateAll(nodes=>nodes.map(n=>{
+       const r=n.getBoundingClientRect();
+       return {children:n.querySelectorAll(".work-card:not([hidden])").length,x:r.x,right:r.right,width:r.width};
+     }));
+     const wanted=(device==="desktop"?3:2);
+     check(cols.length===wanted,device+" "+filter+": expected "+wanted+" filled columns, saw "+cols.length);
+     check(cols.every(c=>c.children>0),device+" "+filter+": empty masonry column");
+     const grid=await page.locator("#work .work-grid").boundingBox();
+     check(Math.abs(cols.at(-1).right-(grid.x+grid.width))<5,device+" "+filter+": right side was not filled");
+   }
    report.push({device,filter,count:tiles.length,overlap:0,ratios:"ok"});
    if(filter==="highlights"||filter==="motion"){
      await page.locator("#work").screenshot({path:"screenshots/"+device+"-"+filter+".png"});
