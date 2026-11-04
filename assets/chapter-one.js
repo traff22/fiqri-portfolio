@@ -12,7 +12,7 @@ const ease=t=>t*t*(3-2*t);
 
 /* A data-video-src is intentionally empty in the template. No broken video loads.
    Add an approved asset path when the real footage is ready. */
-const videoSlots=$(".showreel-shell[data-video-src], .float-reel-card__media[data-video-src]");
+const videoSlots=$$(".showreel-shell[data-video-src], .float-reel-card__media[data-video-src]");
 const videoObservers=[];
 const managedVideos=[];
 function setVideoReady(slot,video){
