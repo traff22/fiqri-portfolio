@@ -7,16 +7,55 @@ const gallerySection=$(".selected-work");
 const galleryGrid=$(".selected-work .work-grid");
 // The collage pairs complementary media ratios. Slots are assigned to visible cards
 // automatically on every filter change; added projects fall back to an even grid.
-function setGalleryMode(kind){
- const collage=kind==="highlights"||kind==="all"||kind==="motion";
- gallerySection?.classList.toggle("gallery-collage",collage);
- if(gallerySection)gallerySection.dataset.galleryMode=kind;
- cards.forEach(card=>{
-  card.removeAttribute("data-collage-slot");
-  card.style.removeProperty("--collage-span");
- });
- galleryGrid?.setAttribute("aria-label",collage?"Curated project collage":"Filtered project gallery");
+let activeGalleryMode="highlights";
+function galleryColumnCount(mode){
+ const mobile=window.innerWidth<=640;
+ const compact=window.innerWidth<=920;
+ if(mode==="longform")return mobile?1:2;
+ return compact?2:3;
 }
+function setGalleryMode(kind){
+ activeGalleryMode=kind;
+ const masonry=kind==="all"||kind==="motion"||kind==="longform";
+ gallerySection?.classList.toggle("gallery-collage",kind==="highlights"||masonry);
+ if(gallerySection)gallerySection.dataset.galleryMode=kind;
+ if(!galleryGrid)return;
+ // Rebuild from canonical project order when switching modes; this restores
+ // cards moved into masonry columns and retains their native click handlers.
+ galleryGrid.replaceChildren(...cards);
+ galleryGrid.removeAttribute("data-column-count");
+ if(masonry){
+  const count=galleryColumnCount(kind);
+  const gap=window.innerWidth<=640?9:14;
+  const width=(galleryGrid.clientWidth-gap*(count-1))/count;
+  const heights=Array(count).fill(0);
+  const cols=Array.from({length:count},(_,i)=>{
+   const node=document.createElement("div");
+   node.className="gallery-column";
+   node.dataset.column=String(i+1);
+   return node;
+  });
+  for(const card of cards){
+   if(card.hidden)continue;
+   const targetRatio=card.dataset.format==="portrait"?9/16:16/9;
+   const index=heights.indexOf(Math.min(...heights));
+   cols[index].appendChild(card);
+   heights[index]+=width/targetRatio+gap;
+  }
+  galleryGrid.replaceChildren(...cols,...cards.filter(card=>card.hidden));
+  galleryGrid.style.setProperty("--gallery-columns",String(count));
+  galleryGrid.setAttribute("data-column-count",String(count));
+ }else{
+  galleryGrid.style.removeProperty("--gallery-columns");
+ }
+ galleryGrid.setAttribute("aria-label",masonry?"Balanced project collage":"Filtered project gallery");
+}
+let resizeFrame=0;
+window.addEventListener("resize",()=>{
+ if(!["all","motion","longform"].includes(activeGalleryMode))return;
+ if(resizeFrame)cancelAnimationFrame(resizeFrame);
+ resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;setGalleryMode(activeGalleryMode)});
+},{passive:true});
 
 function filterWork(kind){
  filters.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.filter===kind)));
