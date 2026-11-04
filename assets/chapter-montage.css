@@ -333,11 +333,23 @@
    The former centered button touched the lower frame edge on scroll. */
 @media(min-width:701px){
  #cinema-wrap .cinema-footer{
-  left:auto!important;right:6%!important;
+  left:auto!important;right:3.5%!important;
   bottom:5%!important;
   width:auto;justify-content:flex-end!important;
  }
 }
 @media(max-width:700px){
  #cinema-wrap .cinema-frame.showreel-shell{width:92vw}
+}
+
+/* Maintain high contrast for the changing film title over bright original thumbnails. */
+#cinema-wrap .montage-credit__name{
+ display:block!important;
+ visibility:visible!important;
+ opacity:1!important;
+ color:#f7fbff!important;
+ font-weight:700!important;
+ line-height:1.18!important;
+ text-shadow:0 3px 14px #000f;
+ min-height:1.18em;
 }
