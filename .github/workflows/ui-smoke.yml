@@ -1,0 +1,35 @@
+name: Portfolio layout smoke test
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "assets/**"
+      - "scripts/ui-smoke.mjs"
+      - ".github/workflows/ui-smoke.yml"
+  workflow_dispatch:
+jobs:
+  visual-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check layout in real Chromium
+        run: |
+          mkdir -p screenshots
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/fiqri-ui-server.log 2>&1 &
+          sleep 2
+          node scripts/ui-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gallery-screenshots
+          path: screenshots/
+          if-no-files-found: ignore
