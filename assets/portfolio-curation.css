@@ -1,0 +1,265 @@
+/* Fiqri Portfolio V1.0 — curated projects, category-responsive layout,
+   and event case studies with original photographs and multiple films. */
+.selected-work .work-card .work-media .work-poster{
+  object-fit:cover;object-position:center;
+}
+.selected-work .work-card[data-format="portrait"] .work-media .work-poster{
+  /* Shorts thumbnails are originally portrait. Do not letterbox them. */
+  object-position:center;
+}
+
+/* Highlights: an editorial four-tile composition with a tall short-form cover.
+   No dead space under the vertical video; all four titles are visible at once. */
+.selected-work.gallery-collage[data-gallery-mode="highlights"] .work-grid{
+  display:grid!important;columns:auto!important;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-auto-rows:clamp(105px,11vw,164px);
+  gap:13px;
+  align-items:stretch;
+}
+.selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card{
+  aspect-ratio:auto!important;
+  grid-column:auto;
+  grid-row:auto;
+  height:100%;
+  width:100%;
+  margin:0;
+  display:block;
+}
+.selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="bitcoin-almanac"]{
+  grid-column:span 4!important;grid-row:span 3;
+}
+.selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="cinematic-mancing"]{
+  grid-column:span 8!important;grid-row:span 2;
+}
+.selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="age-of-chaos"]{
+  grid-column:span 4!important;grid-row:span 1;
+}
+.selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="logistics-nine"]{
+  grid-column:span 4!important;grid-row:span 1;
+}
+
+/* All work: actual masonry using native CSS multicolumns. It's a curated
+   thumbnail wall; media always plays in its native aspect ratio in the dialog. */
+.selected-work.gallery-collage[data-gallery-mode="all"] .work-grid{
+  display:block!important;
+  columns:3;
+  column-gap:15px;
+}
+.selected-work.gallery-collage[data-gallery-mode="all"] .work-card{
+  display:inline-block;
+  width:100%;grid-column:auto!important;
+  margin:0 0 15px;
+  vertical-align:top;
+  break-inside:avoid;
+  -webkit-column-break-inside:avoid;
+  aspect-ratio:var(--tile-aspect,16/9);
+}
+
+/* Category grids: longform and motion are cinematic landscape; Reels
+   stay genuinely portrait; event tiles present their wide stage visuals. */
+.selected-work:not(.gallery-collage) .work-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:25px 20px;
+  align-items:start;
+  grid-auto-flow:row dense;
+}
+.selected-work:not(.gallery-collage) .work-grid > .work-card{
+  grid-column:span 6;
+  align-self:start;
+  min-width:0;
+}
+.selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="portrait"]{
+  grid-column:span 3;
+}
+.selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="event"]{
+  grid-column:span 6;
+}
+.selected-work:not(.gallery-collage) .work-grid > .work-card .work-media{
+  width:100%;max-width:none;margin:0;
+}
+.selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="portrait"] .work-media{aspect-ratio:9/16}
+.selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="event"] .work-media{aspect-ratio:1760/761}
+.selected-work:not(.gallery-collage) .work-card .work-titleline h3{font-size:clamp(19px,2.2vw,29px)}
+.selected-work:not(.gallery-collage)[data-gallery-mode="reels"] .work-grid{gap:21px 16px}
+
+/* In tight collage cards, protect legibility from category tags/captions. */
+.selected-work.gallery-collage .work-card[data-format="event"] .work-titleline h3{
+  font-size:clamp(17px,2.15vw,30px);
+}
+.selected-work.gallery-collage .work-card .work-titleline{
+  bottom:16px;left:18px;right:18px;
+}
+.selected-work.gallery-collage .work-card .work-meta{
+  bottom:56px;left:18px;right:18px;
+}
+.selected-work.gallery-collage .work-card .work-media-action{
+  top:11px;right:11px;padding:8px 12px;
+}
+.selected-work.gallery-collage .work-card .work-media .art{font-size:clamp(26px,4vw,64px)}
+.selected-work .work-card[hidden]{display:none!important}
+
+/* Event case-study modal */
+.event-dialog{width:min(1120px,calc(100% - 30px))}
+.event-dialog .dialog-intro{margin-bottom:24px}
+.event-feature-player{
+  width:100%;
+  aspect-ratio:16/9;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  background:#07111f;
+  border:1px solid #9bc9ff5e;
+  border-radius:19px;
+}
+.event-feature-player>img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+}
+.event-feature-shade{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,#0d193433 0%,#04091065 100%);
+  pointer-events:none;
+}
+.event-feature-play{
+  position:absolute;z-index:3;inset:0;
+  width:100%;height:100%;
+  background:transparent;color:#eef7ff;
+  border:0;cursor:pointer;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  gap:12px;
+  font:600 clamp(13px,1.5vw,17px) "Space Grotesk",sans-serif;
+  text-shadow:0 3px 15px #000c;
+}
+.event-feature-play span:first-child{
+  display:grid;place-items:center;
+  width:72px;height:72px;
+  border-radius:50%;
+  border:1px solid #d0e6ffb5;
+  background:#0d284cc9;
+  box-shadow:0 14px 40px #010612ad;
+  font-size:23px;
+  transition:transform .35s ease,background .35s ease;
+}
+.event-feature-play:hover span:first-child{transform:scale(1.1);background:#6aabed}
+.event-feature-player iframe.event-video-frame{
+  position:absolute;inset:0;z-index:5;
+  width:100%;height:100%;border:0;background:#020612;
+}
+.event-feature-player.is-playing>img,.event-feature-player.is-playing .event-feature-shade{opacity:0}
+.event-feature-player.is-empty{background:radial-gradient(ellipse at 50% 35%,#283a63,#0b1326 65%)}
+.event-feature-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#c1d4ec;font-size:15px}
+.event-feature-player [hidden]{display:none!important}
+.event-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:38px 0 17px}
+.event-section-heading h3{margin:0;font:600 clamp(21px,3vw,30px)/1.18 "Space Grotesk",sans-serif;letter-spacing:-.05em}
+.event-section-heading span{font:600 10px "Space Grotesk",sans-serif;letter-spacing:.13em;color:#91bde9;text-transform:uppercase;white-space:nowrap}
+.event-video-list{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.event-video-choice{
+  border:1px solid #8bbbf655;border-radius:13px;
+  background:#0d1d31;color:#e8f3ff;
+  overflow:hidden;padding:0;cursor:pointer;
+  text-align:left;
+  transition:transform .28s cubic-bezier(.18,.7,.2,1),background .3s,border-color .3s,box-shadow .3s;
+}
+.event-video-choice img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;filter:brightness(.9);transition:filter .28s}
+.event-video-choice__text{display:flex;flex-direction:column;gap:5px;padding:14px 15px 17px}
+.event-video-choice strong{font:600 14px/1.15 "Space Grotesk",sans-serif}
+.event-video-choice small{font-size:11px;color:#9bb4d1}
+.event-video-choice:hover,.event-video-choice[aria-pressed="true"]{
+  transform:translateY(-3px);border-color:#b4d8ffb7;background:#18314f;
+  box-shadow:0 17px 40px #0106118c;
+}
+.event-video-choice[aria-pressed="true"]{outline:1px solid #91c5ff6c}
+.event-video-choice:hover img{filter:brightness(1.08)}
+.event-video-choice:focus-visible,.event-feature-play:focus-visible{outline:3px solid #b5ddff;outline-offset:3px}
+.event-photo-section[hidden]{display:none!important}
+.event-photo-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.event-photo{
+  overflow:hidden;margin:0;
+  border:1px solid #86add94a;
+  border-radius:13px;background:#13243c;
+}
+.event-photo img{
+  display:block;width:100%;aspect-ratio:3/2;object-fit:cover;
+  transition:transform .6s cubic-bezier(.2,.7,.2,1),filter .45s ease;
+}
+.event-photo:hover img{transform:scale(1.04);filter:brightness(1.05)}
+.event-photo figcaption{padding:13px 16px;color:#bcd2ed;font-size:12px}
+.event-dialog .event-project-context{margin-top:34px}
+.event-dialog .dialog-layout>.event-section-heading{margin-top:38px}
+.event-dialog .event-video-list:empty{display:none}
+.event-dialog .dialog-intro p{max-width:440px}
+.event-video-external{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:15px;color:#a9d4ff;
+  font:600 12px "Space Grotesk",sans-serif;
+  text-decoration:underline;text-underline-offset:4px;
+}
+.event-video-external[hidden]{display:none!important}
+
+/* Responsive: keep the event film 16:9, documentation native 3:2 */
+@media(max-width:980px){
+ .selected-work.gallery-collage[data-gallery-mode="all"] .work-grid{columns:2}
+ .selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="portrait"]{grid-column:span 4}
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-grid{grid-auto-rows:clamp(90px,11vw,135px)}
+ .event-video-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-grid{
+  display:grid!important;columns:auto!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:clamp(95px,27vw,137px);
+  gap:9px;
+ }
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="bitcoin-almanac"]{
+  grid-column:span 1!important;grid-row:span 2;
+ }
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="cinematic-mancing"]{
+  grid-column:span 1!important;grid-row:span 1;
+ }
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="age-of-chaos"]{
+  grid-column:span 1!important;grid-row:span 1;
+ }
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card[data-project="logistics-nine"]{
+  grid-column:span 2!important;grid-row:span 1;
+ }
+ .selected-work.gallery-collage[data-gallery-mode="all"] .work-grid{
+  display:block!important;columns:2!important;column-gap:9px;
+ }
+ .selected-work.gallery-collage[data-gallery-mode="all"] .work-card{
+  margin-bottom:9px;display:inline-block;width:100%;
+  aspect-ratio:var(--tile-aspect,16/9);
+ }
+ .selected-work.gallery-collage[data-gallery-mode="all"] .work-card[data-format="event"]{
+  --tile-aspect:16/9;
+ }
+ .selected-work:not(.gallery-collage) .work-grid{gap:18px 12px}
+ .selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="portrait"]{grid-column:span 6}
+ .selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="event"],
+ .selected-work:not(.gallery-collage) .work-grid > .work-card[data-format="landscape"]{grid-column:span 12}
+ .selected-work:not(.gallery-collage) .work-card .work-titleline h3{font-size:18px}
+ .selected-work:not(.gallery-collage) .work-card[data-format="portrait"] .work-titleline h3{font-size:14px}
+ .selected-work:not(.gallery-collage) .work-card[data-format="portrait"]>p{font-size:11px}
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card .work-titleline h3{
+  font-size:clamp(14px,3.4vw,19px);
+ }
+ .selected-work.gallery-collage[data-gallery-mode="highlights"] .work-card .work-meta{display:none}
+ .event-dialog{width:calc(100% - 12px);max-height:calc(100dvh - 12px)}
+ .event-feature-player{border-radius:12px}
+ .event-feature-play span:first-child{width:55px;height:55px;font-size:17px}
+ .event-feature-play{font-size:12px}
+ .event-video-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .event-video-choice__text{padding:10px 10px 12px}
+ .event-video-choice strong{font-size:12px}
+ .event-photo-list{grid-template-columns:1fr}
+ .event-section-heading{margin-top:26px}
+}
+@media(prefers-reduced-motion:reduce){
+ .event-video-choice,.event-photo img,.event-feature-play span:first-child{transition:none!important}
+ .event-video-choice:hover{transform:none}
+}
