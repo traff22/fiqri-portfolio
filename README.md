@@ -1,3 +1,13 @@
+## Chapter One — cinematic shuffle preview (V1.2)
+
+The central Chapter One film frame no longer expands forward into neighboring cards. It now **recedes from roughly 0.98× to 0.75×** across the sticky scroll scene. The large heading stays stationary. Product Motion, Editorial Stories and Event Films are real linked-project stills positioned outside the central frame and keep a subtle floating/hover tilt.
+
+The center uses `assets/chapter-montage.js`. It automatically collects *all published cards* in `#work`, shuffles without repeating the same entry immediately and tries to alternate categories, with a **1.7-second beat**, crossfade and slow photo push-in. It initially displays the branded FQ frame for about 850ms. It pauses when offscreen/hidden, does not run rapid transitions for reduced-motion or Save Data visitors, and falls back safely if an image fails. The current version shows YouTube project **thumbnail frames**, not downloaded video excerpts, because source MP4 teaser files have not yet been supplied.
+
+**To make it a real moving footage montage later:** Export short, silent, web-ready **MP4 or WebM snippets** from your own permitted footage. Place files under `assets/showreel/` and add `data-montage-src="assets/showreel/your-teaser.mp4"` to the corresponding `.work-media` in `index.html`. The montage player automatically uses the teaser clip for that project and falls back to its YouTube poster if the video cannot play. Each card requires no separate shuffle manifest. A single exported 15–30s showreel MP4 can alternatively be assigned to the existing `.showreel-shell[data-video-src]`, replacing the shuffle for a polished final edit.
+
+The old decorative geometry inside the three floating cards is hidden when real project poster frames are present. Mobile hides those decorative side cards, keeps the headline intact, and avoids crowded in-frame captions during the branded opening.
+
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
 A responsive, cinematic portfolio for Fiqri Apriandi. **V1.1** contains 14 project cards after removing TRIV Premiere, the exact four selected Highlights, native-aspect video thumbnails, three event case studies, and genuine Age of Chaos / Counter Trend event photography.
