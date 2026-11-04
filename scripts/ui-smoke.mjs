@@ -35,9 +35,10 @@ for (const [viewport, device] of [
  const chapterCopy=await page.locator("#cinema-wrap .cinema-copy").boundingBox();
  check(stageStart.width>200,device+": Chapter One main frame missing");
  const firstCard=await page.locator("#cinema-wrap .float-reel-card--one .float-reel-card__media").evaluate(el=>({
-   width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height
+   ratio:getComputedStyle(el).aspectRatio,
+   width:el.clientWidth,height:el.clientHeight
  }));
- if(device==="desktop")check(Math.abs(firstCard.width/firstCard.height-9/16)<.08,device+": portrait depth card must be 9:16");
+ if(device==="desktop")check(Math.abs(firstCard.width/firstCard.height-9/16)<.04,device+": portrait media must retain 9:16 before card rotation: "+JSON.stringify(firstCard));
 
  if(device==="desktop"){
   const planes=await page.locator("#cinema-wrap").evaluate(scene=>{
