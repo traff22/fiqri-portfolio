@@ -6,6 +6,21 @@
 const scene=document.getElementById("cinema-wrap");
 const shell=scene?.querySelector(".showreel-shell");
 const stage=shell?.querySelector(".showreel-montage");
+// Satellite cards: request the sharpest real project poster with safe fallbacks.
+for(const img of scene?.querySelectorAll(".float-reel-card__poster")||[]){
+ const id=img.getAttribute("src")?.match(/\/vi\/([\w-]{11})\//)?.[1];
+ if(!id)continue;
+ const qualities=["maxresdefault","sddefault","hqdefault"];
+ let index=0;
+ const apply=()=>{img.src="https://i.ytimg.com/vi/"+id+"/"+qualities[index]+".jpg"};
+ const fallback=()=>{if(index<qualities.length-1){index++;apply()}};
+ img.addEventListener("error",fallback);
+ img.addEventListener("load",()=>{
+  if(img.naturalWidth<600&&index<qualities.length-1)fallback();
+ });
+ apply();
+}
+
 const panels=stage?[...stage.querySelectorAll(".montage-stream")]:[];
 const title=stage?.querySelector(".montage-title");
 const clock=stage?.querySelector(".montage-timestamp");
