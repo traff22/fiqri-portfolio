@@ -53,11 +53,17 @@ for (const [viewport, device] of [
  const currentTitle=await page.locator("#cinema-wrap .montage-title").evaluate(el=>{
   const r=el.getBoundingClientRect(),f=el.closest(".showreel-shell").getBoundingClientRect();
   const st=getComputedStyle(el);
-  return {text:el.textContent,display:st.display,visibility:st.visibility,opacity:st.opacity,width:r.width,height:r.height,
-   inside:r.left>=f.left-2&&r.right<=f.right+2&&r.top>=f.top-2&&r.bottom<=f.bottom+2};
+  const stage=el.closest(".showreel-montage");
+  return {text:el.textContent,playback:stage?.dataset.playback||"pending",
+    display:st.display,visibility:st.visibility,opacity:st.opacity,width:r.width,height:r.height,
+    inside:r.left>=f.left-2&&r.right<=f.right+2&&r.top>=f.top-2&&r.bottom<=f.bottom+2};
  });
- check(currentTitle.display!=="none"&&currentTitle.visibility==="visible"&&Number(currentTitle.opacity)>.95&&currentTitle.width>40&&currentTitle.inside,
-  device+": chapter project title is not readable: "+JSON.stringify(currentTitle));
+ check(currentTitle.display!=="none"&&currentTitle.visibility==="visible"&&currentTitle.inside,
+  device+": chapter title holder is outside the frame: "+JSON.stringify(currentTitle));
+ if(currentTitle.playback==="playing")check(currentTitle.width>40&&currentTitle.text.length>2,
+  device+": real video is playing without a project title");
+ else check(!currentTitle.text||currentTitle.playback==="unavailable",
+  device+": a static title appeared before genuine video playback: "+JSON.stringify(currentTitle));
  report.push({device,titleVisibility:currentTitle});
 
  report.push({device,chapter:"restrained zoom forward",initialWidth:Math.round(stageStart.width),endWidth:Math.round(stageAfter.width)});
