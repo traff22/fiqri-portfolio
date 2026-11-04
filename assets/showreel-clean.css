@@ -206,3 +206,115 @@
 #cinema-wrap .showreel-shell .showreel-montage[data-playback="unavailable"] .montage-title{
  font-size:clamp(16px,2.2vw,25px)!important;
 }
+
+
+/* Chapter One V1.6 — three real depth planes, not three identical tiny cards.
+   The near Editorial card is intentionally the largest; Event sits in the
+   middle; the portrait Product card stays a small atmospheric background cue.
+   The central film always paints above all supporting cards. */
+#cinema-wrap .float-reel-card{
+ pointer-events:auto;
+ transform-origin:center center;
+ backface-visibility:hidden;
+ transition:scale .16s linear,opacity .16s linear,filter .35s ease;
+}
+#cinema-wrap .float-reel-card--one{
+ /* BACKGROUND — vertical product teaser, away from the reading corridor */
+ display:block!important;
+ left:7.6%!important;right:auto!important;
+ top:31%!important;bottom:auto!important;
+ width:clamp(106px,9.5vw,146px)!important;
+ z-index:3!important;
+ --float-base-rot:-9deg;
+ scale:var(--depth-far-scale,.83)!important;
+ opacity:var(--depth-far-opacity,.67)!important;
+ filter:saturate(.79) brightness(.84) blur(.35px);
+}
+#cinema-wrap .float-reel-card--one .float-reel-card__inner{
+ border-color:#b2ccea52;
+ box-shadow:0 15px 30px #0009,0 0 24px #659cfa0b;
+}
+#cinema-wrap .float-reel-card--one .float-reel-card__media{
+ aspect-ratio:9/16!important;
+}
+#cinema-wrap .float-reel-card--two{
+ /* FOREGROUND — wide editorial film gets a strong cinematic presence */
+ display:block!important;
+ right:1.3%!important;left:auto!important;
+ top:43%!important;bottom:auto!important;
+ width:clamp(248px,22vw,338px)!important;
+ z-index:8!important;
+ --float-base-rot:6deg;
+ scale:var(--depth-near-scale,1.06)!important;
+ opacity:var(--depth-near-opacity,1)!important;
+ filter:saturate(1.06) brightness(1.04);
+}
+#cinema-wrap .float-reel-card--two .float-reel-card__inner{
+ border-color:#b7d8ffbd;
+ border-radius:17px;
+ box-shadow:0 38px 104px #010714ef,0 0 48px #88bfff29;
+}
+#cinema-wrap .float-reel-card--two .float-reel-card__media{
+ aspect-ratio:16/9!important;
+}
+#cinema-wrap .float-reel-card--three{
+ /* MIDGROUND — the event banner sits low on the opposite side */
+ display:block!important;
+ left:4.6%!important;right:auto!important;
+ top:auto!important;bottom:12.5%!important;
+ width:clamp(185px,16vw,248px)!important;
+ z-index:5!important;
+ --float-base-rot:4deg;
+ scale:var(--depth-mid-scale,.95)!important;
+ opacity:var(--depth-mid-opacity,.91)!important;
+ filter:saturate(.91) brightness(.96);
+}
+#cinema-wrap .float-reel-card--three .float-reel-card__inner{
+ border-color:#a9d2ff82;
+ box-shadow:0 26px 63px #010714c9,0 0 31px #82b4ff1a;
+}
+#cinema-wrap .float-reel-card--three .float-reel-card__media{
+ aspect-ratio:1760/761!important;
+}
+#cinema-wrap .float-reel-card__media img.float-reel-card__poster{
+ width:100%!important;height:100%!important;
+ object-fit:cover!important;
+}
+#cinema-wrap .float-reel-card__meta{
+ padding:9px 12px!important;
+ font-size:clamp(8px,.72vw,10px)!important;
+ letter-spacing:.1em;
+}
+#cinema-wrap .float-reel-card:hover{
+ filter:brightness(1.09) saturate(1.08);
+}
+#cinema-wrap .cinema-frame.showreel-shell{
+ z-index:11!important;
+}
+/* Preserve the three-plane composition on laptops without swallowing the film. */
+@media(max-width:1100px) and (min-width:701px){
+ #cinema-wrap .float-reel-card--one{
+  left:2.4%!important;top:32%!important;
+  width:clamp(90px,10vw,116px)!important;
+ }
+ #cinema-wrap .float-reel-card--two{
+  right:1%!important;top:44%!important;
+  width:clamp(190px,22vw,252px)!important;
+ }
+ #cinema-wrap .float-reel-card--three{
+  left:1.5%!important;bottom:13%!important;
+  width:clamp(150px,17.5vw,196px)!important;
+ }
+}
+@media(max-width:700px){
+ /* On phones the film, not three satellite cards, remains the focal point. */
+ #cinema-wrap .float-reel-card--one,
+ #cinema-wrap .float-reel-card--two,
+ #cinema-wrap .float-reel-card--three{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #cinema-wrap .float-reel-card{transition:none!important}
+ #cinema-wrap .float-reel-card--one{scale:.83!important}
+ #cinema-wrap .float-reel-card--two{scale:1.06!important}
+ #cinema-wrap .float-reel-card--three{scale:.95!important}
+}
