@@ -454,3 +454,38 @@
   padding:5px 7px!important;font-size:8px!important
  }
 }
+
+
+/* V1.7.1: the film frame keeps its ORIGINAL 16:9 dimensions during scroll.
+   Only our caption extends below the frame; the YouTube iframe itself is
+   neither masked nor covered by the caption. */
+#cinema-wrap .cinema-frame.showreel-shell{
+ aspect-ratio:16 / 9!important;
+ padding:0!important;
+ height:auto!important;
+ overflow:visible!important;
+}
+#cinema-wrap .cinema-frame.showreel-shell > .showreel-visual{
+ position:absolute!important;
+ inset:0!important;
+ width:100%!important;
+ height:100%!important;
+ aspect-ratio:auto!important;
+ border-radius:inherit!important;
+ overflow:hidden!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay{
+ bottom:-48px!important;
+ height:48px!important;
+ border:1px solid #9fc5f35c!important;
+ border-top:0!important;
+ border-radius:0 0 12px 12px!important;
+ box-shadow:0 20px 52px #030b1ac4;
+}
+@media(max-width:700px){
+ #cinema-wrap .showreel-shell > .montage-overlay{
+  bottom:-38px!important;
+  height:38px!important;
+  border-radius:0 0 9px 9px!important;
+ }
+}
