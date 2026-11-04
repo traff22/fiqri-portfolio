@@ -1,0 +1,164 @@
+/* Chapter One v1.2 — depth zoom and curated cinematic project frames.
+   Gallery is intentionally separate; this file owns only the immersive chapter. */
+#cinema-wrap .cinema-frame.showreel-shell{
+  width:min(56vw,890px);
+  top:49%;
+  z-index:6!important;
+  transform:translate3d(-50%,calc(-18% + var(--frame-y,0px)),0)
+    scale(var(--cinema-scale,.98))!important;
+  transform-origin:center center!important;
+  transition:border-color .35s ease,box-shadow .35s ease;
+  will-change:transform;
+  box-shadow:0 34px 104px #020715ce,0 0 72px #6ba9fe18;
+}
+#cinema-wrap .cinema-frame.showreel-shell:hover{
+  box-shadow:0 44px 114px #020714e3,0 0 85px #86bafe22;
+}
+#cinema-wrap .cinema-copy{
+  z-index:17!important;
+  opacity:1!important;
+  pointer-events:none;
+}
+#cinema-wrap .float-reel-card{
+  z-index:8!important;
+  opacity:clamp(.78, var(--float-opacity,1), 1)!important;
+  filter:none!important;
+  pointer-events:auto!important;
+  width:clamp(155px,15vw,226px);
+}
+#cinema-wrap .float-reel-card--one{left:4%;top:43%;--float-base-rot:-7deg}
+#cinema-wrap .float-reel-card--two{right:4%;top:51%;--float-base-rot:7deg}
+#cinema-wrap .float-reel-card--three{
+  display:block!important;left:7%;bottom:10%;top:auto;
+  width:clamp(145px,13vw,200px);--float-base-rot:4deg;
+}
+#cinema-wrap .float-reel-card__inner{
+  background:#0b182c;
+  border:1px solid #93b8e980;
+  box-shadow:0 16px 40px #030913a3;
+}
+#cinema-wrap .float-reel-card__media{background:#0c1e36;isolation:isolate}
+#cinema-wrap .float-reel-card__poster{
+  position:absolute;inset:0;z-index:2;
+  display:block;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  filter:brightness(.86) saturate(.94);
+  transform:scale(1.02);
+  transition:transform .5s ease,filter .5s ease;
+  pointer-events:none;
+}
+#cinema-wrap .float-reel-card:hover .float-reel-card__poster{
+  filter:brightness(1.05) saturate(1.07);transform:scale(1.085)
+}
+#cinema-wrap .float-reel-card__placeholder{display:none!important}
+#cinema-wrap .float-reel-card__meta{
+  background:#07152be8;
+  color:#d4e9ff;
+  padding:10px 12px;
+  font-size:9px;
+  letter-spacing:.11em;
+}
+#cinema-wrap .showreel-visual{isolation:isolate}
+#cinema-wrap .showreel-montage{
+  position:absolute;inset:0;z-index:2;overflow:hidden;
+  pointer-events:none;
+  opacity:0;
+  background:#07101d;
+  transition:opacity .38s ease;
+}
+#cinema-wrap .showreel-shell.is-montage-active:not(.has-video) .showreel-montage{opacity:1}
+#cinema-wrap .showreel-shell.has-video .showreel-montage{opacity:0}
+#cinema-wrap .showreel-shell.is-montage-active .showreel-placeholder{
+  opacity:0!important;visibility:hidden;
+  transition:opacity .32s ease,visibility .32s ease;
+}
+#cinema-wrap .montage-shot{
+  position:absolute;inset:0;
+  display:block;width:100%;height:100%;
+  object-fit:cover;object-position:center center;
+  opacity:0;
+  transform:scale(1.07) translate3d(0,0,0);
+  filter:brightness(.72) saturate(.91);
+  transition:opacity .28s ease,filter .3s ease;
+  will-change:transform,opacity;
+}
+#cinema-wrap .montage-shot.is-current{
+  opacity:1;animation:fiqri-shot-move 1.72s linear both;
+}
+#cinema-wrap .montage-shot[data-format="portrait"]{object-position:center 42%}
+@keyframes fiqri-shot-move{
+ from{transform:scale(1.045) translate3d(0,0,0)}
+ to{transform:scale(1.125) translate3d(-.7%,.4%,0)}
+}
+#cinema-wrap .showreel-montage::after{
+ content:"";position:absolute;inset:0;z-index:2;
+ pointer-events:none;
+ background:linear-gradient(180deg,#05112665 0%,transparent 29%,#03081415 50%,#020613c9 100%);
+}
+#cinema-wrap .montage-credit{
+  position:absolute;z-index:3;left:6.4%;right:20%;bottom:12.5%;
+  display:flex;flex-direction:column;align-items:start;gap:5px;
+  color:#f5f9ff;text-align:left;
+  text-shadow:0 4px 18px #000b;
+}
+#cinema-wrap .montage-credit__number{
+ font:700 clamp(8px,.7vw,11px)/1.2 "Space Grotesk",sans-serif;
+ letter-spacing:.17em;color:#b3d7ff;
+}
+#cinema-wrap .montage-credit__name{
+  max-width:100%;
+  font:600 clamp(19px,2.6vw,38px)/1.08 "Space Grotesk",sans-serif;
+  letter-spacing:-.055em;
+  text-wrap:balance;
+}
+#cinema-wrap .montage-credit__category{
+  margin-top:3px;
+  font:600 clamp(8px,.7vw,10px)/1.3 "Space Grotesk",sans-serif;
+  color:#b5cde7;letter-spacing:.11em;text-transform:uppercase;
+}
+#cinema-wrap .montage-progress{
+ position:absolute;z-index:4;left:6.4%;right:6.4%;bottom:9.2%;
+ height:1px;overflow:hidden;
+ background:#e0f0ff3c;
+}
+#cinema-wrap .montage-progress span{
+ display:block;width:100%;height:100%;
+ background:#b0d7ff;
+ transform:scaleX(0);
+ transform-origin:left;
+}
+#cinema-wrap .showreel-shell.is-montage-active .montage-progress.is-running span{
+ animation:fiqri-montage-progress var(--montage-beat,1700ms) linear both;
+}
+@keyframes fiqri-montage-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+#cinema-wrap .showreel-topline,#cinema-wrap .showreel-bottomline{pointer-events:none}
+#cinema-wrap .showreel-bottomline{letter-spacing:.11em}
+@media(max-width:1060px){
+ #cinema-wrap .cinema-frame.showreel-shell{width:min(66vw,740px)}
+ #cinema-wrap .float-reel-card{width:clamp(125px,16vw,185px)}
+ #cinema-wrap .float-reel-card--one{left:-3%}
+ #cinema-wrap .float-reel-card--two{right:-3%}
+ #cinema-wrap .float-reel-card--three{left:2%;bottom:10%;width:140px}
+}
+@media(max-width:700px){
+ #cinema-wrap .cinema-frame.showreel-shell{
+   width:91vw;top:49%;
+ }
+ #cinema-wrap .float-reel-card{display:none!important}
+ #cinema-wrap .showreel-message{max-width:53%}
+ #cinema-wrap .montage-credit{left:6%;right:7%;bottom:17%;gap:2px}
+ #cinema-wrap .montage-credit__name{font-size:clamp(16px,5vw,25px)}
+ #cinema-wrap .montage-credit__category{font-size:7px}
+ #cinema-wrap .montage-credit__number{font-size:8px}
+ #cinema-wrap .montage-progress{left:6%;right:6%;bottom:12.2%}
+ #cinema-wrap .showreel-bottomline{bottom:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ #cinema-wrap .cinema-frame.showreel-shell{
+   transform:translate3d(-50%,-18%,0) scale(.93)!important;
+   will-change:auto;
+ }
+ #cinema-wrap .montage-shot{animation:none!important;transition:none!important}
+ #cinema-wrap .montage-progress span{animation:none!important;transform:scaleX(1)}
+ #cinema-wrap .float-reel-card:hover .float-reel-card__poster{transform:none}
+}
