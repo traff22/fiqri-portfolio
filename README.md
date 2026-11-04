@@ -1,16 +1,18 @@
-## Chapter One — cinematic shuffle preview (V1.2)
+## Chapter One — five-second video montage (V1.3)
 
-The central Chapter One film frame no longer expands forward into neighboring cards. It now **recedes from roughly 0.98× to 0.75×** across the sticky scroll scene. The large heading stays stationary. Product Motion, Editorial Stories and Event Films are real linked-project stills positioned outside the central frame and keep a subtle floating/hover tilt.
+**Main frame:** A restrained 0–13% forward zoom on scroll, rather than the old uncontrolled full-screen zoom. The main video stays under the heading; supporting project cards recede into the background. A 9:16 Bitcoin Almanac card, 16:9 Editorial Stories card and 1760:761 Age of Chaos event banner communicate different formats and visual depth.
 
-The center uses `assets/chapter-montage.js`. It automatically collects *all published cards* in `#work`, shuffles without repeating the same entry immediately and tries to alternate categories, with a **1.7-second beat**, crossfade and slow photo push-in. It initially displays the branded FQ frame for about 850ms. It pauses when offscreen/hidden, does not run rapid transitions for reduced-motion or Save Data visitors, and falls back safely if an image fails. The current version shows YouTube project **thumbnail frames**, not downloaded video excerpts, because source MP4 teaser files have not yet been supplied.
+**Live footage:** The page reads published project IDs directly from the Selected Work cards. When Chapter One is visible and the visitor allows motion/data, `assets/chapter-montage.js` loads the official YouTube IFrame Player API and maintains two **muted** players. It chooses an approximately five-second segment of a randomly selected film; when duration is available, it seeks to a randomized valid point. The video panels cross-dissolve, retaining the outgoing frame while the next project becomes playable. Click or keyboard-activate **Next shot** anywhere over the center frame to skip immediately to another randomly selected project. The montage pauses when the page is hidden/offscreen. The 5-second rhythm restarts when the next actual player starts.
 
-**To make it a real moving footage montage later:** Export short, silent, web-ready **MP4 or WebM snippets** from your own permitted footage. Place files under `assets/showreel/` and add `data-montage-src="assets/showreel/your-teaser.mp4"` to the corresponding `.work-media` in `index.html`. The montage player automatically uses the teaser clip for that project and falls back to its YouTube poster if the video cannot play. Each card requires no separate shuffle manifest. A single exported 15–30s showreel MP4 can alternatively be assigned to the existing `.showreel-shell[data-video-src]`, replacing the shuffle for a polished final edit.
+**Fallback and limitations:** If YouTube is blocked, an owner disabled embedding, a browser blocks scripted autoplay, or a connection is slow, the project poster remains visible as a cinematic frame montage. YouTube embeds are not guaranteed seamless because the content is streamed by a third party; controls=0 is not equivalent to removing YouTube branding. The deterministic Playwright YouTube mock test validates five-second scheduling, randomized seeks, muting, and click-to-skip logic, but does not guarantee browser-specific external streaming.
 
-The old decorative geometry inside the three floating cards is hidden when real project poster frames are present. Mobile hides those decorative side cards, keeps the headline intact, and avoids crowded in-frame captions during the branded opening.
+**Native teaser upgrade:** Export short silent high-quality `.mp4`/`.webm` clips from footage you're allowed to publish, store them under `assets/showreel/`, and set `data-montage-src="assets/showreel/filename.mp4"` on the relevant card's `.work-media`. The montage prioritizes an available native clip, giving smoother transitions than YouTube. A standalone edited showreel can still replace the montage through `.showreel-shell[data-video-src]`.
+
+**Current project counts:** 15 total cards, 4 Highlights (unchanged), 7 Motion including **A-CLUB Wrapped 2025**, 5 Reels, 5 Long-form, 3 Events.
 
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
-A responsive, cinematic portfolio for Fiqri Apriandi. **V1.1** contains 14 project cards after removing TRIV Premiere, the exact four selected Highlights, native-aspect video thumbnails, three event case studies, and genuine Age of Chaos / Counter Trend event photography.
+A responsive, cinematic portfolio for Fiqri Apriandi. **V1.3** contains 15 project cards including A-CLUB Wrapped 2025 (TRIV Premiere removed), the exact four selected Highlights, native-aspect video thumbnails, three event case studies, and genuine Age of Chaos / Counter Trend event photography.
 
 ## Preview website
 
@@ -62,7 +64,7 @@ Then open http://localhost:4173 .
 
 ## Current gallery and event case studies (V1.1)
 
-The website displays **14 projects**, including the four featured Highlights in this exact editorial order:
+The website displays **15 projects**, including the four featured Highlights in this exact editorial order:
 
 1. **ADS Astronacci — Bitcoin Almanac 2025** (Reels, 9:16)
 2. **Cinematic Mancing** (Long-form, 16:9)
