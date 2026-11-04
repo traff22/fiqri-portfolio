@@ -213,8 +213,8 @@
 /* V1.3 — a slightly larger centre lens, without the former full-screen collision.
    Three supporting cards are deliberately different in size, aspect and depth. */
 #cinema-wrap .cinema-frame.showreel-shell{
- width:min(61vw,960px);
- top:48.5%;
+ width:min(58vw,930px);
+ top:50%;
  z-index:11!important;
 }
 #cinema-wrap .cinema-copy{z-index:18!important}
@@ -309,7 +309,7 @@
  animation-duration:5s;
 }
 @media(max-width:1040px){
- #cinema-wrap .cinema-frame.showreel-shell{width:min(65vw,800px)}
+ #cinema-wrap .cinema-frame.showreel-shell{width:min(62vw,800px)}
  #cinema-wrap .float-reel-card--one{left:2%;width:clamp(95px,11vw,128px)}
  #cinema-wrap .float-reel-card--two{right:2%;width:clamp(145px,16vw,191px)}
  #cinema-wrap .float-reel-card--three{left:3%;width:clamp(135px,16vw,188px)}
