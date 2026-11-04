@@ -39,6 +39,13 @@ try{
  await page.locator("#cinema-wrap .showreel-shell").scrollIntoViewIfNeeded();
  await page.waitForFunction(()=>document.querySelector(".montage-stream.is-current"),{timeout:9000});
  const first=await page.locator(".montage-title").textContent();
+ if(first!=="Know More Bout Me — 2024")
+  throw new Error("Chapter One must always start with Know More Bout Me: "+first);
+ const classification=await page.locator('.work-card[data-project="know-more-about-me-2024"]').evaluate(el=>el.dataset.categories);
+ if(classification.split(" ").includes("motion")||!classification.split(" ").includes("longform"))
+  throw new Error("Know More Bout Me incorrectly classified: "+classification);
+ const firstSource=await page.evaluate(()=>window.__ytQA.loads[0]);
+ if(firstSource!=="hEhRkIbH-Pg")throw new Error("Opening stream ID incorrect: "+firstSource);
  const stage=await page.locator(".showreel-montage").evaluate(el=>({
   sourceCount:Number(el.dataset.sourceCount),mode:el.dataset.previewMode,playback:el.dataset.playback
  }));
@@ -56,6 +63,9 @@ try{
  await skip.click({force:true});
  await page.waitForFunction(prior=>document.querySelector(".montage-title")?.textContent!==prior,first,{timeout:8000});
  const second=await page.locator(".montage-title").textContent();
+ const caption=await page.locator("#cinema-wrap .showreel-shell > .montage-overlay").boundingBox();
+ const movie=await page.locator("#cinema-wrap .showreel-visual").boundingBox();
+ if(caption.y < movie.y+movie.height-3)throw new Error("Own title overlaps YouTube player");
  const data=await page.evaluate(()=>structuredClone(window.__ytQA));
  if(data.loads.length<2||data.seeks.length<2||data.mutes<2)throw Error("Player did not load and seek real videos: "+JSON.stringify(data));
  if(data.loads.some(v=>!/^[A-Za-z0-9_-]{11}$/.test(v)))throw Error("Invalid video ID in shuffle");
@@ -66,7 +76,7 @@ try{
  if(errors.length)throw Error("JS errors: "+errors.join("|"));
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/chapter-original-video-montage.png"});
  console.log("MONTAGE_SMOKE_REPORT="+JSON.stringify({
-  sources:stage.sourceCount,excludedReels:excluded.length,mode:stage.mode,playing:true,first,second,third,
+  sources:stage.sourceCount,opening:first,classification,captionBelow:true,excludedReels:excluded.length,mode:stage.mode,playing:true,first,second,third,
   clock:timer,loads:data.loads,seeks:data.seeks,mutedCalls:data.mutes,
   clickSkip:true,autoNext:true,syntheticPhotoClips:false,jsErrors:errors
  }));
