@@ -208,3 +208,122 @@
   #cinema-wrap .montage-credit__category{font-size:7px;margin-top:0}
   #cinema-wrap .montage-progress{bottom:5%}
 }
+
+
+/* V1.3 — a slightly larger centre lens, without the former full-screen collision.
+   Three supporting cards are deliberately different in size, aspect and depth. */
+#cinema-wrap .cinema-frame.showreel-shell{
+ width:min(61vw,960px);
+ top:48.5%;
+ z-index:11!important;
+}
+#cinema-wrap .cinema-copy{z-index:18!important}
+#cinema-wrap .float-reel-card{
+ z-index:5!important;
+ scale:var(--chapter-card-depth,1);
+ opacity:var(--chapter-card-fade,1)!important;
+ transition:scale .16s linear,opacity .16s linear;
+ will-change:scale,transform;
+}
+#cinema-wrap .float-reel-card--one{
+ left:5.1%;top:34%;
+ width:clamp(100px,9vw,142px);
+ --float-base-rot:-7deg
+}
+#cinema-wrap .float-reel-card--one .float-reel-card__media{
+ aspect-ratio:9/16;
+}
+#cinema-wrap .float-reel-card--one .float-reel-card__poster{
+ object-position:50% 45%;
+}
+#cinema-wrap .float-reel-card--two{
+ right:4.1%;top:51%;
+ width:clamp(160px,15vw,225px);
+ --float-base-rot:8deg
+}
+#cinema-wrap .float-reel-card--two .float-reel-card__media{
+ aspect-ratio:16/9;
+}
+#cinema-wrap .float-reel-card--three{
+ display:block!important;
+ left:6.7%;bottom:10%;top:auto;
+ width:clamp(160px,15vw,213px);
+ --float-base-rot:4deg;
+}
+#cinema-wrap .float-reel-card--three .float-reel-card__media{
+ aspect-ratio:1760/761;
+}
+#cinema-wrap .float-reel-card__poster{object-fit:cover}
+#cinema-wrap .float-reel-card__meta{
+ font-size:clamp(7px,.65vw,9px);
+ padding:9px 10px;
+}
+#cinema-wrap .montage-youtube-panel{
+ position:absolute;inset:0;z-index:1;
+ width:100%;height:100%;
+ overflow:hidden;
+ pointer-events:none;
+ opacity:0;
+ transition:opacity .65s ease;
+ background:transparent;
+}
+#cinema-wrap .montage-youtube-panel.is-current{opacity:1}
+#cinema-wrap .montage-youtube-panel > div,
+#cinema-wrap .montage-youtube-panel iframe{
+ position:absolute;inset:0;
+ display:block;width:100%;height:100%;
+ min-width:100%;min-height:100%;
+ border:0!important;pointer-events:none;
+ background:transparent;
+}
+/* Crop the 16:9 YouTube player to the central 9:16 Shorts image when necessary. */
+#cinema-wrap .montage-youtube-panel[data-format="portrait"] iframe{
+ width:316%;min-width:316%;
+ left:-108%;
+}
+#cinema-wrap .montage-skip{
+ position:absolute;z-index:10;inset:0;
+ display:flex;justify-content:flex-end;align-items:flex-end;gap:6px;
+ padding:0 6% 6%;
+ color:#e6f3ff;
+ font:600 11px "Space Grotesk",sans-serif;
+ text-shadow:0 2px 9px #000d;
+ background:transparent;border:0;
+ cursor:pointer;pointer-events:auto;
+ opacity:0;transition:opacity .25s ease;
+}
+#cinema-wrap .showreel-shell:hover .montage-skip,
+#cinema-wrap .showreel-shell:focus-within .montage-skip{opacity:1}
+#cinema-wrap .montage-skip:focus-visible{
+ outline:3px solid #bfdeff;
+ outline-offset:-7px;
+ opacity:1;
+}
+#cinema-wrap .montage-shot{
+ transition:opacity .65s ease;
+}
+#cinema-wrap .montage-shot.is-current{
+ animation:fiqri-shot-move 5s linear both;
+}
+#cinema-wrap .showreel-shell.is-montage-active .montage-progress.is-running span{
+ animation-duration:5s;
+}
+@media(max-width:1040px){
+ #cinema-wrap .cinema-frame.showreel-shell{width:min(65vw,800px)}
+ #cinema-wrap .float-reel-card--one{left:2%;width:clamp(95px,11vw,128px)}
+ #cinema-wrap .float-reel-card--two{right:2%;width:clamp(145px,16vw,191px)}
+ #cinema-wrap .float-reel-card--three{left:3%;width:clamp(135px,16vw,188px)}
+}
+@media(max-width:700px){
+ #cinema-wrap .cinema-frame.showreel-shell{width:90vw;top:45%}
+ #cinema-wrap .float-reel-card{display:none!important}
+ #cinema-wrap .montage-skip{opacity:.82;padding-bottom:12%;font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ #cinema-wrap .cinema-frame.showreel-shell{
+  transform:translate3d(-50%,-18%,0) scale(1)!important
+ }
+ #cinema-wrap .montage-youtube-panel{transition:none}
+ #cinema-wrap .montage-shot{transition:none;animation:none!important}
+ #cinema-wrap .float-reel-card{scale:1;transition:none}
+}
