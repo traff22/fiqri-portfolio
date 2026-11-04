@@ -7,23 +7,15 @@ const gallerySection=$(".selected-work");
 const galleryGrid=$(".selected-work .work-grid");
 // The collage pairs complementary media ratios. Slots are assigned to visible cards
 // automatically on every filter change; added projects fall back to an even grid.
-const collageColumns=[12,12,12,12,12,12,5,19,19,5];
 function setGalleryMode(kind){
- const collage=kind==="highlights"||kind==="all";
+ const collage=kind==="highlights"||kind==="all"||kind==="motion";
  gallerySection?.classList.toggle("gallery-collage",collage);
  if(gallerySection)gallerySection.dataset.galleryMode=kind;
- const visible=cards.filter(card=>!card.hidden);
- visible.forEach((card,i)=>{
-  if(collage){
-   card.dataset.collageSlot=String(i+1);
-   const isUnpaired=i===visible.length-1 && i%2===0;
-   card.style.setProperty("--collage-span",String(isUnpaired?24:(collageColumns[i]||12)));
-  }else{
-   card.removeAttribute("data-collage-slot");
-   card.style.removeProperty("--collage-span");
-  }
+ cards.forEach(card=>{
+  card.removeAttribute("data-collage-slot");
+  card.style.removeProperty("--collage-span");
  });
- if(galleryGrid)galleryGrid.setAttribute("aria-label",collage?"Curated project collage":"Filtered project gallery");
+ galleryGrid?.setAttribute("aria-label",collage?"Curated project collage":"Filtered project gallery");
 }
 
 function filterWork(kind){
@@ -39,39 +31,48 @@ function filterWork(kind){
  const status=$(".work-filter-status");if(status){status.setAttribute("data-active-filter",kind);const suffix=kind==="highlights"?(shown===1?" highlighted project":" highlighted projects"):(shown===1?" project":" projects");const label=status.querySelector("[data-count-label]");if(label)label.textContent=suffix;else status.replaceChildren(count||document.createTextNode(String(shown)),document.createTextNode(suffix));}
  setGalleryMode(kind);
 }
-filters.forEach(button=>button.addEventListener("click",()=>filterWork(button.dataset.filter)));
+filters.forEach(button=>button.addEventListener("click",()=>{stopAllHoverPreviews();filterWork(button.dataset.filter)}));
 filterWork("highlights");
 
 // Youtube posters are present in HTML, so thumbnails render even before this JS runs.
 // This is progressive enhancement for loading state and optional external image posters.
-cards.forEach(card=>{
- const media=$(".work-media",card);
- if(!media)return;
- const src=(media.dataset.posterSrc||"").trim();
- let image=$(".work-poster",media);
- if(!image&&src){
-  image=document.createElement("img");
-  image.className="work-poster";image.alt="";
-  image.loading="lazy";image.decoding="async";
-  media.prepend(image);image.src=src;
+// Upgrade YouTube thumbnail quality. Some channels do not publish maxres;
+ // YouTube sometimes answers 404 thumbnails with a tiny 120x90 JPEG.
+function thumbnailFor(id,quality="maxresdefault"){
+ return "https://i.ytimg.com/vi/"+encodeURIComponent(id)+"/"+quality+".jpg";
+}
+function setThumbnailWithFallback(img,id){
+ if(!img||!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+ const choices=["maxresdefault","sddefault","hqdefault"];
+ let choice=0;
+ function next(){
+  if(choice>=choices.length-1){img.hidden=false;return;}
+  choice++;
+  img.src=thumbnailFor(id,choices[choice]);
  }
- if(!image)return;
- let triedFallback=false;
- const ready=()=>{
-  if(image.naturalWidth>1&&image.naturalHeight>1){image.hidden=false;media.classList.add("has-poster");}
- };
- const failed=()=>{
-  const id=(media.dataset.youtubeId||"").trim();
-  if(!triedFallback&&/^[A-Za-z0-9_-]{11}$/.test(id)){
-   triedFallback=true;
-   image.src="https://img.youtube.com/vi/"+id+"/mqdefault.jpg";
-   return;
-  }
-  image.hidden=true;media.classList.remove("has-poster");
- };
- image.addEventListener("load",ready);
- image.addEventListener("error",failed);
- if(image.complete){if(image.naturalWidth>1)ready();else failed();}
+ img.addEventListener("error",next);
+ img.addEventListener("load",()=>{
+  if(img.naturalWidth<480&&choice<choices.length-1){next();return}
+  img.hidden=false;
+  img.closest(".work-media")?.classList.add("has-poster");
+ });
+ img.src=thumbnailFor(id);
+ if(img.complete&&img.naturalWidth>=480)img.closest(".work-media")?.classList.add("has-poster");
+}
+cards.forEach(card=>{
+ const media=$(".work-media",card);if(!media)return;
+ const id=(media.dataset.youtubeId||"").trim();
+ let img=$(".work-poster",media);
+ if(!img&&(id||media.dataset.posterSrc)){
+  img=document.createElement("img");img.className="work-poster";img.alt="";
+  img.loading="lazy";img.decoding="async";media.prepend(img);
+ }
+ if(!img)return;
+ if(id)setThumbnailWithFallback(img,id);
+ else{
+  const poster=(media.dataset.posterSrc||"").trim();
+  if(poster){img.src=poster;img.addEventListener("load",()=>media.classList.add("has-poster"),{once:true})}
+ }
 });
 
 /* Desktop hover: muted YouTube video preview after a deliberate pause.
@@ -97,35 +98,37 @@ function stopHoverPreview(card){
 function queueHoverPreview(card){
  const media=$(".work-media",card);
  const id=(media?.dataset.youtubeId||"").trim();
- if(!canHoverPreview()||!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+ if(!canHoverPreview()||!/^[A-Za-z0-9_-]{11}$/.test(id)||card.hidden)return;
  if(activeHover&&activeHover!==card)stopHoverPreview(activeHover);
+ // Start immediately on pointer enter. Network buffering is YouTube-dependent;
+ // don't add the old artificial 650ms timer.
+ stopHoverPreview(card);
  activeHover=card;
- card._hoverTimer=setTimeout(()=>{
-  card._hoverTimer=0;
-  if(activeHover!==card||card.hidden||!canHoverPreview())return;
-  const iframe=document.createElement("iframe");
-  iframe.className="work-hover-video";
-  iframe.title="Muted preview";
-  iframe.tabIndex=-1;
-  iframe.setAttribute("aria-hidden","true");
-  iframe.setAttribute("allow","autoplay; encrypted-media; picture-in-picture");
-  const url=new URL("https://www.youtube-nocookie.com/embed/"+id);
-  url.searchParams.set("autoplay","1");
-  url.searchParams.set("mute","1");
-  url.searchParams.set("controls","0");
-  url.searchParams.set("playsinline","1");
-  url.searchParams.set("rel","0");
-  url.searchParams.set("loop","1");
-  url.searchParams.set("playlist",id);
-  const start=Math.max(0,Math.min(36000,Number(media.dataset.youtubeStart)||0));
-  if(start)url.searchParams.set("start",String(start));
-  iframe.src=url.toString();
-  media.appendChild(iframe);
-  iframe.addEventListener("load",()=>{
-   if(activeHover===card)media.classList.add("is-previewing");
-  },{once:true});
- },650);
+ const iframe=document.createElement("iframe");
+ iframe.className="work-hover-video";
+ iframe.title="Muted preview";
+ iframe.tabIndex=-1;
+ iframe.loading="eager";
+ iframe.setAttribute("aria-hidden","true");
+ iframe.setAttribute("allow","autoplay; encrypted-media; picture-in-picture");
+ const url=new URL("https://www.youtube-nocookie.com/embed/"+id);
+ url.searchParams.set("autoplay","1");
+ url.searchParams.set("mute","1");
+ url.searchParams.set("controls","0");
+ url.searchParams.set("playsinline","1");
+ url.searchParams.set("rel","0");
+ url.searchParams.set("loop","1");
+ url.searchParams.set("playlist",id);
+ url.searchParams.set("modestbranding","1");
+ const start=Math.max(0,Math.min(36000,Number(media.dataset.youtubeStart)||0));
+ if(start)url.searchParams.set("start",String(start));
+ iframe.addEventListener("load",()=>{
+  if(activeHover===card)media.classList.add("is-previewing");
+ },{once:true});
+ iframe.src=url.toString();
+ media.appendChild(iframe);
 }
+
 cards.forEach(card=>{
  if(!$(".work-media[data-youtube-id]",card))return;
  card.addEventListener("pointerenter",()=>queueHoverPreview(card));
@@ -207,7 +210,7 @@ const eventPlayLabel=$("#event-main-play-label");
 const eventVideoList=$("#event-video-list");
 const eventPhotoList=$("#event-photo-list");
 let activeEventVideo=null,activeEventIframe=null,activeEventConfig=null;
-function youtubeThumb(id){return "https://i.ytimg.com/vi/"+encodeURIComponent(id)+"/hqdefault.jpg"}
+function youtubeThumb(id){return thumbnailFor(id,"maxresdefault")}
 function makeEventIframe(id){
  const frame=document.createElement("iframe");
  frame.className="event-video-frame";
@@ -239,7 +242,7 @@ function showEventVideo(video,shouldPlay=false){
   eventFeature.classList.toggle("is-empty",!valid);
  }
  if(eventFeaturePoster){eventFeaturePoster.hidden=!valid;
-  if(valid)eventFeaturePoster.src=youtubeThumb(video.id);
+  if(valid)setThumbnailWithFallback(eventFeaturePoster,video.id);
   else eventFeaturePoster.removeAttribute("src");
  }
  if(eventPlayButton)eventPlayButton.hidden=!valid;
@@ -271,7 +274,7 @@ function renderEventVideos(videos){
   button.dataset.videoId=video.id;
   button.setAttribute("aria-pressed","false");
   const image=document.createElement("img");
-  image.src=youtubeThumb(video.id);image.alt="";image.loading="lazy";image.decoding="async";
+  image.alt="";image.loading="lazy";image.decoding="async";setThumbnailWithFallback(image,video.id);
   const body=document.createElement("span");body.className="event-video-choice__text";
   const label=document.createElement("strong");label.textContent=video.label;
   const desc=document.createElement("small");desc.textContent=video.type;
@@ -280,6 +283,8 @@ function renderEventVideos(videos){
   eventVideoList.appendChild(button);
  }
  const count=$("#event-video-count");if(count)count.textContent=videos.length+" video"+(videos.length===1?"":"s");
+ const heading=$("#event-videos-heading");if(heading)heading.hidden=videos.length<=1;
+ eventVideoList.hidden=videos.length<=1;
 }
 function renderEventPhotos(photos){
  if(!eventPhotoList)return;
