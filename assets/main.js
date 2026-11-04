@@ -44,8 +44,16 @@ if(cinema&&frame){
  doc.style.setProperty("--scene-back-y",(-p*65).toFixed(1)+"px");
  doc.style.setProperty("--scene-front-y",(p*42).toFixed(1)+"px");
  doc.style.setProperty("--frame-y",(-p*10).toFixed(1)+"px");
+ // Three distinct visual planes: foreground film, midground event, background product.
+ // Each moves to a different depth as the main film grows on scroll.
  doc.style.setProperty("--chapter-card-depth",(1-easing*.28).toFixed(3));
  doc.style.setProperty("--chapter-card-fade",(1-easing*.32).toFixed(3));
+ doc.style.setProperty("--depth-near-scale",(1.06-easing*.17).toFixed(3));
+ doc.style.setProperty("--depth-mid-scale",(.95-easing*.21).toFixed(3));
+ doc.style.setProperty("--depth-far-scale",(.83-easing*.19).toFixed(3));
+ doc.style.setProperty("--depth-near-opacity",(1-easing*.13).toFixed(3));
+ doc.style.setProperty("--depth-mid-opacity",(.91-easing*.24).toFixed(3));
+ doc.style.setProperty("--depth-far-opacity",(.67-easing*.23).toFixed(3));
  doc.style.setProperty("--scene-rotation",(p*25).toFixed(1)+"deg");
  doc.style.setProperty("--frame-radius",(26-p*20).toFixed(1)+"px");
  doc.style.setProperty("--cinema-logo-opacity",clamp(1-p*2.0).toFixed(3));
