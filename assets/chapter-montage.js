@@ -1,171 +1,256 @@
-/* Chapter One — curated frame shuffle.
- * Every preview comes from the user's actual Selected Work cards.
- * If a compressed teaser .mp4 is supplied later via data-montage-src on
- * .work-media, that shot plays silently; otherwise its YouTube poster
- * receives a gentle editorial push-in. No YouTube iframe roulette.
- */
+/* Chapter One v1.3 — muted five-second excerpts with cross-dissolved YouTube players.
+   Only loads embeds while the chapter is in view. Falls back to project posters
+   when autoplay / embedding / network policy prevents playback. */
 (()=>{"use strict";
 const scene=document.querySelector("#cinema-wrap");
 const shell=scene?.querySelector(".showreel-shell");
-const shots=shell?[...shell.querySelectorAll(".montage-shot")]:[];
-const clips=shell?[...shell.querySelectorAll(".montage-clip")]:[];
-const credit=shell?.querySelector(".montage-credit");
-const number=shell?.querySelector(".montage-credit__number");
-const name=shell?.querySelector(".montage-credit__name");
-const category=shell?.querySelector(".montage-credit__category");
-const progress=shell?.querySelector(".montage-progress");
-if(!scene||!shell||shots.length!==2||clips.length!==2)return;
+const montage=shell?.querySelector(".showreel-montage");
+const images=montage?[...montage.querySelectorAll(".montage-shot")]:[];
+const clipNodes=montage?[...montage.querySelectorAll(".montage-clip")]:[];
+const panels=montage?[...montage.querySelectorAll(".montage-youtube-panel")]:[];
+const nextButton=montage?.querySelector(".montage-skip");
+const progress=montage?.querySelector(".montage-progress");
+if(!scene||!shell||!montage||images.length!==2||panels.length!==2||!nextButton)return;
 
-const reduced=matchMedia("(prefers-reduced-motion: reduce)");
-const projects=[...document.querySelectorAll("#work .work-card[data-status='published']")]
- .map(card=>{
-  const media=card.querySelector(".work-media");
-  const id=(media?.dataset.youtubeId||"").trim();
-  if(!/^[A-Za-z0-9_-]{11}$/.test(id))return null;
-  const group=card.dataset.categories||"";
-  const type=group.includes("event")?"EVENT FILMS":
-             group.includes("reels")?"SHORT-FORM / ADS":
-             group.includes("motion")?"MOTION / PRODUCT":
-             "LONG-FORM / STORY";
-  return {
-   id, slug:card.dataset.project, name:card.dataset.title||"Selected film",
-   category:type,
-   format:card.dataset.format||"landscape",
-   clip:(media?.dataset.montageSrc||"").trim()
-  };
- }).filter(Boolean);
-if(projects.length===0)return;
+const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)");
+const saveData=()=>!!navigator.connection?.saveData;
+const beat=5000;
+const fade=650;
+const published=[...document.querySelectorAll("#work .work-card[data-status='published']")];
+const projects=published.map(card=>{
+ const media=card.querySelector(".work-media");
+ const id=(media?.dataset.youtubeId||"").trim();
+ if(!/^[\w-]{11}$/.test(id))return null;
+ const tags=card.dataset.categories||"";
+ return {
+  id,
+  slug:card.dataset.project,
+  name:card.dataset.title||"Selected work",
+  category:tags.includes("event")?"EVENT / MOTION":tags.includes("reels")?"SHORT-FORM / VERTICAL":tags.includes("motion")?"PRODUCT / MOTION":"FILM / STORY",
+  format:card.dataset.format||"landscape",
+  mp4:(media?.dataset.montageSrc||"").trim()
+ };
+}).filter(Boolean);
+if(!projects.length)return;
 
-const initial=projects.find(p=>p.slug==="cinematic-mancing")||projects[0];
-let pool=projects.filter(p=>p!==initial);
-let last=null,visible=false,running=false,wasStarted=false;
-let slot=-1,timer=0,loadTicket=0;
-const beat=1700; // A brisk rhythm without unreadably flashing frames.
-shell.style.setProperty("--montage-beat",beat+"ms");
-
-function imageCandidates(id){
- return ["maxresdefault","sddefault","hqdefault"]
-  .map(q=>"https://i.ytimg.com/vi/"+id+"/"+q+".jpg");
+const credit={
+ count:montage.querySelector(".montage-credit__number"),
+ title:montage.querySelector(".montage-credit__name"),
+ kind:montage.querySelector(".montage-credit__category")
+};
+const players=[null,null];
+const slots=[{ready:false,turn:0,seeked:false,video:""},{ready:false,turn:0,seeked:false,video:""}];
+let started=false,active=false,visible=false,turn=0,picture=-1,current=null,order=[],last=null;
+let timer=0,booting=false,apiReady=false,videoStarted=false,apiFailed=false;
+let settleTimer=0;
+const pick=()=>{
+ if(!started){started=true;return projects.find(x=>x.slug==="cinematic-mancing")||projects[0]}
+ if(!order.length)order=[...projects].sort(()=>Math.random()-.5);
+ const candidates=order.filter(x=>x.id!==last?.id&&x.category!==last?.category);
+ const options=candidates.length?candidates:order.filter(x=>x.id!==last?.id);
+ const choice=(options.length?options:order)[Math.floor(Math.random()*(options.length||order.length))];
+ order.splice(order.indexOf(choice),1);
+ return choice;
+};
+function safe(fn){try{fn()}catch(_){}}
+function clearTime(){clearTimeout(timer);clearTimeout(settleTimer);timer=settleTimer=0}
+function restartProgress(){
+ progress?.classList.remove("is-running");
+ if(!active||reduceMotion.matches||saveData())return;
+ void progress?.offsetWidth;
+ progress?.classList.add("is-running");
 }
-function loadPoster(id){
- const urls=imageCandidates(id);
- return new Promise((resolve,reject)=>{
-  let current=0;
-  let finished=false;
-  const img=new Image();
-  const timeout=setTimeout(()=>{if(!finished){finished=true;img.onload=null;img.onerror=null;reject(Error("Thumbnail timeout"))}},4500);
-  function done(ok,url){
-   if(finished)return;
-   finished=true;clearTimeout(timeout);img.onload=null;img.onerror=null;
-   ok?resolve(url):reject(Error("No thumbnail available"));
+function scheduleNext(ms=beat){
+ clearTimeout(timer);
+ if(active&&!reduceMotion.matches&&!saveData())timer=setTimeout(()=>advance(),ms);
+}
+function thumbnail(index,project){
+ const img=images[index];
+ let quality=0;
+ const q=["maxresdefault","sddefault","hqdefault"];
+ img.onerror=()=>{if(++quality<q.length)img.src="https://i.ytimg.com/vi/"+project.id+"/"+q[quality]+".jpg"};
+ img.onload=()=>{
+  if(img.naturalWidth<480&&quality<q.length-1){
+   quality++;img.src="https://i.ytimg.com/vi/"+project.id+"/"+q[quality]+".jpg";
   }
-  function tryNext(){
-   if(finished)return;
-   if(current>=urls.length){done(false);return}
-   img.src=urls[current++];
-  }
-  img.onload=()=>{
-   // YouTube sometimes serves a tiny default image when maxres is missing.
-   if(img.naturalWidth<480&&current<urls.length){tryNext();return}
-   done(true,img.src);
-  };
-  img.onerror=tryNext;
-  tryNext();
- });
+ };
+ img.src="https://i.ytimg.com/vi/"+project.id+"/"+q[0]+".jpg";
+ img.dataset.format=project.format;
 }
-function draw(){
- if(!wasStarted){wasStarted=true;return initial}
- if(!pool.length)pool=[...projects];
- const different=pool.filter(p=>p.id!==last?.id&&p.category!==last?.category);
- const distinct=pool.filter(p=>p.id!==last?.id);
- const candidates=different.length?different:distinct.length?distinct:pool;
- const selected=candidates[Math.floor(Math.random()*candidates.length)];
- pool.splice(pool.indexOf(selected),1);
- return selected;
+function stopNative(){
+ for(const v of clipNodes){safe(()=>v.pause());v.classList.remove("is-current");v.hidden=true;v.removeAttribute("src");safe(()=>v.load())}
 }
-function stopClip(video){
- video.pause();
- video.hidden=true;
- video.classList.remove("is-current");
- video.removeAttribute("src");
- video.load();
- video.oncanplay=null;video.onerror=null;
-}
-function prepareClip(project,index,ticket){
- const video=clips[index];
- stopClip(video);
- if(!project.clip||!/^((assets\/)[^?#]+\.(mp4|webm))(\?.*)?$/i.test(project.clip))return;
- video.muted=true;video.loop=true;video.playsInline=true;video.preload="auto";
+function useNative(project,idx,seq){
+ stopNative();
+ if(!/^assets\/[\w/.-]+\.(?:mp4|webm)(?:\?[\w.-]+)?$/i.test(project.mp4))return false;
+ const video=clipNodes[idx];
+ video.muted=true;video.playsInline=true;video.loop=true;video.preload="auto";
+ video.hidden=false;
  video.oncanplay=()=>{
-  if(ticket!==loadTicket||slot!==index||!running)return;
-  video.hidden=false;
-  video.classList.add("is-current");
-  video.play().catch(()=>{video.hidden=true});
+  if(seq!==turn||!active)return;
+  video.play().then(()=>{
+    if(seq!==turn)return;
+    video.classList.add("is-current");
+    scheduleNext(beat);
+    restartProgress();
+  }).catch(()=>{video.hidden=true});
  };
  video.onerror=()=>{video.hidden=true};
- video.src=project.clip;
- video.load();
+ video.src=project.mp4;
+ safe(()=>video.load());
+ return true;
 }
-function restartProgress(){
- if(!progress)return;
- progress.classList.remove("is-running");
- void progress.offsetWidth;
- if(running&&!reduced.matches)progress.classList.add("is-running");
+function chooseStart(duration){
+ if(!Number.isFinite(duration)||duration<=9)return 0;
+ const latest=Math.max(0,duration-beat/1000-2);
+ const earliest=duration>27?8:2;
+ return Math.round(earliest+Math.random()*Math.max(0,latest-earliest));
 }
-function showNext(){
- if(!running||shell.classList.contains("has-video"))return;
- const ticket=++loadTicket;
- const project=draw();
- loadPoster(project.id).then(poster=>{
-  if(!running||ticket!==loadTicket)return;
-  const next=slot===0?1:0;
-  const image=shots[next];
-  const old=slot===-1?null:shots[slot];
-  if(slot!==-1)stopClip(clips[slot]);
-  image.src=poster;
-  image.dataset.format=project.format;
-  image.classList.add("is-current");
-  if(old)old.classList.remove("is-current");
-  slot=next;last=project;
-  shell.classList.add("is-montage-active");
-  if(number)number.textContent="FRAME "+String(projects.indexOf(project)+1).padStart(3,"0");
-  if(name)name.textContent=project.name;
-  if(category)category.textContent=project.category;
-  if(credit)credit.title=project.name;
-  prepareClip(project,next,ticket);
-  restartProgress();
-  if(running&&!reduced.matches&&!navigator.connection?.saveData){
-   timer=setTimeout(showNext,beat);
-  }
- }).catch(()=>{
-  if(!running||ticket!==loadTicket)return;
-  // A broken remote poster must not break the remaining portfolio sequence.
-  timer=setTimeout(showNext,450);
- });
+function stopPlayers(){
+ panels.forEach(panel=>panel.classList.remove("is-current"));
+ players.forEach(player=>{if(player)safe(()=>{player.mute();player.pauseVideo()})});
 }
-function pause(){
- running=false;clearTimeout(timer);timer=0;loadTicket++;
- progress?.classList.remove("is-running");
- clips.forEach(v=>{if(!v.paused)v.pause()});
+function onState(i,event){
+ if(!window.YT||event.data!==window.YT.PlayerState.PLAYING)return;
+ const slot=slots[i];
+ if(!active||slot.turn!==turn||!slot.ready||!players[i])return;
+ const player=players[i];
+ safe(()=>player.mute());
+ if(!slot.seeked){
+  slot.seeked=true;
+  const offset=chooseStart(Number(safeDuration(player)));
+  if(offset>0)safe(()=>player.seekTo(offset,true));
+  // If seek briefly triggers BUFFERING, the next PLAYING state takes over.
+  settleTimer=setTimeout(()=>{if(slot.turn===turn&&active&&safePlayerState(player)===1)presentVideo(i)},350);
+  return;
+ }
+ presentVideo(i);
 }
-function resume(){
- if(running||!visible||document.hidden||shell.classList.contains("has-video"))return;
- running=true;
- if(!wasStarted){
-  // Give the FQ monogram a short opening beat before the selected frames.
-  timer=setTimeout(showNext,reduced.matches?0:850);
- }else if(reduced.matches||navigator.connection?.saveData){
-  if(slot<0)showNext();
- }else{
-  timer=setTimeout(showNext,180);
+function safeDuration(player){try{return player.getDuration()||0}catch(_){return 0}}
+function safePlayerState(player){try{return player.getPlayerState()}catch(_){return -1}}
+function presentVideo(i){
+ if(!active||slots[i].turn!==turn||videoStarted)return;
+ videoStarted=true;
+ panels[i].classList.add("is-current");
+ panels[1-i].classList.remove("is-current");
+ // Pause the retiring player only after the video crossfade finishes.
+ const old=players[1-i],generation=turn;
+ if(old)setTimeout(()=>{if(turn===generation)safe(()=>old.pauseVideo())},fade+80);
+ scheduleNext(beat);
+ restartProgress();
+}
+function onError(i){
+ if(slots[i].turn===turn){
+  panels[i].classList.remove("is-current");
+  if(!timer)scheduleNext(beat);
  }
 }
+function initPlayers(){
+ if(apiReady||apiFailed||!window.YT?.Player||!active)return;
+ apiReady=true;
+ for(let i=0;i<2;i++){
+  const root=document.getElementById("montage-youtube-"+(i===0?"a":"b"));
+  if(!root)continue;
+  try{
+   players[i]=new window.YT.Player(root,{
+    width:"100%",height:"100%",
+    host:"https://www.youtube-nocookie.com",
+    playerVars:{controls:0,autoplay:0,playsinline:1,disablekb:1,fs:0,iv_load_policy:3,rel:0,cc_load_policy:0,origin:location.origin},
+    events:{
+     onReady:e=>{
+      slots[i].ready=true;
+      safe(()=>{e.target.mute();e.target.setVolume(0)});
+      if(active&&current&&slots[i].turn===turn)loadForTurn(i,current,turn);
+      else if(active&&current&&players.every((p,j)=>!p||slots[j].ready))loadForCurrent();
+     },
+     onStateChange:e=>onState(i,e),
+     onError:()=>onError(i),
+     onAutoplayBlocked:()=>onError(i)
+    }
+   });
+  }catch(_){apiFailed=true;break}
+ }
+}
+function loadAPI(){
+ if(booting||apiReady||apiFailed||reduceMotion.matches||saveData())return;
+ booting=true;
+ if(window.YT?.Player){initPlayers();return}
+ const previous=window.onYouTubeIframeAPIReady;
+ window.onYouTubeIframeAPIReady=()=>{if(typeof previous==="function")safe(previous);initPlayers()};
+ const script=document.createElement("script");
+ script.src="https://www.youtube.com/iframe_api";
+ script.async=true;
+ script.onerror=()=>{apiFailed=true};
+ document.head.appendChild(script);
+ // API failure leaves the thumbnail gallery fully usable.
+}
+function loadForTurn(i,project,seq){
+ const player=players[i];if(!player||!slots[i].ready||!active)return;
+ const slot=slots[i];slot.turn=seq;slot.seeked=false;slot.video=project.id;
+ safe(()=>{
+  player.mute();
+  player.loadVideoById({videoId:project.id,startSeconds:0,suggestedQuality:"hd720"});
+ });
+}
+function loadForCurrent(){
+ if(!current||!active)return;
+ const preferred=picture;
+ if(slots[preferred]?.ready)loadForTurn(preferred,current,turn);
+}
+function advance(force=false){
+ if(!active)return;
+ if(reduceMotion.matches&&!force&&started)return;
+ clearTime();
+ const project=pick(),prev=picture;
+ picture=picture===0?1:0;
+ turn++;
+ current=project;last=project;
+ videoStarted=false;
+ const seq=turn;
+ thumbnail(picture,project);
+ images[picture].classList.add("is-current");
+ images[1-picture].classList.remove("is-current");
+ panels.forEach(p=>p.classList.remove("is-current"));
+ if(prev>=0)setTimeout(()=>{if(turn===seq)safe(()=>players[prev]?.pauseVideo())},fade+75);
+ const number=String(projects.indexOf(project)+1).padStart(3,"0");
+ if(credit.count)credit.count.textContent="FRAME "+number;
+ if(credit.title)credit.title.textContent=project.name;
+ if(credit.kind)credit.kind.textContent=project.category;
+ shell.classList.add("is-montage-active");
+ panels[picture].dataset.format=project.format;
+ const hasNative=useNative(project,picture,seq);
+ restartProgress();
+ // Fallback keeps changing frames if the YouTube server does not respond.
+ scheduleNext(beat);
+ if(hasNative)return;
+ if(slots[picture].ready)loadForTurn(picture,project,seq);
+ else if(!apiReady)loadAPI();
+}
+function pause(){
+ active=false;clearTime();stopPlayers();stopNative();
+ progress?.classList.remove("is-running");
+}
+function resume(){
+ if(active||!visible||document.hidden||shell.classList.contains("has-video"))return;
+ active=true;
+ if(!started){
+  setTimeout(()=>{if(active)advance()},550);
+ }else{
+  advance(true);
+ }
+ if(!reduceMotion.matches&&!saveData())loadAPI();
+}
+nextButton.addEventListener("click",event=>{
+ event.preventDefault();event.stopPropagation();
+ if(!active){visible=true;resume()}
+ advance(true);
+});
 if("IntersectionObserver" in window){
- const observer=new IntersectionObserver(entries=>{
-  visible=entries.some(entry=>entry.isIntersecting);
+ const io=new IntersectionObserver(entries=>{
+  visible=entries.some(e=>e.isIntersecting);
   if(visible)resume();else pause();
- },{rootMargin:"25px 0px",threshold:0.09});
- observer.observe(scene);
+ },{threshold:.08,rootMargin:"80px 0px"});
+ io.observe(scene);
 }else{
  const check=()=>{
   const r=scene.getBoundingClientRect();
@@ -176,5 +261,5 @@ if("IntersectionObserver" in window){
 }
 document.addEventListener("visibilitychange",()=>{if(document.hidden)pause();else resume()});
 window.addEventListener("pagehide",pause);
-reduced.addEventListener?.("change",()=>{pause();resume()});
+reduceMotion.addEventListener?.("change",()=>{pause();resume()});
 })();
