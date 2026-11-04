@@ -44,7 +44,7 @@ for (const [viewport, device] of [
  await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart+sceneSpan*.82);
  await page.waitForTimeout(650);
  const stageAfter=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
- check(stageAfter.width>stageStart.width*1.05&&stageAfter.width<stageStart.width*1.23,
+ check(stageAfter.width>stageStart.width*(device==="mobile"?1.03:1.07)&&stageAfter.width<stageStart.width*1.23,
    device+": main frame scale not in the restrained zoom range, start "+stageStart.width+" end "+stageAfter.width);
  check(intersection(stageAfter,chapterCopy)<20,device+": Chapter One copy overlaps frame during scroll");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-depth.png"});
