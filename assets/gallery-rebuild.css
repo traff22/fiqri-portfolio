@@ -447,3 +447,7 @@ body.modal-open{overflow:hidden!important}
  #work .work-card:hover{transform:none}
  dialog.portfolio-dialog[open]{animation:none}
 }
+
+/* Hidden cards must beat filter-specific !important display rules. */
+#work .work-grid > .work-card[hidden],
+#work[data-gallery-mode] .work-grid > .work-card[hidden]{display:none!important}
