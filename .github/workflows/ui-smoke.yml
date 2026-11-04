@@ -7,6 +7,7 @@ on:
       - "assets/**"
       - "scripts/ui-smoke.mjs"
       - "scripts/montage-smoke.mjs"
+      - "scripts/atmosphere-smoke.mjs"
       - ".github/workflows/ui-smoke.yml"
   workflow_dispatch:
 jobs:
@@ -29,6 +30,7 @@ jobs:
           sleep 2
           node scripts/ui-smoke.mjs
           node scripts/montage-smoke.mjs
+          node scripts/atmosphere-smoke.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
