@@ -11,6 +11,7 @@ const title=stage?.querySelector(".montage-title");
 const clock=stage?.querySelector(".montage-timestamp");
 const bar=stage?.querySelector(".montage-progress");
 const skip=stage?.querySelector(".montage-skip");
+const skipText=skip?.querySelector("span");
 if(!scene||!stage||panels.length!==2||!title||!clock||!bar||!skip)return;
 
 const ID=/^[A-Za-z0-9_-]{11}$/;
@@ -118,6 +119,7 @@ function show(index,req){
  current=req.item;
  stage.dataset.playback="playing";
  stage.classList.add("is-playing");
+ if(skipText)skipText.textContent="Next ↗";
  title.textContent=req.item.title;
  panels[index].dataset.format=req.item.format;
  panels[index].classList.add("is-current");
@@ -145,7 +147,9 @@ function handlePlaying(index){
    req.seekValue=seconds;
    safe(()=>slot.player.seekTo(seconds,true));
    // Some players continue PLAYING without another state event after seek.
-   setTimeout(()=>settle(index,req),450);
+   setTimeout(()=>{
+    if(safe(()=>slot.player.getPlayerState())===1)settle(index,req);
+   },450);
    return;
   }
  }
@@ -245,6 +249,7 @@ function initAPI(){
       blocked=true;
       stage.dataset.playback="blocked";
       skip.setAttribute("aria-label","Click to enable previews");
+      if(skipText)skipText.textContent="Play ↗";
      }
     }
    });
