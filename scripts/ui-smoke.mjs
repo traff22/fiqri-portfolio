@@ -43,6 +43,9 @@ for (const [viewport, device] of [
    }
    check(overlap.length===0,device+" "+filter+": "+overlap.join(", "));
    report.push({device,filter,count:tiles.length,overlap:0,ratios:"ok"});
+   if(filter==="highlights"||filter==="motion"){
+     await page.locator("#work").screenshot({path:"screenshots/"+device+"-"+filter+".png"});
+   }
  }
  // Open the event case study and validate its visual size.
  await page.locator('.filter[data-filter="event"]').click();
@@ -52,6 +55,7 @@ for (const [viewport, device] of [
  const video=await page.locator("#event-feature-player").boundingBox();
  check(video.width>dialog.width*.70,device+": event player only "+video.width+" of "+dialog.width+"px modal");
  check(Math.abs(video.width/video.height-16/9)<.05,device+": event player ratio wrong");
+ await page.locator("#event-dialog").screenshot({path:"screenshots/"+device+"-event-dialog.png"});
  const photoCount=await page.locator(".event-photo").count();
  check(photoCount===2,device+": Age of Chaos missing photos: "+photoCount);
  await page.locator("#event-dialog [data-close-dialog]").click();
