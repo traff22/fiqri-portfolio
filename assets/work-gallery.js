@@ -163,22 +163,143 @@ function newYoutubePlayer(){
 let priorFocus=null;
 const events={
  "age-of-chaos":{
-  title:"Age of Chaos 2025",year:"2025",
-  summary:"Motion assets, event visuals, and cinematic coverage — gathered as one creative project.",
-  contribution:"Event motion design, visual assets, cinematic editing and selected on-site footage. Individual credits and approved behind-the-scenes assets will be added as the archive is curated.",
-  banner:"",motion:"",documentation:""
+  title:"Age of Chaos",year:"2025",
+  summary:"Event visual storytelling — stage graphics, a banner video, and the people behind production.",
+  contribution:"Event visuals, motion and cinematic documentation. Photos supplied from the event archive.",
+  videos:[{id:"c9wCgrjlUhk",label:"Event banner",type:"Main banner film"}],
+  photos:[
+   {src:"assets/events/age-of-chaos/stage.webp",caption:"Stage visuals — Age of Chaos",alt:"Age of Chaos event stage and digital backdrop"},
+   {src:"assets/events/age-of-chaos/crew.webp",caption:"Production crew",alt:"Crew members with a cinema camera at Age of Chaos"}
+  ]
+ },
+ "counter-trend":{
+  title:"Counter Trend",year:"EVENT VISUALS",
+  summary:"An event visual package spanning looping screens, speaker visuals and talkshow material.",
+  contribution:"Stage-screen motion assets and event visuals, accompanied by venue documentation.",
+  videos:[
+   {id:"e4LDw8UeBVM",label:"Banner loop",type:"Main stage loop"},
+   {id:"ytYOsh3ZcWc",label:"Speaker",type:"Speaker visual"},
+   {id:"AH1l-VdQj1I",label:"Talkshow",type:"Talkshow visual"}
+  ],
+  photos:[{src:"assets/events/counter-trend/venue.webp",caption:"Counter Trend venue and stage",alt:"Counter Trend venue with stage screen and audience seating"}]
+ },
+ "heavenly-whisper":{
+  title:"Heavenly Whisper",year:"EVENT & MUSIC",
+  summary:"An opening bumper and a separate music video brought together in one event collection.",
+  contribution:"Bumper and music video editing / motion work.",
+  videos:[
+   {id:"ydwCKwjdPHI",label:"Event bumper",type:"Opening visual"},
+   {id:"Vk4Me3JrLng",label:"Tuhan Pengharapanku",type:"Music video"}
+  ],
+  photos:[]
  },
  "triv-premiere":{
   title:"TRIV Premiere 2026",year:"2026",
-  summary:"An event story told across moving images, graphic design and behind-the-scenes documentation.",
-  contribution:"Event aftermovie editing, camera operation, B-roll and motion assets. Approved final materials and production credits will be added here.",
-  banner:"",motion:"",documentation:""
+  summary:"Event production and cinematic documentation; approved assets will be added.",
+  contribution:"Event aftermovie editing, camera operation, B-roll and motion assets.",
+  videos:[],photos:[]
  }
 };
+const eventFeature=$("#event-feature-player");
+const eventFeaturePoster=$("#event-feature-poster");
+const eventPlayButton=$("#event-main-play");
+const eventPlayLabel=$("#event-main-play-label");
+const eventVideoList=$("#event-video-list");
+const eventPhotoList=$("#event-photo-list");
+let activeEventVideo=null,activeEventIframe=null,activeEventConfig=null;
+function youtubeThumb(id){return "https://i.ytimg.com/vi/"+encodeURIComponent(id)+"/hqdefault.jpg"}
+function makeEventIframe(id){
+ const frame=document.createElement("iframe");
+ frame.className="event-video-frame";
+ frame.title="Playing event video";
+ frame.setAttribute("allow","accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
+ frame.setAttribute("allowfullscreen","");
+ frame.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
+ const embed=new URL("https://www.youtube-nocookie.com/embed/"+id);
+ embed.searchParams.set("autoplay","1");
+ embed.searchParams.set("rel","0");
+ frame.src=embed.toString();
+ return frame;
+}
+function stopEventPlayback(){
+ if(activeEventIframe){
+  activeEventIframe.src="about:blank";
+  activeEventIframe.remove();
+  activeEventIframe=null;
+ }
+ eventFeature?.classList.remove("is-playing");
+ if(eventFeaturePoster)eventFeaturePoster.hidden=false;
+ if(eventPlayButton)eventPlayButton.hidden=!activeEventVideo;
+}
+function showEventVideo(video,shouldPlay=false){
+ stopEventPlayback();
+ activeEventVideo=video||null;
+ const valid=video&&/^[A-Za-z0-9_-]{11}$/.test(video.id);
+ if(eventFeature){
+  eventFeature.classList.toggle("is-empty",!valid);
+ }
+ if(eventFeaturePoster){eventFeaturePoster.hidden=!valid;
+  if(valid)eventFeaturePoster.src=youtubeThumb(video.id);
+  else eventFeaturePoster.removeAttribute("src");
+ }
+ if(eventPlayButton)eventPlayButton.hidden=!valid;
+ if(eventPlayLabel)eventPlayLabel.textContent=video?"Play "+video.label:"No video available yet";
+ const empty=$("#event-feature-empty");if(empty)empty.hidden=!!valid;
+ $$(".event-video-choice",eventVideoList).forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.videoId===video?.id)));
+ const external=$("#event-video-external");
+ if(external){
+  external.hidden=!valid;
+  if(valid)external.href="https://www.youtube.com/watch?v="+video.id;
+  else external.removeAttribute("href");
+ }
+ if(valid&&shouldPlay&&eventFeature){
+  const frame=makeEventIframe(video.id);
+  activeEventIframe=frame;
+  eventFeature.appendChild(frame);
+  eventFeature.classList.add("is-playing");
+  if(eventPlayButton)eventPlayButton.hidden=true;
+ }
+}
+eventPlayButton?.addEventListener("click",()=>{if(activeEventVideo)showEventVideo(activeEventVideo,true)});
+function renderEventVideos(videos){
+ if(!eventVideoList)return;
+ eventVideoList.replaceChildren();
+ for(const video of videos){
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="event-video-choice";
+  button.dataset.videoId=video.id;
+  button.setAttribute("aria-pressed","false");
+  const image=document.createElement("img");
+  image.src=youtubeThumb(video.id);image.alt="";image.loading="lazy";image.decoding="async";
+  const body=document.createElement("span");body.className="event-video-choice__text";
+  const label=document.createElement("strong");label.textContent=video.label;
+  const desc=document.createElement("small");desc.textContent=video.type;
+  body.append(label,desc);button.append(image,body);
+  button.addEventListener("click",()=>showEventVideo(video,true));
+  eventVideoList.appendChild(button);
+ }
+ const count=$("#event-video-count");if(count)count.textContent=videos.length+" video"+(videos.length===1?"":"s");
+}
+function renderEventPhotos(photos){
+ if(!eventPhotoList)return;
+ eventPhotoList.replaceChildren();
+ const section=$("#event-photo-section");
+ if(section)section.hidden=photos.length===0;
+ for(const photo of photos){
+  const fig=document.createElement("figure");fig.className="event-photo";
+  const img=document.createElement("img");
+  img.src=photo.src;img.alt=photo.alt;img.loading="lazy";img.decoding="async";
+  const cap=document.createElement("figcaption");cap.textContent=photo.caption;
+  fig.append(img,cap);eventPhotoList.appendChild(fig);
+ }
+ const count=$("#event-photo-count");if(count)count.textContent=photos.length+" photos";
+}
+
 function openModal(dialog,origin){
  if(!dialog)return;
  if(videoDialog?.open&&dialog!==videoDialog)closeModal(videoDialog);
- if(eventDialog?.open&&dialog!==eventDialog)eventDialog.close();
+ if(eventDialog?.open&&dialog!==eventDialog)closeModal(eventDialog);
  priorFocus=origin||document.activeElement;
  if(typeof dialog.showModal==="function")dialog.showModal();
  else dialog.setAttribute("open","");
@@ -190,11 +311,13 @@ function closeModal(dialog){
  stopAllHoverPreviews();
  hoverCooldownUntil=Date.now()+900;
  if(dialog===videoDialog)stopVideoPlayback(); // synchronous, before the close animation/event
+ if(dialog===eventDialog)stopEventPlayback();
  if(dialog.open&&typeof dialog.close==="function")dialog.close();
  else{dialog.removeAttribute("open");onModalClosed();}
 }
 function onModalClosed(){
  if(!eventDialog?.open&&!videoDialog?.open)document.body.classList.remove("modal-open");
+ if(eventDialog&&!eventDialog.open)stopEventPlayback();
  if(videoDialog&&!videoDialog.open){
   stopVideoPlayback(); // also covers native Escape or external calls to dialog.close()
   stopAllHoverPreviews();
@@ -209,31 +332,22 @@ function onModalClosed(){
   stopAllHoverPreviews();
   hoverCooldownUntil=Date.now()+900;
   if(dialog===videoDialog)stopVideoPlayback();
+  if(dialog===eventDialog)stopEventPlayback();
  });
  $$("[data-close-dialog]",dialog).forEach(btn=>btn.addEventListener("click",()=>closeModal(dialog)));
 });
-function configureImage(img,src,placeholder){
- if(!img)return;
- img.hidden=true;if(placeholder)placeholder.hidden=false;
- if(src){
-  img.addEventListener("load",()=>{img.hidden=false;if(placeholder)placeholder.hidden=true},{once:true});
-  img.addEventListener("error",()=>{img.hidden=true;if(placeholder)placeholder.hidden=false},{once:true});
-  img.src=src;
- }else img.removeAttribute("src");
-}
 function openEvent(card,trigger){
- const config=events[card.dataset.project];if(!config||!eventDialog)return;
+ const config=events[card.dataset.project];
+ if(!config||!eventDialog)return;
+ stopAllHoverPreviews();
+ activeEventConfig=config;
  $("#event-dialog-title").textContent=config.title;
  $("#event-dialog-year").textContent=config.year;
  $("#event-dialog-summary").textContent=config.summary;
  $("#event-dialog-contribution").textContent=config.contribution;
- $("#event-banner-name").textContent=config.title;
- configureImage($("#event-banner-img"),config.banner,$(".event-banner-concept"));
- for(const name of ["motion","documentation"]){
-  const img=$('[data-event-asset="'+name+'"]',eventDialog);
-  const placeholder=img?.parentElement?.querySelector(".event-asset-placeholder");
-  configureImage(img,config[name],placeholder);
- }
+ renderEventVideos(config.videos);
+ renderEventPhotos(config.photos);
+ showEventVideo(config.videos[0]||null,false); // quiet thumbnail first; audio starts only on click
  openModal(eventDialog,trigger);
 }
 function openVideo(card,trigger){
@@ -279,8 +393,9 @@ $$(".work-trigger").forEach(trigger=>trigger.addEventListener("click",()=>{
 }));
 // Never leave embedded audio running when the tab is hidden or navigated away.
 document.addEventListener("visibilitychange",()=>{if(document.hidden){
- stopAllHoverPreviews();stopVideoPlayback();
+ stopAllHoverPreviews();stopVideoPlayback();stopEventPlayback();
  if(videoDialog?.open)closeModal(videoDialog);
+ if(eventDialog?.open)closeModal(eventDialog);
 }});
-window.addEventListener("pagehide",()=>{stopAllHoverPreviews();stopVideoPlayback();});
+window.addEventListener("pagehide",()=>{stopAllHoverPreviews();stopVideoPlayback();stopEventPlayback();});
 })();
