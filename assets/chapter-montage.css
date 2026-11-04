@@ -162,3 +162,16 @@
  #cinema-wrap .montage-progress span{animation:none!important;transform:scaleX(1)}
  #cinema-wrap .float-reel-card:hover .float-reel-card__poster{transform:none}
 }
+
+/* If real 1–2 second silent teaser clips are added later, the active clip
+   occupies the same shot without a layout reflow or YouTube player chrome. */
+#cinema-wrap .montage-clip{
+ position:absolute;z-index:1;inset:0;
+ display:block;width:100%;height:100%;
+ object-fit:cover;object-position:center;
+ opacity:0;pointer-events:none;
+ filter:brightness(.78) saturate(.95);
+ transition:opacity .25s ease;
+}
+#cinema-wrap .montage-clip.is-current{opacity:1}
+#cinema-wrap .montage-clip[hidden]{display:none!important}
