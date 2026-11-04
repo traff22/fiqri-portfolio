@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="assets/refinement.css">
 <link rel="stylesheet" href="assets/gallery-rebuild.css?v=1.3.1">
 <link rel="stylesheet" href="assets/chapter-montage.css?v=1.3.2">
+<link rel="stylesheet" href="assets/showreel-clean.css?v=1.4.0">
 
 
 
@@ -21,7 +22,7 @@
 <script defer src="assets/main.js?v=1.3.1"></script>
 <script defer src="assets/chapter-one.js?v=1.2.0"></script>
 <script defer src="assets/living-motion.js"></script>
-<script defer src="assets/work-gallery.js?v=1.3.1"></script><script defer src="assets/chapter-montage.js?v=1.3.1"></script></head>
+<script defer src="assets/work-gallery.js?v=1.3.1"></script><script defer src="assets/chapter-montage.js?v=1.4.0"></script></head>
 <body id="top">
 <a class="skip" href="#main">Skip to main content</a><div id="progress" class="progress" aria-hidden="true"></div>
 <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Portfolio introduction" data-splash-src="" hidden>
@@ -72,41 +73,20 @@
       <h2 id="cinema-title"><span class="cinema-copy-line">Raw footage.</span><span class="cinema-copy-line accent">Real feeling.</span></h2>
       <p class="cinema-deck cinema-copy-line">The difference is in the details: what stays, what moves, and what makes you feel.</p>
     </header>
-    <div class="cinema-frame showreel-shell" data-video-src="" aria-label="16 by 9 showreel video preview">
-      <div class="showreel-topline" aria-hidden="true"><span>FIQRI APRIANDI</span><span>WORK PREVIEW</span></div>
+    <div class="cinema-frame showreel-shell" aria-label="Silent five-second motion preview" data-video-src="">
       <div class="showreel-visual">
-        <video class="showreel-video" muted loop playsinline preload="none" hidden aria-label="Fiqri Apriandi video editing showreel"></video>
-        <div class="showreel-montage">
-          <img class="montage-shot montage-shot--a" alt="" decoding="async">
-          <img class="montage-shot montage-shot--b" alt="" decoding="async">
-          <video class="montage-clip montage-clip--a" muted playsinline preload="none" hidden aria-hidden="true"></video>
-          <video class="montage-clip montage-clip--b" muted playsinline preload="none" hidden aria-hidden="true"></video>
-          <div class="montage-credit"><span class="montage-credit__number">FRAME 001</span><strong class="montage-credit__name">Selected work</strong><span class="montage-credit__category">VIDEO · MOTION · STORY</span></div>
-          <div class="montage-progress" aria-hidden="true"><span></span></div>
-          <div class="montage-youtube-panel montage-youtube-panel--a" aria-hidden="true"><div id="montage-youtube-a"></div></div>
-          <div class="montage-youtube-panel montage-youtube-panel--b" aria-hidden="true"><div id="montage-youtube-b"></div></div>
-          <button type="button" class="montage-skip" aria-label="Skip to a random portfolio video">Next shot <span aria-hidden="true">↗</span></button>
-        </div>
-        <div class="showreel-placeholder">
-          <div class="showreel-glow" aria-hidden="true"></div>
-          <div class="showreel-glyph" aria-hidden="true">
-            <span class="glyph-outline glyph-outline-one"></span>
-            <span class="glyph-outline glyph-outline-two"></span>
-            <span class="glyph-cross glyph-cross-h"></span>
-            <span class="glyph-cross glyph-cross-v"></span>
-            <span class="glyph-word">FQ<span>.</span></span>
+        <div class="showreel-montage" role="group" aria-label="Selected event motion previews">
+          <div class="montage-fallback" aria-hidden="true"></div>
+          <video class="montage-clip montage-clip--a" muted playsinline loop preload="auto" aria-hidden="true"></video>
+          <video class="montage-clip montage-clip--b" muted playsinline loop preload="auto" aria-hidden="true"></video>
+          <div class="montage-overlay">
+            <strong class="montage-title">Age of Chaos</strong>
+            <span class="montage-timestamp" aria-label="Preview duration">00:00 / 00:05</span>
           </div>
-          <span class="showreel-slot mono">SELECTED FRAMES</span>
-          <div class="showreel-message">
-            <span class="mini-label">EDITING · MOTION · STORY</span>
-            <strong>Every frame<br>tells a story.</strong>
-          </div>
-          
+          <div class="montage-progress" role="progressbar" aria-label="Preview progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><span></span></div>
+          <button type="button" class="montage-skip" aria-label="Play a different preview"><span aria-hidden="true">Next ↗</span></button>
         </div>
-        <div class="showreel-vignette" aria-hidden="true"></div>
-        <div class="showreel-frame-lines" aria-hidden="true"></div>
       </div>
-      <div class="showreel-bottomline"><span class="mono">STORY / MOTION / MOMENT</span><button type="button" class="showreel-sound" hidden aria-label="Enable sound for showreel">Sound on ↗</button><span class="mono">CURATED WORK / FRAME STUDIES</span></div>
     </div>
     <div class="float-reel-card float-reel-card--one" data-float-depth="1" aria-label="Product motion video slot">
       <div class="float-reel-card__inner">
