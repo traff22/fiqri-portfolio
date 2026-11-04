@@ -1,6 +1,6 @@
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
-A responsive creative portfolio for Fiqri Apriandi. **V0.6** uses the latest single black-and-white portrait, purposeful camera/edit/motion icons, restrained copy, and a Chapter One heading that appears as soon as the scene enters the viewport and remains stationary and readable. Floating cards and the showreel frame retain independent motion.
+A responsive, cinematic portfolio for Fiqri Apriandi. **V1.0** contains 15 project cards, the exact four selected Highlights, category-aware Reels/Long-form/Event layouts, three video-backed event collections, and genuine Age of Chaos / Counter Trend event photography.
 
 ## Preview website
 
@@ -34,7 +34,8 @@ Then open http://localhost:4173 .
 - `assets/main.js` — splash/skip/replay, filters, reveal animations and base parallax.
 - `assets/chapter-one.css` — 16:9 showreel, floating preview cards, geometric shapes, and Blue Hour hover states.
 - `assets/chapter-one.js` — card depth parallax, interactive hover tilt, lazy video loading and optional sound control.
-- `assets/collage.css` — compact ratio-aware collage and mobile masonry for Highlights / All work.
+- `assets/collage.css` — base curated gallery styles.
+- `assets/portfolio-curation.css` — current V1.0 highlight collage, category grids and event case-study galleries.
 - `assets/living-motion.css` — original floating motion and interactive photographic card styling.
 - `assets/living-motion.js` — pointer-reactive portrait tilt/glare plus early, stationary Chapter One heading reveal.
 - `assets/refinement.css` — single-portrait editorial layout, accessible film iconography, and static chapter typography.
@@ -49,23 +50,28 @@ Then open http://localhost:4173 .
 
 **Important:** Project artworks and work descriptions are preview placeholders. Replace with authorized real case-study materials before using the website in job applications.
 
-## Editorial auto-collage — Highlights + All work (V0.8)
+## Current gallery and event case studies (V1.0)
 
-**Highlights** (4 hand-picked projects) and **All work** (6 projects) now switch automatically into a compact, gap-minimized gallery. On desktop, the 24-track CSS Grid balances complementary visual ratios in pairs:
+The website displays **15 projects**, including the four featured Highlights in this exact editorial order:
 
-- Reels portrait **9:16** beside long-form **16:9**
-- Event key visual **1760:761** beside product motion **16:9**
-- Another event key visual beside portrait reels (All work)
+1. **ADS Astronacci — Bitcoin Almanac 2025** (Reels, 9:16)
+2. **Cinematic Mancing** (Long-form, 16:9)
+3. **Age of Chaos** (Event, 1760:761 thumbnail)
+4. **Logistics 9 — Product Showcase** (Motion, 16:9)
 
-The existing DOM order stays intact for keyboard/screen-reader navigation. `assets/work-gallery.js` assigns a collage slot to each visible card automatically on each filter change; other category filters keep the existing full-width aspect-aware presentation. Adding more projects works with an even-column fallback.
+**All work** is a compact masonry wall. Category filters present 4 Reels as portrait, 5 Long-form videos as widescreen, motion work in mixed formats, and one card per event. Highlights uses a custom four-tile layout with no blank row next to the vertical Reel.
 
-On small screens the gallery switches to a compact **two-column masonry layout** using CSS columns, with tighter titles and gently cropped event thumbnails for readability. Event case studies themselves still show the **full 1760×761** banner, and video player playback keeps the original ratio. Collage mode is only an editorial *thumbnail view*.
+**Event architecture:** A visitor sees one prominent banner/bumper video cover per event. Clicking it opens a full event case study, with an interactive video selector and any uploaded photo assets. Switching selected videos unloads the previous iframe. Closing the popup, pressing Escape, switching tabs, or navigating away also unloads playback.
 
-Visual labels move inside thumbnails; descriptions remain available to modal views rather than producing rows of text underneath every tile.
+- **Age of Chaos**: banner `c9wCgrjlUhk`, photo assets `stage.webp` and `crew.webp`.
+- **Counter Trend**: banner loop `e4LDw8UeBVM`, speaker `ytYOsh3ZcWc`, talkshow `AH1l-VdQj1I`, photo `venue.webp`.
+- **Heavenly Whisper**: bumper `ydwCKwjdPHI`, music video `Vk4Me3JrLng`.
+- **TRIV Premiere 2026**: retained as an event case study placeholder until approved assets are provided.
 
-**Adding real thumbnails:** change a card's `data-poster-src=""` in `index.html` to an optimized image path such as `assets/posters/bitcoin-almanac.webp`. This is loaded lazily. If empty, the designed artwork placeholder remains, and the site does not fetch missing assets.
+Event photos supplied by the owner are compressed and stored at `assets/events/<event-slug>/*.webp`. The originals are not altered. Static assets are visible in the public repository.
 
-Styles: `assets/collage.css`. Layout logic: `assets/work-gallery.js`.
+`assets/portfolio-curation.css` is the latest layout layer and event modal styling. The interactive data and playback behavior live in `assets/work-gallery.js`. To add another video to an event, edit its `videos` array in the `events` object. To add photography, edit its `photos` array with a genuine path, caption and alt text. All event videos are embedded through YouTube's privacy-enhanced domain only after clicking Play.
+
 
 ## Real video projects / YouTube + native MP4 (V0.9)
 
@@ -82,7 +88,19 @@ The user-supplied portfolio is configured from the links supplied in November 20
 
 YouTube IDs appear as `data-youtube-id="VIDEO_ID"` on the corresponding `.work-media` element. The thumbnail loads lazily via `https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg`. Clicking the project opens a privacy-enhanced YouTube embed; a fallback **Watch on YouTube** link is available if embedding is restricted. Video titles are the user's labels and have not been independently checked against YouTube.
 
-The **Highlights** default is four existing/linked films (IHSG, Podtrade, Cinematic Mancing, Logistics 9). Additional placeholders for campaign/event/reels assets remain under **All work** until approved footage arrives.
+The current **Highlights** selection is Bitcoin Almanac Reels, Cinematic Mancing, Age of Chaos, and Logistics 9 Product Showcase. Nonfeatured projects remain available in All work and their corresponding category filters.
+
+### New linked videos in V1.0
+
+| Category | Video | YouTube ID |
+| --- | --- | --- |
+| Long-form | Logistics 9 — Yiwu Market Tour VLOG | `X4biFwBPwRg` |
+| Reels | ADS Astronacci — Bitcoin Almanac 2025 | `DkounxK31EU` |
+| Reels | Astronacci — NFP 100% | `E2D5KPuhug0` |
+| Reels | Logistics 9 — Garden Set | `wvAc12hybog` |
+| Reels | Logistics 9 — Custom Packaging | `9IurjSDUGdQ` |
+
+Event videos are recorded above under the event case-study section.
 
 ### Add work that is not on YouTube
 
