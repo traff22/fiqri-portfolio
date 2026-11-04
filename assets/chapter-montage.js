@@ -22,14 +22,15 @@ for(const img of scene?.querySelectorAll(".float-reel-card__poster")||[]){
 }
 
 const panels=stage?[...stage.querySelectorAll(".montage-stream")]:[];
-const title=stage?.querySelector(".montage-title");
-const clock=stage?.querySelector(".montage-timestamp");
+const title=shell?.querySelector(".montage-title");
+const clock=shell?.querySelector(".montage-timestamp");
 const bar=stage?.querySelector(".montage-progress");
-const skip=stage?.querySelector(".montage-skip");
+const skip=shell?.querySelector(".montage-skip");
 const skipText=skip?.querySelector("span");
 if(!scene||!stage||panels.length!==2||!title||!clock||!bar||!skip)return;
 
 const ID=/^[A-Za-z0-9_-]{11}$/;
+const OPENING_VIDEO_ID="hEhRkIbH-Pg";
 const FIVE_SECONDS=5000, FADE_MS=580, REVEAL_TIMEOUT=11000;
 const extraFilms=[
  {id:"ytYOsh3ZcWc",title:"Counter Trend — Speaker",category:"event",format:"event"},
@@ -54,6 +55,7 @@ const fromCards=[...document.querySelectorAll("#work .work-card[data-status='pub
 }).filter(Boolean);
 const catalog=[...new Map([...fromCards,...extraFilms].map(x=>[x.id,x])).values()]
  .filter(item=>item.format!=="portrait"&&item.category!=="reels");
+const openingFilm=catalog.find(item=>item.id===OPENING_VIDEO_ID)||null;
 if(!catalog.length)return;
 stage.dataset.sourceCount=String(catalog.length);
 stage.dataset.sourceFormat="landscape-only";
@@ -63,7 +65,7 @@ stage.dataset.previewMode="original-video-embed";
 const slots=panels.map(()=>({player:null,ready:false,request:null}));
 const failed=new Set();
 let visible=false,enabled=false,apiReady=false,apiLoading=false,blocked=false;
-let activeIndex=-1,current=null,bag=[],lastId="",lastCategory="";
+let activeIndex=-1,current=null,bag=[],lastId="",lastCategory="",openingPending=true;
 let currentTimer=0,preloadTimer=0,watchdog=0,fadeTimer=0,clockRaf=0;
 let timeStart=0,playhead=0,requestId=0,pendingPreload=null;
 
@@ -93,6 +95,17 @@ function reshuffle(){
  }
 }
 function pick(){
+ // Always introduce the Chapter One with the owner's own 2024 profile film.
+ // Random shuffle applies only to subsequent five-second segments.
+ if(openingPending){
+  openingPending=false;
+  if(openingFilm&&!failed.has(OPENING_VIDEO_ID)){
+   bag=bag.filter(item=>item.id!==OPENING_VIDEO_ID);
+   lastId=OPENING_VIDEO_ID;
+   lastCategory=openingFilm.category;
+   return {...openingFilm,isOpening:true};
+  }
+ }
  if(!bag.length)reshuffle();
  if(!bag.length)return null;
  const preferred=bag.find(x=>x.id!==lastId&&x.category!==lastCategory);
@@ -103,6 +116,7 @@ function pick(){
  return result;
 }
 function offsetFor(item,duration){
+ if(item.isOpening)return 0;
  if(!Number.isFinite(duration)||duration<=10)return Math.max(0,item.earliest||0);
  const minimum=Math.min(duration-6,Math.max(2,item.earliest||0));
  const upper=Math.max(minimum,duration-6.25);
@@ -140,6 +154,7 @@ function show(index,req){
  current=req.item;
  stage.dataset.playback="playing";
  stage.classList.add("is-playing");
+ shell.classList.add("is-playing");
  if(skipText)skipText.textContent="Next ↗";
  title.textContent=req.item.title;
  panels[index].dataset.format=req.item.format;
@@ -304,6 +319,10 @@ function stop(){
  enabled=false;clearTime();pendingPreload=null;
  slots.forEach((s,i)=>{safePause(i);s.request=null});
  activeIndex=-1;
+ openingPending=true;
+ bag=[];
+ lastId="";lastCategory="";
+ shell.classList.remove("is-playing");
  panels.forEach(p=>p.classList.remove("is-current"));
  stage.dataset.playback="paused";
 }
