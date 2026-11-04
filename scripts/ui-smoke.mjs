@@ -77,7 +77,7 @@ for (const [viewport, device] of [
     return {name,x:r.x,right:r.right,width:r.width,y:r.y,height:r.height,opacity:Number(getComputedStyle(el).opacity)};
   }));
   check(transforms.every(x=>x.width>40),device+": one of the 3 depth cards collapsed after scroll");
-  check(transforms.every(x=>x.x>=-12&&x.right<=window.innerWidth+12),
+  check(transforms.every(x=>x.x>=-12&&x.right<=viewport.width+12),
     device+": scroll pushed a floating depth card outside the viewport: "+JSON.stringify(transforms));
   report.push({device,depthScroll:transforms});
  }
