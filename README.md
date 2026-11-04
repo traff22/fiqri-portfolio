@@ -1,3 +1,12 @@
+## Editorial motion refinement — V1.8
+
+The blue/charcoal design, typography, projects, video playback and case-study layouts stay intact. Lightweight editor-inspired background particles now use SVG keyframe diamonds, focus and crop marks, film perforations, timeline ticks and waveform motifs.
+
+Independent far, middle and near planes move at different rates while scrolling, with gentle mouse depth on desktop. The effects extend through the hero, Chapter One, project gallery and Expertise, staying subtle behind project thumbnails. Existing Chapter One video and floating cards keep their established geometry and interactions.
+
+No motion library, third-party CDN or image asset was added. One shared requestAnimationFrame loop handles active parallax planes; mobile reduces strength, prefers-reduced-motion removes animation, Save Data disables JS parallax, and all visuals use aria-hidden and pointer-events:none.
+
+QA checks desktop/mobile rendering, horizontal overflow, depth response, reduced-motion support, selected-work filters and real-video player interaction.
 ## Chapter One V1.7 — fixed introduction and separate film caption
 
 - Every fresh Chapter One viewing session starts with the **actual** `Know More Bout Me — 2024` long-form video (`hEhRkIbH-Pg`), then continues the randomized selection of landscape projects. Reels are excluded from this 13-source landscape playlist.
