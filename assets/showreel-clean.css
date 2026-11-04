@@ -318,3 +318,139 @@
  #cinema-wrap .float-reel-card--two{scale:1.06!important}
  #cinema-wrap .float-reel-card--three{scale:.95!important}
 }
+
+
+/* V1.7 — separate 16:9 YouTube player from OUR branded caption.
+   The iframe receives its full legal viewport: no artificial masking,
+   crops of channel text or overlays over YouTube controls/branding. */
+#cinema-wrap .cinema-frame.showreel-shell{
+ aspect-ratio:auto!important;
+ height:auto!important;
+ padding:0 0 49px!important;
+ overflow:hidden!important;
+ box-sizing:border-box!important;
+}
+#cinema-wrap .cinema-frame.showreel-shell > .showreel-visual{
+ position:relative!important;
+ inset:auto!important;
+ width:100%!important;
+ height:auto!important;
+ aspect-ratio:16 / 9!important;
+ overflow:hidden!important;
+ border-radius:0!important;
+}
+#cinema-wrap .showreel-shell .showreel-montage::after{
+ content:none!important;
+ display:none!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay{
+ position:absolute!important;
+ left:0!important;right:0!important;bottom:0!important;
+ top:auto!important;
+ width:100%!important;height:49px!important;
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:space-between!important;
+ gap:14px!important;
+ padding:0 17px!important;
+ margin:0!important;
+ z-index:16!important;
+ background:linear-gradient(90deg,#0b1729,#0c1b33)!important;
+ border-top:1px solid #a9cfff39!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+ color:#f6fbff!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-title{
+ display:block!important;
+ position:static!important;
+ flex:1 1 auto!important;
+ min-width:0!important;max-width:none!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ padding:0!important;margin:0!important;
+ font:650 clamp(14px,1.25vw,19px)/1.15 "Space Grotesk",sans-serif!important;
+ letter-spacing:-.027em!important;
+ color:#f7fbff!important;
+ text-shadow:none!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-actions{
+ display:flex!important;
+ align-items:center!important;
+ flex:0 0 auto!important;
+ gap:12px!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-timestamp{
+ font:600 10px/1.2 "Space Grotesk",sans-serif!important;
+ color:#bdd6f2!important;
+ letter-spacing:.045em!important;
+ text-shadow:none!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-skip{
+ position:static!important;
+ inset:auto!important;
+ display:inline-flex!important;
+ flex:0 0 auto!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:auto!important;height:auto!important;
+ min-width:0!important;
+ opacity:1!important;
+ margin:0!important;padding:0!important;
+ cursor:pointer!important;
+ background:transparent!important;
+ border:0!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-skip span{
+ display:inline-block!important;
+ color:#e4f2ff!important;
+ opacity:1!important;
+ transform:none!important;
+ margin:0!important;
+ padding:7px 10px!important;
+ font:600 10px/1.1 "Space Grotesk",sans-serif!important;
+ letter-spacing:0!important;
+ border-radius:999px!important;
+ background:#5d99da16!important;
+ border:1px solid #83b8ed6d!important;
+ transition:background .2s,border-color .2s!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-skip:hover span{
+ background:#75b6ff32!important;
+ border-color:#a4d4ff!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-progress{
+ position:absolute!important;
+ left:0!important;right:0!important;top:auto!important;bottom:0!important;
+ width:100%!important;height:2px!important;
+ display:block!important;
+ background:#afd6ff24!important;
+ z-index:19!important;
+ pointer-events:none!important;
+}
+#cinema-wrap .showreel-shell > .montage-overlay .montage-progress span{
+ background:#acd2ff!important;
+ transform:scaleX(var(--segment-progress,0))!important;
+}
+#cinema-wrap .showreel-shell:not(.is-playing) > .montage-overlay .montage-title{
+ visibility:hidden!important;
+}
+/* Keep progress/label readable across the responsive breakpoints. */
+@media(max-width:700px){
+ #cinema-wrap .cinema-frame.showreel-shell{padding-bottom:38px!important}
+ #cinema-wrap .showreel-shell > .montage-overlay{
+  height:38px!important;
+  padding:0 8px!important;
+  gap:6px!important;
+ }
+ #cinema-wrap .showreel-shell > .montage-overlay .montage-title{
+  font-size:clamp(10px,2.7vw,13px)!important;
+ }
+ #cinema-wrap .showreel-shell > .montage-overlay .montage-actions{gap:5px!important}
+ #cinema-wrap .showreel-shell > .montage-overlay .montage-timestamp{font-size:8px!important}
+ #cinema-wrap .showreel-shell > .montage-overlay .montage-skip span{
+  padding:5px 7px!important;font-size:8px!important
+ }
+}
