@@ -16,8 +16,8 @@ function galleryColumnCount(mode){
 }
 function setGalleryMode(kind){
  activeGalleryMode=kind;
- const masonry=kind==="all"||kind==="motion"||kind==="longform";
- gallerySection?.classList.toggle("gallery-collage",kind==="highlights"||masonry);
+ const masonry=kind==="all"||kind==="longform";
+ gallerySection?.classList.toggle("gallery-collage",kind==="highlights"||kind==="motion"||masonry);
  if(gallerySection)gallerySection.dataset.galleryMode=kind;
  if(!galleryGrid)return;
  // Rebuild from canonical project order when switching modes; this restores
@@ -52,7 +52,7 @@ function setGalleryMode(kind){
 }
 let resizeFrame=0;
 window.addEventListener("resize",()=>{
- if(!["all","motion","longform"].includes(activeGalleryMode))return;
+ if(!["all","longform"].includes(activeGalleryMode))return;
  if(resizeFrame)cancelAnimationFrame(resizeFrame);
  resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;setGalleryMode(activeGalleryMode)});
 },{passive:true});
