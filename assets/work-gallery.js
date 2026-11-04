@@ -50,12 +50,12 @@ function setThumbnailWithFallback(img,id){
   choice++;
   img.src=thumbnailFor(id,choices[choice]);
  }
- img.addEventListener("error",next);
- img.addEventListener("load",()=>{
+ img.onerror=next;
+ img.onload=()=>{
   if(img.naturalWidth<480&&choice<choices.length-1){next();return}
   img.hidden=false;
   img.closest(".work-media")?.classList.add("has-poster");
- });
+ };
  img.src=thumbnailFor(id);
  if(img.complete&&img.naturalWidth>=480)img.closest(".work-media")?.classList.add("has-poster");
 }
@@ -75,7 +75,7 @@ cards.forEach(card=>{
  }
 });
 
-/* Desktop hover: muted YouTube video preview after a deliberate pause.
+/* Desktop hover: launch a muted video preview as soon as pointer enters.
    Touch/reduced-motion/save-data never loads a hovering iframe. Clicking
    always opens the independent player dialog with full controls. */
 const finePointer=window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -195,12 +195,6 @@ const events={
    {id:"Vk4Me3JrLng",label:"Tuhan Pengharapanku",type:"Music video"}
   ],
   photos:[]
- },
- "triv-premiere":{
-  title:"TRIV Premiere 2026",year:"2026",
-  summary:"Event production and cinematic documentation; approved assets will be added.",
-  contribution:"Event aftermovie editing, camera operation, B-roll and motion assets.",
-  videos:[],photos:[]
  }
 };
 const eventFeature=$("#event-feature-player");
