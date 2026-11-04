@@ -1,18 +1,10 @@
-## Chapter One — shuffled genuine video excerpts (V1.5)
+## Chapter One V1.7 — fixed introduction and separate film caption
 
-The user requested **real moving footage from their existing video projects**, not Ken Burns/zoom effects on event photos. The Chapter One preview has therefore stopped using the generated still-photo MP4/WebM assets. The 15 published YouTube-backed project cards and 3 additional event videos (Counter Trend Speaker, Counter Trend Talkshow, Heavenly Whisper music video) form an **18-source shuffle**.
-
-When the hero/chapter approaches the viewport, the site starts the official YouTube IFrame Player API in **muted** mode. Each clip begins at a randomly selected point (within the video's playable duration), appears only after a PLAYING state, and runs for about **five seconds** before the next random project cross-dissolves in. It preloads the next player when possible. Clicking **Next** skips to another random project. Shuffle avoids immediate repeats; embedded/unavailable videos are skipped. Playback is paused off-screen and when the document is hidden.
-
-### Important constraint — YouTube player versus native MP4
-
-This uses the *actual published videos* rather than fabricated motion. YouTube's `controls=0` hides the main player controls, but **YouTube's channel branding and other overlays cannot be guaranteed hidden**; the `modestbranding` parameter has been deprecated. Some creators restrict embedding, and autoplay/seek buffering is controlled by the browser and YouTube. The player maintains a clean outer frame with just the portfolio project title, five-second timecode and thin progress bar, but the external iframe may still show its own metadata.
-
-To achieve truly **no YouTube branding, no external loading pause, seamless 5-second cuts and full-resolution video**, export actual footage snippets from the relevant Premiere Pro / After Effects projects (with permission to republish) into optimized MP4/WebM. Then host the permitted files through a media host/CDN and change the player to native HTML5. This cannot be fully achieved from YouTube watch links alone.
-
-### Tests
-
-Playwright's desktop/mobile layout test checks no card collisions, native project aspect ratios and Chapter One spacing. A deterministic mock of the YouTube Player API tests the **18-source video catalog, random seek commands, muted state, user click to skip and timed auto-next**. Because the mock cannot validate third-party network permissions or streaming behavior, real YouTube playback still needs checking in the visitor's browser.
+- Every fresh Chapter One viewing session starts with the **actual** `Know More Bout Me — 2024` long-form video (`hEhRkIbH-Pg`), then continues the randomized selection of landscape projects. Reels are excluded from this 13-source landscape playlist.
+- `Know More Bout Me — 2024` is classified as **Long-form / Archive**, not Motion. Filter counts: Long-form 6, Motion 6, Reels 5, Events 3, Highlights 4, All Work 15.
+- The YouTube video area retains its entire 16:9 player viewport. The portfolio's own project title, five-second timecode, slim progress bar, and Next button sit in a separate dark strip **beneath** the player rather than covering the footage. Clicking Next continues the random excerpt sequence.
+- Official YouTube embed parameters already use `controls=0`. YouTube's own channel metadata, pause icon, branding and recommendations **cannot be guaranteed hidden**; the deprecated `showinfo` and `modestbranding` controls no longer work. The official YouTube player cannot be covered or altered to conceal its UI; for a completely clean showreel, supply permissioned original MP4/WebM footage and use a native video player instead.
+- Regression checks validate the first title and video ID, correct category, native 16:9 viewport, caption physically below the player, scroll spacing, and functioning filter counts.
 
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
