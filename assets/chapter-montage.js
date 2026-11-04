@@ -114,14 +114,19 @@ async function changeClip(force=false){
    const old=videos[oldIndex];
    old.classList.remove("is-current");
    clearTimeout(pauseTimeout);
-   pauseTimeout=setTimeout(()=>{if(currentIndex!==oldIndex)old.pause()},FADE+50);
+   // Do not change the outgoing source until its dissolve is fully complete.
+   pauseTimeout=setTimeout(()=>{
+    if(currentIndex===oldIndex||!running)return;
+    old.pause();
+    prebuffer();
+   },FADE+100);
   }
   shell.classList.add("is-montage-active");
   title.textContent=item.title;
   showProgress(0);
   frameStart=performance.now();
   if(!reduced.matches&&!saveData())raf=requestAnimationFrame(tick);
-  prebuffer();
+  if(oldIndex<0)prebuffer();
  }catch(_){
   // Never display a broken player or branding. Keep the existing film if loaded;
   // otherwise use the clean blue placeholder while trying another local clip.
