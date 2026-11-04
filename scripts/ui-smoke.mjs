@@ -50,6 +50,16 @@ for (const [viewport, device] of [
  const navigation=await page.locator("#cinema-wrap .cinema-view-work").boundingBox();
  check(intersection(stageAfter,navigation)<20,device+": chapter navigation CTA intersects the preview frame");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-depth.png"});
+ const currentTitle=await page.locator("#cinema-wrap .montage-title").evaluate(el=>{
+  const r=el.getBoundingClientRect(),f=el.closest(".showreel-shell").getBoundingClientRect();
+  const st=getComputedStyle(el);
+  return {text:el.textContent,display:st.display,visibility:st.visibility,opacity:st.opacity,width:r.width,height:r.height,
+   inside:r.left>=f.left-2&&r.right<=f.right+2&&r.top>=f.top-2&&r.bottom<=f.bottom+2};
+ });
+ check(currentTitle.display!=="none"&&currentTitle.visibility==="visible"&&Number(currentTitle.opacity)>.95&&currentTitle.width>40&&currentTitle.inside,
+  device+": chapter project title is not readable: "+JSON.stringify(currentTitle));
+ report.push({device,titleVisibility:currentTitle});
+
  report.push({device,chapter:"restrained zoom forward",initialWidth:Math.round(stageStart.width),endWidth:Math.round(stageAfter.width)});
  await page.emulateMedia({reducedMotion:"reduce"});
 
