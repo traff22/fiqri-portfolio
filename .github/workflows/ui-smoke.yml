@@ -6,6 +6,7 @@ on:
       - "index.html"
       - "assets/**"
       - "scripts/ui-smoke.mjs"
+      - "scripts/montage-smoke.mjs"
       - ".github/workflows/ui-smoke.yml"
   workflow_dispatch:
 jobs:
