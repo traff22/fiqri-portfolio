@@ -17,9 +17,9 @@ const DURATION=5000,FADE=500;
 const reduced=window.matchMedia("(prefers-reduced-motion: reduce)");
 const saveData=()=>!!navigator.connection?.saveData;
 const clips=[
- {title:"Age of Chaos",src:"assets/showreel/age-of-chaos-stage.mp4"},
- {title:"Counter Trend",src:"assets/showreel/counter-trend-venue.mp4"},
- {title:"Behind the Scenes",src:"assets/showreel/age-of-chaos-crew.mp4"}
+ {title:"Age of Chaos",base:"assets/showreel/age-of-chaos-stage"},
+ {title:"Counter Trend",base:"assets/showreel/counter-trend-venue"},
+ {title:"Behind the Scenes",base:"assets/showreel/age-of-chaos-crew"}
 ];
 let visible=false,running=false,started=false,currentIndex=-1,current=null;
 let queued=null,queueIndex=-1,lastTitle="",queue=[],generation=0,raf=0,frameStart=0;
@@ -47,9 +47,11 @@ function prepare(index,item){
  const v=videos[index];
  v.muted=true;v.volume=0;v.defaultMuted=true;
  v.playsInline=true;v.loop=true;v.autoplay=false;
- if(v.dataset.clip!==item.src){
-  v.dataset.clip=item.src;
-  v.src=item.src;
+ const webm=!!v.canPlayType('video/webm; codecs="vp9"');
+ const url=item.base+(webm?".webm":".mp4");
+ if(v.dataset.clip!==url){
+  v.dataset.clip=url;
+  v.src=url;
   v.preload="auto";
   v.load();
  }
