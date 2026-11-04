@@ -89,14 +89,18 @@ function animate(){
   page.style.setProperty("--glyph-angle",(e*8).toFixed(2)+"deg");
   page.style.setProperty("--showreel-message-y",(e*-12).toFixed(2)+"px");
   page.style.setProperty("--showreel-message-opacity",clamp(1-Math.max(0,p-.56)*2.8).toFixed(3));
-  const sign=[-1,1,-1];
+  // Cinematic depth should be felt through relative size, light and distance,
+  // not by ejecting the supporting cards beyond the viewport during scroll.
+  const direction=[-1,1,-1];
+  const drift=mobile?[5,6,5]:[11,13,15];
+  const lift=mobile?[4,-7,3]:[9,-19,8];
+  const spin=mobile?[.7,.9,.7]:[1.5,2.4,1.8];
   floating.forEach((card,i)=>{
-   const direction=sign[i],depth=(i+1)*.43,range=mobile?32:110;
-   card.style.setProperty("--float-x",(direction*(4+e*range*depth)).toFixed(2)+"px");
-   card.style.setProperty("--float-y",(((i===1?-1:1)*e*(mobile?55:145)*depth)).toFixed(2)+"px");
-   card.style.setProperty("--float-rot",(direction*e*(mobile?7:18)*depth).toFixed(2)+"deg");
-   card.style.setProperty("--float-scale",(1-e*.045*depth).toFixed(3));
-   card.style.setProperty("--float-opacity",clamp(1-Math.max(0,p-.38)*(mobile?2.7:2.2)).toFixed(3));
+   card.style.setProperty("--float-x",(direction[i]*(3+e*drift[i])).toFixed(2)+"px");
+   card.style.setProperty("--float-y",(e*lift[i]).toFixed(2)+"px");
+   card.style.setProperty("--float-rot",(direction[i]*e*spin[i]).toFixed(2)+"deg");
+   card.style.setProperty("--float-scale",(1-e*.018).toFixed(3));
+   card.style.setProperty("--float-opacity",(1-e*.04).toFixed(3));
   });
  }
  syncPlayback();
