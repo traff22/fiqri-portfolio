@@ -1,18 +1,22 @@
-## Chapter One — clean native video montage (V1.4)
+## Chapter One — shuffled genuine video excerpts (V1.5)
 
-The central screen no longer embeds YouTube. The old iframe player displayed its own channel name, pause control, suggestions and logo on top of the website's text. The new player is **native HTML5 video** with **one project title**, **an elapsed/total timer**, **a thin five-second progress bar**, and an unobtrusive whole-screen **Next** click target. No channel branding or additional frame labels are drawn. Two prebuffered video elements cross-dissolve around each five-second mark. Playback is muted and pauses offscreen / when the tab is hidden.
+The user requested **real moving footage from their existing video projects**, not Ken Burns/zoom effects on event photos. The Chapter One preview has therefore stopped using the generated still-photo MP4/WebM assets. The 15 published YouTube-backed project cards and 3 additional event videos (Counter Trend Speaker, Counter Trend Talkshow, Heavenly Whisper music video) form an **18-source shuffle**.
 
-**Current video assets:** `assets/showreel/age-of-chaos-stage.{webm,mp4}`, `counter-trend-venue.{webm,mp4}`, and `age-of-chaos-crew.{webm,mp4}`. These are **short animated motion treatments of event photographs provided by the portfolio owner**, not excerpts from the source films. They serve as a transparent visual stand-in until real approved motion samples are provided. WebM VP9 supports browsers using Chromium without H.264 codecs; MP4 is retained as an alternative for Safari and other browsers. Files are approximately 45–85 KB per clip, so the visible video starts without loading an external embed.
+When the hero/chapter approaches the viewport, the site starts the official YouTube IFrame Player API in **muted** mode. Each clip begins at a randomly selected point (within the video's playable duration), appears only after a PLAYING state, and runs for about **five seconds** before the next random project cross-dissolves in. It preloads the next player when possible. Clicking **Next** skips to another random project. Shuffle avoids immediate repeats; embedded/unavailable videos are skipped. Playback is paused off-screen and when the document is hidden.
 
-**Replace with genuine footage:** Export your actual 5-second silent video clips from Premiere/After Effects as H.264 MP4 and optionally VP9 WebM. Copy them into `assets/showreel/` and update the playlist in `assets/chapter-montage.js`; match the filename bases. Do not rehost third-party material without appropriate rights. Original project links and the regular YouTube player in Selected Work remain unchanged.
+### Important constraint — YouTube player versus native MP4
 
-**Motion/layout:** The sticky Chapter One showreel frame grows a restrained ~13% during desktop scroll while its three supporting cards recede; the frame is a native 16:9 viewport. Headlines and the Explore Work CTA remain outside the main film. Mobile preserves a smaller ~5% zoom without covering the heading.
+This uses the *actual published videos* rather than fabricated motion. YouTube's `controls=0` hides the main player controls, but **YouTube's channel branding and other overlays cannot be guaranteed hidden**; the `modestbranding` parameter has been deprecated. Some creators restrict embedding, and autoplay/seek buffering is controlled by the browser and YouTube. The player maintains a clean outer frame with just the portfolio project title, five-second timecode and thin progress bar, but the external iframe may still show its own metadata.
 
-**Regression checks:** Playwright validates the clean video playback, timecode advance, skip to a different clip, zero YouTube iframe elements inside Chapter One, project title visibility and desktop/mobile native-aspect project gallery layouts.
+To achieve truly **no YouTube branding, no external loading pause, seamless 5-second cuts and full-resolution video**, export actual footage snippets from the relevant Premiere Pro / After Effects projects (with permission to republish) into optimized MP4/WebM. Then host the permitted files through a media host/CDN and change the player to native HTML5. This cannot be fully achieved from YouTube watch links alone.
+
+### Tests
+
+Playwright's desktop/mobile layout test checks no card collisions, native project aspect ratios and Chapter One spacing. A deterministic mock of the YouTube Player API tests the **18-source video catalog, random seek commands, muted state, user click to skip and timed auto-next**. Because the mock cannot validate third-party network permissions or streaming behavior, real YouTube playback still needs checking in the visitor's browser.
 
 # Fiqri Apriandi — Cinematic Portfolio Preview
 
-A responsive, cinematic portfolio for Fiqri Apriandi. **V1.4** contains 15 project cards including A-CLUB Wrapped 2025 (TRIV Premiere removed), the exact four selected Highlights, native-aspect video thumbnails, three event case studies, and genuine Age of Chaos / Counter Trend event photography.
+A responsive, cinematic portfolio for Fiqri Apriandi. **V1.5** contains 15 project cards including A-CLUB Wrapped 2025 (TRIV Premiere removed), the exact four selected Highlights, native-aspect video thumbnails, three event case studies, and genuine Age of Chaos / Counter Trend event photography.
 
 ## Preview website
 
