@@ -93,6 +93,7 @@ for (const [viewport, device] of [
 
  check(stageAfter.width>stageStart.width*(device==="mobile"?1.03:1.07)&&stageAfter.width<stageStart.width*1.23,
    device+": main frame scale not in the restrained zoom range, start "+stageStart.width+" end "+stageAfter.width);
+ if(device==="desktop")console.log("CHAPTER_COLLISION_GEOMETRY="+JSON.stringify({stageAfter,chapterCopy,overlap:intersection(stageAfter,chapterCopy),scrollTop:await page.evaluate(()=>scrollY),css:await page.locator("#cinema-wrap").evaluate(el=>({section:el.getBoundingClientRect().toJSON(),scale:getComputedStyle(el.querySelector(".showreel-shell")).transform,copyOpacity:getComputedStyle(el.querySelector(".cinema-copy")).opacity,copyStyle:getComputedStyle(el.querySelector(".cinema-copy")).transform}))}));
  check(intersection(stageAfter,chapterCopy)<20,device+": Chapter One copy overlaps frame during scroll");
  const navigation=await page.locator("#cinema-wrap .cinema-view-work").boundingBox();
  check(intersection(stageAfter,navigation)<20,device+": chapter navigation CTA intersects the preview frame");
