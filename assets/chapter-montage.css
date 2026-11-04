@@ -327,3 +327,17 @@
  #cinema-wrap .montage-shot{transition:none;animation:none!important}
  #cinema-wrap .float-reel-card{scale:1;transition:none}
 }
+
+
+/* V1.3.1 — keep the external navigation CTA outside the growing film.
+   The former centered button touched the lower frame edge on scroll. */
+@media(min-width:701px){
+ #cinema-wrap .cinema-footer{
+  left:auto!important;right:6%!important;
+  bottom:5%!important;
+  width:auto;justify-content:flex-end!important;
+ }
+}
+@media(max-width:700px){
+ #cinema-wrap .cinema-frame.showreel-shell{width:92vw}
+}
