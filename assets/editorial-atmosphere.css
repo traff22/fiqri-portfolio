@@ -3,7 +3,9 @@
  * Visuals stay BEHIND content; don't alter the established type or gallery geometry.
  */
 :root{--ed-ice:#b5d8ff;--ed-blue:#79aeef}
-.hero,.cinema-stick,#work,.expertise{position:relative}
+.hero,#work,.expertise{position:relative}
+/* Chapter One must remain sticky; never reset its positioning context. */
+.cinema-stick{position:sticky}
 .hero>.editorial-atmosphere,
 .cinema-stick>.editorial-atmosphere,
 #work>.editorial-atmosphere,
