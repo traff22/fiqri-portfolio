@@ -324,7 +324,7 @@ button:focus-visible,a:focus-visible {
   border-top:3px solid #d2a283;
 }
 .contact h2{color:#14212b}
-.contact .eyebrow{color:#936d53}
+.contact .eyebrow{color:#77533e}
 .contact .section-lead,
 .contact .muted{color:#4a5960}
 .contact .mail{
@@ -332,7 +332,7 @@ button:focus-visible,a:focus-visible {
   border-bottom:2px solid #b47752;
   transition:color .2s ease,border-color .2s ease;
 }
-.contact .mail:hover{color:#955a37;border-color:#955a37}
+.contact .mail:hover{color:#905b3d;border-color:#905b3d}
 .contact .whatsapp-contact{
   background:#172831;
   background-image:none;
