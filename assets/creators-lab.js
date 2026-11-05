@@ -39,7 +39,7 @@
 
   // First-party, same-origin SVG is editable artwork, not an external asset
   // or a fake raster of an interactive scene.
-  fetch("assets/creator-workspace.svg")
+  fetch("assets/creator-workspace.svg?v=2.0.0")
     .then(response=>{if(!response.ok)throw Error("Artwork unavailable");return response.text()})
     .then(source=>{
       const xml=new DOMParser().parseFromString(source,"image/svg+xml");
