@@ -1,0 +1,138 @@
+/* Fiqri Portfolio / The little things (easter eggs v1)
+   Three quiet discoveries, no third-party effects or asset downloads. */
+
+/* SECRET 01 — Director's Cut */
+dialog.directors-cut {
+  position:fixed;
+  width:min(650px,calc(100vw - 28px));
+  max-height:calc(100dvh - 32px);
+  margin:auto;
+  padding:0;
+  overflow:auto;
+  border:1px solid #99c9f17d;
+  border-radius:22px;
+  color:#f0f7ff;
+  color-scheme:dark;
+  background:radial-gradient(circle at 88% 4%,#254c71 0%,transparent 50%),
+             linear-gradient(145deg,#0c1b30,#080f1e 82%);
+  box-shadow:0 28px 125px #000c,0 0 75px #569be92b;
+}
+dialog.directors-cut:not([open]){display:none}
+dialog.directors-cut::backdrop{background:#020817d9;backdrop-filter:blur(8px)}
+body.directors-cut-open{overflow:hidden}
+.directors-cut__inner{padding:clamp(22px,5vw,42px)}
+.directors-cut__topline{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  font:700 10px/1.5 "Space Grotesk",sans-serif;letter-spacing:.18em;color:#94caff;
+}
+.directors-cut__close{
+  display:grid;place-items:center;width:44px;height:44px;flex:none;
+  border:1px solid #a5cefa68;border-radius:50%;
+  background:#172d46;color:#edf6ff;
+  cursor:pointer;font:500 26px/1 "Space Grotesk",sans-serif;
+}
+.directors-cut__close:hover{background:#264563}
+.directors-cut__close:focus-visible{outline:2px solid #d4eaff;outline-offset:3px}
+.directors-cut__title{
+  margin:35px 0 13px;
+  font:600 clamp(38px,7.5vw,67px)/1.02 "Space Grotesk",sans-serif;
+  letter-spacing:-.075em;
+}
+.directors-cut__title em{font-style:normal;color:#abd4ff}
+.directors-cut__lead{color:#aec6de;font:400 14px/1.7 "DM Sans",sans-serif;max-width:43ch;margin:0 0 28px}
+.directors-cut__timeline{display:grid;gap:0;border-top:1px solid #80b5e450}
+.directors-cut__scene{
+  display:grid;grid-template-columns:72px 1fr;gap:16px;
+  padding:19px 0;border-bottom:1px solid #80b5e436;
+}
+.directors-cut__time{font:700 10px/1.6 "Space Grotesk",sans-serif;color:#7db5ef;letter-spacing:.08em}
+.directors-cut__scene strong{display:block;margin-bottom:5px;font:600 17px/1.25 "Space Grotesk",sans-serif;color:#f3f8ff}
+.directors-cut__scene p{margin:0;color:#acbed3;font:400 12px/1.6 "DM Sans",sans-serif}
+.directors-cut__end{display:flex;align-items:center;gap:10px;margin-top:25px;color:#b7d1eb;font:600 10px/1.5 "Space Grotesk",sans-serif;letter-spacing:.12em}
+.directors-cut__end::before{content:"";width:24px;height:2px;flex:none;background:#9dceff}
+
+/* SECRET 02 — Project editor notes. Never hijack normal project clicks. */
+.work-card .easter-work-note{
+  position:absolute;
+  inset:0;
+  z-index:13;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:13px;
+  padding:clamp(14px,6%,27px);
+  border-radius:inherit;
+  overflow:hidden;
+  color:#f1f7ff;
+  background:linear-gradient(140deg,#061323f2 1%,#0b2441ed 55%,#163657e8);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(7px);
+  transition:opacity .25s ease,transform .25s ease,visibility .25s;
+  pointer-events:none;
+  text-align:left;
+}
+.work-card.is-easter-peeking .easter-work-note{
+  opacity:1;visibility:visible;transform:none;
+}
+.easter-work-note__eyebrow{
+  display:block;
+  font:700 clamp(8px,.75vw,10px)/1.5 "Space Grotesk",sans-serif;
+  letter-spacing:.16em;color:#9dcaff;
+}
+.easter-work-note__copy{
+  display:block;
+  max-width:25ch;
+  font:600 clamp(15px,1.9vw,25px)/1.25 "Space Grotesk",sans-serif;
+  letter-spacing:-.035em;
+  text-wrap:balance;
+}
+.work-card[data-format="portrait"] .easter-work-note__copy{
+  font-size:clamp(15px,2vw,24px);
+}
+.work-card .work-trigger{-webkit-touch-callout:none}
+
+/* SECRET 03 — Final-frame credit appears when the visitor finishes scrolling. */
+.footer-final-note{
+  min-height:70px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:11px;
+  padding:8px 0 31px;
+  color:#a7c6e7;
+  font:500 11px/1.5 "Space Grotesk",sans-serif;
+  text-align:center;
+  letter-spacing:.05em;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .8s ease,transform .8s ease;
+  pointer-events:none;
+}
+.footer-final-note.is-visible{opacity:1;transform:none}
+.footer-final-note__star{color:#a5d7ff;font-size:15px}
+.footer-final-note__fin{color:#7d9fbe;font-size:9px;letter-spacing:.18em}
+
+@media(max-width:700px){
+  .directors-cut__title{margin-top:25px}
+  .directors-cut__scene{grid-template-columns:55px 1fr;gap:12px;padding:15px 0}
+  .directors-cut__scene strong{font-size:15px}
+  .directors-cut__scene p{font-size:12px}
+  .work-card .easter-work-note{gap:7px;padding:13px}
+  .easter-work-note__eyebrow{font-size:8px}
+  .easter-work-note__copy{font-size:clamp(12px,3vw,17px)}
+  .work-card[data-format="portrait"] .easter-work-note__copy{font-size:clamp(13px,3.2vw,17px)}
+  .footer-final-note{padding-bottom:23px;font-size:10px;min-height:74px}
+  .footer-final-note__fin{font-size:8px}
+}
+@media(max-width:359px){
+  .directors-cut__inner{padding:20px}
+  .directors-cut__scene{grid-template-columns:1fr;gap:3px}
+  .work-card .easter-work-note{padding:9px}
+  .easter-work-note__copy{font-size:12px}
+  .footer-final-note{gap:6px;font-size:9px;letter-spacing:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .work-card .easter-work-note,.footer-final-note{transition:none;transform:none}
+}
