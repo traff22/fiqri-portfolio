@@ -47,11 +47,13 @@ for (const [viewport, device] of [
   className:el.className,display:getComputedStyle(el).display
  })));
  const visibleSatellites=satellites.filter(s=>s.display!=="none");
- check(visibleSatellites.length===(device==="desktop"?1:0),
-  device+": expected a single desktop film depth cue, none on mobile: "+JSON.stringify(satellites));
- if(device==="desktop")check(visibleSatellites[0].className.includes("float-reel-card--two"),
-  device+": wrong supporting film card shown");
- report.push({device,satelliteCardsVisible:visibleSatellites.length});
+ check(visibleSatellites.length===(device==="desktop"?3:2),
+  device+": thumbnail count incorrect: "+JSON.stringify(satellites));
+ if(device==="desktop"){
+  check(["one","two","three"].every(part=>visibleSatellites.some(s=>s.className.includes("float-reel-card--"+part))),
+   device+": all three real work thumbnails must appear");
+ }
+ report.push({device,projectThumbnailCount:visibleSatellites.length});
 
  check(intersection(stageStart,chapterCopy)<20,device+": Chapter One copy overlaps main frame at start");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-start.png"});
