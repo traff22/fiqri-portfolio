@@ -8,6 +8,7 @@ on:
       - "scripts/ui-smoke.mjs"
       - "scripts/montage-smoke.mjs"
       - "scripts/atmosphere-smoke.mjs"
+      - "scripts/easter-eggs-smoke.mjs"
       - ".github/workflows/ui-smoke.yml"
   workflow_dispatch:
 jobs:
@@ -28,6 +29,7 @@ jobs:
           mkdir -p screenshots
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/fiqri-ui-server.log 2>&1 &
           sleep 2
+          node scripts/easter-eggs-smoke.mjs
           node scripts/ui-smoke.mjs
           node scripts/montage-smoke.mjs
           node scripts/atmosphere-smoke.mjs
