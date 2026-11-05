@@ -60,10 +60,13 @@
 /* Real film still while the official YouTube player is loading or blocked.
    This is a truthful static preview, never disguised as video playback. */
 #cinema-wrap .showreel-shell .montage-fallback {
-  background:
+  background-color:#121f29;
+  background-image:
     linear-gradient(180deg,#07111a49 0%,#09151cb6 100%),
-    url("https://i.ytimg.com/vi/hEhRkIbH-Pg/hqdefault.jpg") center/cover no-repeat,
-    #121f29;
+    url("https://i.ytimg.com/vi/hEhRkIbH-Pg/hqdefault.jpg");
+  background-position:center,center;
+  background-size:cover,cover;
+  background-repeat:no-repeat,no-repeat;
   filter:saturate(.78);
 }
 #cinema-wrap .showreel-shell .montage-fallback::before {
