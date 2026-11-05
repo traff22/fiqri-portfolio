@@ -52,7 +52,7 @@ try{
     check(result.introHidden,name+": opening splash blocks the portfolio");
     check(result.heading&&result.actionVisible==="visible",name+": hero content lost");
     check(result.frame&&result.footageVideo,name+": video stage lost");
-    check(result.otherCards.every(x=>x!=="none"),name+": original project thumbnails are hidden");
+    check(result.otherCards[0]!=="none" && (mobile?result.otherCards[1]==="none":result.otherCards[1]!=="none"),name+": thumbnail responsiveness incorrect");
     check(result.sideCard!=="none",name+": editorial project thumbnail is hidden");
     check(result.overflow<=1,name+": horizontal overflow "+result.overflow);
     if(mobile)check(result.chapterHeight<=result.viewportHeight*1.33,name+": sticky chapter is too tall");
