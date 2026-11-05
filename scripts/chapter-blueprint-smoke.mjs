@@ -35,7 +35,7 @@ try{
           .map(c=>({name:c.className.match(/--(\w+)/)[1],...box(c),
             // Layout size, not the rotated bounding box.
             media:(m=>({width:m.offsetWidth,height:m.offsetHeight}))(c.querySelector(".float-reel-card__media"))}));
-        const links=[...document.querySelectorAll(".fq-blueprint__link")].map(p=>{
+        const links=[...document.querySelectorAll(".fq-blueprint__clip:not([display]) .fq-blueprint__link")].map(p=>{
           const d=p.getAttribute("d"),n=d.match(/-?\d+(\.\d+)?/g).map(Number);
           const vertical=/^M[\d.\- ]+V/.test(d);
           // Vertical links end on a y value, side links on an x value.
@@ -71,6 +71,31 @@ try{
       assert(g.overflow<=1,tag+": horizontal overflow "+g.overflow);
       if(progress===.5)await page.screenshot({path:"screenshots/chapter-blueprint-"+name+".png"});
     }
+    // Follow the edit: the clip matching the film on screen becomes the source.
+    const state=()=>page.evaluate(()=>({
+      source:document.querySelector(".fq-blueprint").dataset.activeSource,
+      cards:Object.fromEntries([...document.querySelectorAll(".float-reel-card")].map(c=>[
+        c.className.match(/--(\w+)/)[1],
+        c.classList.contains("is-source")?"source":c.classList.contains("is-idle")?"idle":"neutral"])),
+      active:[...document.querySelectorAll(".fq-blueprint__clip.is-active")].map(g=>g.dataset.category),
+      crop:(document.querySelector(".fq-blueprint__crop")?.getAttribute("d")||"").length
+    }));
+    const shot=category=>page.evaluate(c=>document.querySelector("#cinema-wrap")
+      .dispatchEvent(new CustomEvent("fq:shot",{detail:{category:c}})),category);
+    await shot("longform");
+    let st=await state();
+    assert(st.source==="longform"&&st.cards.two==="source"&&st.cards.one==="idle"&&st.active.join()==="longform",
+      name+": longform film did not light the editorial clip "+JSON.stringify(st));
+    if(width>=700)assert(st.crop>20,name+": crop marks missing around the film");
+    await shot("event");
+    st=await state();
+    if(expected===3)assert(st.source==="event"&&st.cards.three==="source"&&st.cards.two==="idle",name+": event film did not light the event clip "+JSON.stringify(st));
+    else assert(st.source==="none"&&st.cards.one==="neutral"&&st.cards.two==="neutral",name+": hidden event clip must leave the visible clips neutral "+JSON.stringify(st));
+    await shot(null);
+    st=await state();
+    assert(st.source==="none"&&!st.active.length&&Object.values(st.cards).every(v=>v==="neutral"),
+      name+": clips should return to neutral without real playback "+JSON.stringify(st));
+
     // Thumbnails open the real project through the Selected Work dialogs.
     const first=page.locator(".float-reel-card--one .float-reel-card__open");
     await first.scrollIntoViewIfNeeded();

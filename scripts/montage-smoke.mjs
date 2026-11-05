@@ -44,6 +44,10 @@ try{
  const classification=await page.locator('.work-card[data-project="know-more-about-me-2024"]').evaluate(el=>el.dataset.categories);
  if(classification.split(" ").includes("motion")||!classification.split(" ").includes("longform"))
   throw new Error("Know More Bout Me incorrectly classified: "+classification);
+ // The blueprint follows the edit: the opening long-form film lights the editorial clip.
+ const following=await page.evaluate(()=>({category:document.querySelector("#cinema-wrap").dataset.activeCategory,
+  editorial:document.querySelector(".float-reel-card--two").classList.contains("is-source")}));
+ if(following.category!=="longform"||!following.editorial)throw new Error("Blueprint does not follow the opening film: "+JSON.stringify(following));
  const firstSource=await page.evaluate(()=>window.__ytQA.loads[0]);
  if(firstSource!=="hEhRkIbH-Pg")throw new Error("Opening stream ID incorrect: "+firstSource);
  const stage=await page.locator(".showreel-montage").evaluate(el=>({

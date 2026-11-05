@@ -70,6 +70,13 @@ let currentTimer=0,preloadTimer=0,watchdog=0,fadeTimer=0,clockRaf=0;
 let timeStart=0,playhead=0,requestId=0,pendingPreload=null;
 
 function safe(fn){try{return fn()}catch(_){return undefined}}
+// Tell the Chapter One blueprint which kind of film is on screen
+// (motion | longform | event), or that no real footage is playing.
+function announce(category){
+ if(category)scene.dataset.activeCategory=category;
+ else delete scene.dataset.activeCategory;
+ scene.dispatchEvent(new CustomEvent("fq:shot",{detail:{category:category||null}}));
+}
 function clearTime(){
  clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);clearTimeout(fadeTimer);
  cancelAnimationFrame(clockRaf);clockRaf=0;
@@ -139,6 +146,7 @@ function onFailure(index,error){
    title.textContent="Preview unavailable";
    clock.textContent="View selected work below";
    stage.dataset.playback="unavailable";
+   announce(null);
    skip.setAttribute("aria-label","Retry video previews");
    return;
   }
@@ -157,6 +165,7 @@ function show(index,req){
  shell.classList.add("is-playing");
  if(skipText)skipText.textContent="Next ↗";
  title.textContent=req.item.title;
+ announce(req.item.category);
  panels[index].dataset.format=req.item.format;
  panels[index].classList.add("is-current");
  if(previous>=0&&previous!==index){
@@ -289,7 +298,7 @@ function initAPI(){
      }
     }
    });
-  }catch(_){stage.dataset.playback="unavailable"}
+  }catch(_){stage.dataset.playback="unavailable";announce(null)}
  }
 }
 function loadAPI(){
@@ -304,7 +313,7 @@ function loadAPI(){
  const script=document.createElement("script");
  script.src="https://www.youtube.com/iframe_api";
  script.async=true;
- script.onerror=()=>{stage.dataset.playback="unavailable";title.textContent="Preview unavailable"};
+ script.onerror=()=>{stage.dataset.playback="unavailable";title.textContent="Preview unavailable";announce(null)};
  document.head.appendChild(script);
 }
 function start(){
@@ -325,6 +334,7 @@ function stop(){
  shell.classList.remove("is-playing");
  panels.forEach(p=>p.classList.remove("is-current"));
  stage.dataset.playback="paused";
+ announce(null);
 }
 skip.addEventListener("click",e=>{
  e.preventDefault();e.stopPropagation();

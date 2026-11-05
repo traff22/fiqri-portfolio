@@ -1,4 +1,4 @@
-/* FQ / CHAPTER ONE — "Cutting Room Marks", checkpoint 1.
+/* FQ / CHAPTER ONE — "Cutting Room Marks" (checkpoints 1 + 2).
    Loads LAST. Owns the Chapter One composition: the film frame, the three
    real project thumbnails (source clips) and the measured blueprint links.
 
@@ -66,6 +66,24 @@
   font:600 9px/1 "Space Grotesk",sans-serif;letter-spacing:.14em;
 }
 .fq-blueprint__tag--in{fill:#91e9d9}
+.fq-blueprint__crop{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.45}
+
+/* FOLLOW THE EDIT — the clip whose kind of film is on screen is the source;
+   its cut line draws into the frame, the other clips step back. */
+.fq-blueprint__clip{transition:opacity .45s ease}
+.fq-blueprint:not([data-active-source="none"]) .fq-blueprint__clip:not(.is-active){opacity:.35}
+.fq-blueprint__clip.is-active .fq-blueprint__link{stroke:#dbe6ff;stroke-opacity:.95;stroke-width:1.25}
+.fq-blueprint__clip.is-active .fq-blueprint__joint{stroke:#dbe6ff;stroke-opacity:1}
+.fq-blueprint__clip.is-active .fq-blueprint__tag{fill:#dbe6ff}
+.fq-blueprint__clip.is-active .fq-blueprint__tag--in{fill:#91e9d9}
+.fq-blueprint__clip.is-drawing .fq-blueprint__link{
+  stroke-dasharray:1;
+  animation:fq-cut-draw .62s cubic-bezier(.3,.7,.2,1) both;
+}
+.fq-blueprint__clip.is-drawing .fq-blueprint__mark--in,
+.fq-blueprint__clip.is-drawing .fq-blueprint__tag--in{animation:fq-cut-in .28s .5s ease-out both}
+@keyframes fq-cut-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes fq-cut-in{from{opacity:0}to{opacity:1}}
 
 /* Process ruler — legible, still driven by data-phase from creators-lab.js. */
 #cinema-wrap .fq-blueprint__sequence{
@@ -132,6 +150,15 @@
   border-color:#e2eaff!important;
   box-shadow:0 28px 70px #010717df,0 0 32px #677ef03c!important;
 }
+#cinema-wrap .float-reel-card__inner{transition:opacity .45s ease,filter .45s ease,border-color .35s ease,box-shadow .35s ease}
+#cinema-wrap .float-reel-card.is-idle .float-reel-card__inner{opacity:.58;filter:saturate(.7)}
+#cinema-wrap .float-reel-card.is-source .float-reel-card__inner{
+  border-color:#91e9d9!important;
+  box-shadow:0 24px 62px #010717d9,0 0 0 1px #91e9d93d,0 0 36px #5fd8c22e!important;
+}
+#cinema-wrap .float-reel-card.is-source .float-reel-card__meta span:first-child{color:#bdf5ea}
+#cinema-wrap .float-reel-card.is-idle:hover .float-reel-card__inner,
+#cinema-wrap .float-reel-card.is-idle:focus-within .float-reel-card__inner{opacity:1;filter:none}
 #cinema-wrap .float-reel-card:hover .float-reel-card__go,
 #cinema-wrap .float-reel-card:focus-within .float-reel-card__go{transform:translate(2px,-2px)}
 
@@ -241,6 +268,11 @@
 }
 
 @media(prefers-reduced-motion:reduce){
+  .fq-blueprint__clip,
+  #cinema-wrap .float-reel-card__inner{transition:none!important}
+  .fq-blueprint__clip .fq-blueprint__link,
+  .fq-blueprint__clip .fq-blueprint__mark--in,
+  .fq-blueprint__clip .fq-blueprint__tag--in{animation:none!important}
   #cinema-wrap .fq-blueprint__sequence span,
   #cinema-wrap .float-reel-card__go{transition:none}
 }

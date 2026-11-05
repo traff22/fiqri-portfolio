@@ -230,3 +230,25 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - Other suites pass locally: color-study, easter-eggs, montage, atmosphere, creators-lab.
 - `ui-smoke.mjs` is flaky in the Claude sandbox **on baseline too**, because YouTube is blocked there ("Preview unavailable"). With the YouTube API stubbed it passes fully on both baseline and this branch.
 - Real YouTube stills could not be viewed from the sandbox. **Verify the real imagery in CI screenshots or on the live site.**
+
+### 2026-11-06 (WIB) — Chapter One checkpoint 2: follow the edit (Claude Code)
+**Branch:** `ccr-b4af4c1b-o7t4qv` (still not merged to `main`, not deployed). **Owner visual approval: pending.**
+**Owner instruction:** "Gas lanjut", read as: continue to checkpoint 2 on the same branch, without merging.
+
+**Implementation:**
+- **The blueprint follows the edit.**
+  - `chapter-montage.js` now announces the category of each shot it shows on `#cinema-wrap` (`data-active-category` plus a `fq:shot` event). The categories are motion, longform and event.
+  - It announces "none" when previews stop, are blocked or are unavailable. Montage order and playback are unchanged.
+  - `chapter-blueprint.js` maps motion→PRODUCT, longform→EDITORIAL, event→EVENT. The matching clip gets `.is-source` (teal border and soft glow) and its cut line redraws into the frame in 0.62s (`stroke-dashoffset` with `pathLength="1"`). The IN mark fades in at the end of the draw.
+  - Other clips step back (opacity .58, desaturated, full again on hover/focus), and their lines drop to 35%.
+  - If the matching clip is hidden at that breakpoint (EVENT on tablets/phones), everything stays neutral. Without real playback everything stays neutral too; we don't fake a "source".
+- **SVG nodes are persistent** (created once, attributes updated on scroll), so the draw animation isn't restarted by scrolling.
+- **Crop marks:** print-style offset ticks outside the picture's corners, plus rule-of-thirds ticks above the frame. They are never drawn over footage. Bottom corners get horizontal ticks only, because the caption strip sits there. They are skipped on phones, where they cluttered the INGEST/CUT/FINISH ruler.
+- **Reduced motion:** the highlight state still applies, with no draw or fade animation.
+- **Bug fixed (also present in checkpoint 1):** the connector group class `.fq-blueprint__cut` clashed with a legacy rule in `creators-lab.css` (animated dashed 2px stroke). That garbled the OUT/IN marks and labels. The group is renamed `.fq-blueprint__clip`. **Don't reuse `fq-blueprint__*` names from `creators-lab.css`** (`top, drawing, base, mesh, guide, cut, wave, sweep, steps, step, footer, caption`).
+
+**QA:**
+- `chapter-blueprint-smoke.mjs` now also checks: longform lights EDITORIAL and dims the others; event lights EVENT on desktop and stays neutral where EVENT is hidden; everything returns to neutral without playback; crop marks exist on ≥700px.
+- `montage-smoke.mjs` asserts that the opening long-form film lights the editorial clip.
+- All suites pass locally. `ui-smoke` was run with the YouTube API stubbed, because YouTube is blocked in the sandbox.
+- Real thumbnails and real playback still need checking outside the sandbox.
