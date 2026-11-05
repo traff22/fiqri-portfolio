@@ -53,7 +53,7 @@ try{
     check(result.frame&&result.footageVideo,name+": video stage lost");
     check(result.frameCard==="none",name+": satellite film cards remain");
     check(result.overflow<=1,name+": horizontal overflow "+result.overflow);
-    if(mobile)check(result.chapterHeight<=innerHeight*1.33,name+": sticky chapter is too tall");
+    if(mobile)check(result.chapterHeight<=result.viewportHeight*1.33,name+": sticky chapter is too tall");
 
     await page.locator(".hero").screenshot({
       path:"screenshots/restraint-"+name+"-hero.png",animations:"disabled"
