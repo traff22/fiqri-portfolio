@@ -43,9 +43,15 @@ for (const [viewport, device] of [
 
  const chapterCopy=await page.locator("#cinema-wrap .cinema-copy").boundingBox();
  check(stageStart.width>200,device+": Chapter One main frame missing");
- const satellites=await page.locator("#cinema-wrap .float-reel-card").evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).display));
- check(satellites.every(display=>display==="none"),device+": decorative satellite cards must stay hidden");
- report.push({device,satelliteCardsVisible:false});
+ const satellites=await page.locator("#cinema-wrap .float-reel-card").evaluateAll(nodes=>nodes.map(el=>({
+  className:el.className,display:getComputedStyle(el).display
+ })));
+ const visibleSatellites=satellites.filter(s=>s.display!=="none");
+ check(visibleSatellites.length===(device==="desktop"?1:0),
+  device+": expected a single desktop film depth cue, none on mobile: "+JSON.stringify(satellites));
+ if(device==="desktop")check(visibleSatellites[0].className.includes("float-reel-card--two"),
+  device+": wrong supporting film card shown");
+ report.push({device,satelliteCardsVisible:visibleSatellites.length});
 
  check(intersection(stageStart,chapterCopy)<20,device+": Chapter One copy overlaps main frame at start");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-start.png"});
