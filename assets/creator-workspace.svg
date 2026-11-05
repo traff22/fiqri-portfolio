@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 426" role="img" aria-label="Isometric pixel artwork: mini Fiqri editing at a desk with dual monitors, headphones, a keyboard and a coffee mug.">
+<defs>
+ <linearGradient id="fqfloor" x1="0" x2="0.95" y1="0.25" y2="1"><stop stop-color="#344c8e"/><stop offset="1" stop-color="#142447"/></linearGradient>
+ <linearGradient id="fqwall" x1="0" x2="1"><stop stop-color="#1c3068"/><stop offset="1" stop-color="#243a79"/></linearGradient>
+ <linearGradient id="fqscreen" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#182b58"/><stop offset="1" stop-color="#080f29"/></linearGradient>
+ <linearGradient id="fqdesk" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#bdc8ec"/><stop offset="1" stop-color="#899abf"/></linearGradient>
+ <radialGradient id="fqbacklight"><stop stop-color="#556ff0" stop-opacity=".33"/><stop offset="1" stop-color="#556ff0" stop-opacity="0"/></radialGradient>
+ <filter id="fqshadow"><feGaussianBlur stdDeviation="10"/></filter>
+</defs>
+<!-- The studio is an original layered geometric illustration: three isometric planes. -->
+<path d="M65 292 345 170 599 288 320 413Z" fill="url(#fqfloor)" stroke="#8ca4e966" stroke-width="2"/>
+<path d="M65 292V182L345 69V170Z" fill="#263f7d7b" stroke="#86a2f542" stroke-width="1.4"/>
+<path d="M345 69 599 182V288L345 170Z" fill="url(#fqwall)" stroke="#7995e655" stroke-width="1.4"/>
+<path d="M65 292 320 413 599 288" fill="none" stroke="#a8bafa55" stroke-width="1.3"/>
+<path d="M108 308 382 185M162 335 434 210M217 363 484 233M271 392 541 260M111 271 357 387M171 245 425 359M234 221 494 323M301 186 558 292" fill="none" stroke="#95aef52a" stroke-width="1"/>
+<ellipse cx="345" cy="297" rx="225" ry="84" fill="#000a24a3" filter="url(#fqshadow)"/>
+<ellipse cx="300" cy="177" rx="260" ry="140" fill="url(#fqbacklight)"/>
+<!-- wall-mounted storyboard and waveform frame -->
+<path d="m104 188 90-36v74l-90 37Z" fill="#13234f" stroke="#8da9f498" stroke-width="2"/>
+<path d="m116 191 66-26v40l-66 28Z" fill="#1c2f65"/>
+<path d="m125 211 20-20 14 12 19-31" stroke="#bbc9ff" fill="none" stroke-width="3"/>
+<path d="m117 241 48-18" stroke="#b5c4fb70" stroke-width="2"/>
+<path d="m440 115 98 45v49l-98-43Z" fill="#17264e" stroke="#8ca5f37d" stroke-width="2"/>
+<path d="m454 135 26 12 15 21 26 10" stroke="#b1c6fe" stroke-width="2" fill="none"/>
+<path d="m457 152 63 28" stroke="#738ede95" stroke-width="2"/>
+<!-- Custom desktop computer tower -->
+<path d="m137 247 45-15 26 13-45 16Z" fill="#445987"/>
+<path d="m137 247 26 14v74l-26-15Z" fill="#172747" stroke="#6788cb"/>
+<path d="m163 261 45-16v76l-45 14Z" fill="#24375f" stroke="#7895d3"/>
+<path d="m170 278 24-8v34l-24 8Z" fill="#101b3b" stroke="#7188b3"/>
+<path d="m179 286 8-3v18l-8 3Z" fill="#80c6ff" opacity=".85"/>
+<circle cx="194" cy="315" r="3.3" fill="#79e8d7"/>
+<!-- Main editing monitor -->
+<path d="M217 107 390 91 400 229 226 244Z" fill="#0c1329" stroke="#819df3" stroke-width="5" stroke-linejoin="round" class="fq-monitor-glow"/>
+<path d="M230 119 378 106 386 215 239 229Z" fill="url(#fqscreen)" stroke="#3856a1"/>
+<path d="m233 129 149-13" stroke="#9bb0ff5a" stroke-width="3"/>
+<path d="m240 145 60-5 3 41-60 6Z" fill="#202d59" stroke="#839af157"/>
+<path d="m246 153 25-2-3 25-20 2Z" fill="#5068c7"/>
+<path d="m271 150 16-1-3 15-13 1Z" fill="#95aefb"/>
+<path d="m243 189 137-13" stroke="#748cd8"/>
+<g class="fq-timeline-row"><path d="m246 194 41-4-1 10-40 4Z" fill="#7a98e7"/><path d="m288 190 38-3-1 10-38 3Z" fill="#5ad0d1"/><path d="m330 186 41-4-1 10-40 4Z" fill="#98a1fb"/></g>
+<g class="fq-timeline-row"><path d="m247 208 23-2v8l-23 2Z" fill="#b69deb"/><path d="m273 205 50-4v9l-50 4Z" fill="#818be7"/><path d="m326 201 44-4v9l-44 4Z" fill="#5ac0bd"/></g>
+<path class="fq-monitor-playhead" d="m252 179v40" stroke="#d5e3ff" stroke-width="2"/>
+<g class="fq-render-progress" opacity="0"><path d="M250 139 363 129 367 174 254 185Z" fill="#08182f" stroke="#abbcff"/><path d="m267 146 80-6" stroke="#d9e6ff" stroke-width="2"/><rect x="269" y="157" width="68" height="5" rx="2" fill="#394977"/><rect x="269" y="157" width="68" height="5" rx="2" fill="#83e8d9" class="fq-render-bar" style="transform-origin:269px 159px;transform:scaleX(.06)"/><text x="271" y="177" fill="#dfeaff" font-size="8" font-family="monospace">EXPORTING...</text></g>
+<!-- Second monitor and previews -->
+<path d="m402 133 118 13-4 93-119-15Z" fill="#0d152e" stroke="#859ff2" stroke-width="5" stroke-linejoin="round"/>
+<path d="m412 145 97 12-3 67-98-12Z" fill="#112954" stroke="#4b6eb9"/>
+<path d="m416 155 32 4-1 33-32-5Z" fill="#7c8cff"/>
+<path d="m449 160 30 3-2 18-29-4Z" fill="#213765"/>
+<path d="m451 164 23 3-1 7-22-3Z" fill="#e0a7a9"/>
+<path d="m484 163 19 2-1 30-19-3Z" fill="#3859a4"/>
+<path d="m417 200 84 9" stroke="#bed0f4"/>
+<path d="m421 204 20 2m4 0 14 2m4 0 19 3" stroke="#8bd4cc" stroke-width="3"/>
+<path d="m295 231 17 20 37-13-10-13Z" fill="#7a8bbf"/>
+<path d="m440 225-1 25 36 7-9-24Z" fill="#6479b0"/>
+<!-- Isometric workstation, keyboard, and papers -->
+<path d="m155 255 221-75 178 93-224 84Z" fill="url(#fqdesk)" stroke="#e4ebff" stroke-width="3" stroke-linejoin="round"/>
+<path d="m155 255 175 102v23L155 275Z" fill="#5c719f" stroke="#a7b8e3" stroke-width="1.5"/>
+<path d="m330 357 224-84v20l-224 87Z" fill="#394c7a" stroke="#879cc9" stroke-width="1.5"/>
+<path d="m196 300-4 58 20 13 7-57Z" fill="#24375e"/>
+<path d="m500 299-2 60 14-8 7-58Z" fill="#25395e"/>
+<path d="m224 265 120-39 76 39-121 44Z" fill="#1a2949" stroke="#819be3" stroke-width="2"/>
+<path d="m231 266 109-35 58 30-107 38Z" fill="#0b1734"/>
+<path d="m239 267 101-32m-93 40 101-31m-91 39 102-32" stroke="#809aeb" stroke-width="2.5" stroke-dasharray="6 6"/>
+<path d="m366 260 18-7 17 10-18 7Z" fill="#d8deed" stroke="#6477b0"/>
+<path d="m178 286 42-14 23 14-43 14Z" fill="#e4e9fa" stroke="#6a83c4"/>
+<path d="m186 286 24-8m-9 13 30-9" stroke="#7089d0" stroke-width="2"/>
+<!-- Voxel coffee mug -->
+<g class="fq-mini-mug"><path d="m430 273 21-7 12 7-22 8Z" fill="#d9e7ff" stroke="#7ca0e6" stroke-width="2"/><path d="m430 273 11 8v12l-11-8Z" fill="#8ea9d2"/><path d="m441 281 22-8v12l-22 8Z" fill="#d6e2f8"/><path d="m462 277 7 2v10l-7 2" stroke="#d7e8fc" fill="none" stroke-width="4"/><path d="m436 272 12-4 6 4-13 5Z" fill="#755978"/></g>
+<g class="fq-coffee-steam" stroke="#c9e9ff" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="m438 261-3-9 5-6m6 11-2-9 4-5m6 13-2-7 3-5"/></g>
+<!-- Chair -->
+<path d="m357 286 45-15 31 25-43 22Z" fill="#384e90" stroke="#7795ed" stroke-width="2"/>
+<path d="m365 248 38-11 30 12 2 49-34 23-36-27Z" fill="#172b65" stroke="#90a9ff" stroke-width="3"/>
+<path d="m371 256 30-9 19 9 2 32-25 15-26-18Z" fill="#304e9b"/>
+<path d="m390 315-4 35 21 4 6-36Z" fill="#2a407a"/>
+<path d="m383 349-24 12 45 10 28-13-18-10Z" fill="#607abc"/>
+<!-- Pixel avatar: handmade dark hair, skin tones, oversized headset and sweatshirt -->
+<g class="fq-avatar-bob fq-pixel-shadow">
+ <path d="m341 269 39-13 31 15 5 55-49 19-33-21Z" fill="#516fd4" stroke="#8da6ff" stroke-width="3" class="fq-pixel"/>
+ <path d="m345 275 25 8-2 49-24-13Z" fill="#3959b0" class="fq-pixel"/>
+ <path d="m371 282 38-12 2 48-39 15Z" fill="#6f86e6" class="fq-pixel"/>
+ <path d="m359 273 13 7 13-13-15-7Z" fill="#d7a482" class="fq-pixel"/>
+ <rect x="364" y="294" width="7" height="17" fill="#c7d8ff" opacity=".7" class="fq-pixel"/>
+ <rect x="379" y="286" width="5" height="21" fill="#c7d8ff" opacity=".6" class="fq-pixel"/>
+ <path d="m355 232 17-12 26 2 13 15-4 31-31 12-27-17Z" fill="#dca884" stroke="#efc8a5" stroke-width="2" class="fq-pixel"/>
+ <path d="m350 242 9-5 2 17-10 2Z" fill="#b9876d" class="fq-pixel"/>
+ <path d="m350 243-5-14 12-20 24-9 25 7 11 19-8 19-9-11-13 1-10-7-14 13Z" fill="#111629" stroke="#526089" stroke-width="2" class="fq-pixel"/>
+ <path d="m356 219 24-11 17 6-22 3-8 13-14 4Z" fill="#34354a" class="fq-pixel"/>
+ <path d="m399 232 10 4-4 23-7 4Z" fill="#292b4b" class="fq-pixel"/>
+ <path d="m353 224 14-21 25-4 17 15" stroke="#b4c7ff" stroke-width="6" fill="none" stroke-linecap="square"/>
+ <path d="m348 232 9-4 5 22-10 5Z" fill="#172349" stroke="#88aaff" stroke-width="2" class="fq-pixel"/>
+ <path d="m402 226 10 4-2 26-11-2Z" fill="#172349" stroke="#88aaff" stroke-width="2" class="fq-pixel"/>
+ <path d="m353 253 9 9 13 3" stroke="#718bc9" fill="none" stroke-width="2"/>
+ <rect x="375" y="244" width="4" height="4" fill="#17203a" class="fq-pixel"/>
+ <rect x="397" y="243" width="4" height="4" fill="#17203a" class="fq-pixel"/>
+ <rect x="385" y="257" width="8" height="2" fill="#9b625b" class="fq-pixel"/>
+</g>
+<g class="fq-avatar-arm fq-pixel"><path d="m340 286 27 8 7 14-31 7-18-16Z" fill="#5070cf" stroke="#8fa5eb" stroke-width="2"/><path d="m323 295 22 10 16-3 3 13-22 5-24-13Z" fill="#e3af8b" stroke="#f2cfaf" stroke-width="1.7"/></g>
+<path d="m397 289 16-8 21 10-15 12-18-3Z" fill="#5574d6" stroke="#8da5ff" stroke-width="1.7"/>
+<path d="m418 297 14-6 15 5-19 9Z" fill="#dcaa86" stroke="#edc6a3" stroke-width="1.5"/>
+<!-- tiny studio-metadata details -->
+<path d="M79 100v20m0-20h24M557 100h-22m22 0v21M77 369v-20m0 20h21M558 369h-22m22 0v-20" stroke="#8aa7ec6e" stroke-width="2" fill="none"/>
+<text x="90" y="118" font-family="monospace" font-size="10" letter-spacing="2" fill="#a9c0ff">FQ / STUDIO_01</text>
+<text x="470" y="379" font-family="monospace" font-size="10" letter-spacing="1" fill="#adc4e8">01 : 24 : 08</text>
+<text x="87" y="381" font-family="monospace" font-size="9" letter-spacing="1" fill="#9cb4d9">MADE WITH PATIENCE</text>
+<path class="fq-cursor" d="m327 174 5 7" fill="none" stroke="#f3f8ff" stroke-width="3"/>
+</svg>
