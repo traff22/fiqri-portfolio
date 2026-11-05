@@ -44,7 +44,7 @@
 .hero .portrait-card__foot strong{letter-spacing:-.055em}
 
 /* One quiet film stage rather than a visual effects demo. */
-#cinema-wrap{height:145svh;background:#0b1820}
+#cinema-wrap{height:128svh;background:#0b1820}
 #cinema-wrap .cinema-stick{
   background:linear-gradient(180deg,#101c25 0%,#14242e 54%,#0c1820 100%);
 }
@@ -57,6 +57,27 @@
   transform:none!important;
   filter:grayscale(1);
 }
+/* Real film still while the official YouTube player is loading or blocked.
+   This is a truthful static preview, never disguised as video playback. */
+#cinema-wrap .showreel-shell .montage-fallback {
+  background:
+    linear-gradient(180deg,#07111a49 0%,#09151cb6 100%),
+    url("https://i.ytimg.com/vi/hEhRkIbH-Pg/hqdefault.jpg") center/cover no-repeat,
+    #121f29;
+  filter:saturate(.78);
+}
+#cinema-wrap .showreel-shell .montage-fallback::before {
+  content:"FILM STILL  /  PREVIEW";
+  position:absolute;
+  z-index:1;
+  bottom:clamp(15px,3vw,32px);
+  left:clamp(15px,3vw,32px);
+  color:#e7e9e5;
+  font:600 clamp(9px,.9vw,11px)/1.4 "Space Grotesk",sans-serif;
+  letter-spacing:.15em;
+  text-shadow:0 2px 10px #000b;
+}
+#cinema-wrap .showreel-montage[data-playback="playing"] .montage-fallback{opacity:0}
 #cinema-wrap .cinema-atmosphere,
 #cinema-wrap .cinema-orbit,
 #cinema-wrap .cinema-light-streak,
