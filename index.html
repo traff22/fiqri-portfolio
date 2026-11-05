@@ -101,26 +101,38 @@
       <h2 id="cinema-title"><span class="cinema-copy-line">Raw footage.</span><span class="cinema-copy-line accent">Real feeling.</span></h2>
       <p class="cinema-deck cinema-copy-line">The difference is in the details: what stays, what moves, and what makes you feel.</p>
     </header>
-    <aside class="fq-blueprint" data-phase="capture" aria-label="Illustrated process: ingest raw footage, cut and color, then deliver the finished story.">
-      <div class="fq-blueprint__top"><strong>FQ / CUTTING ROOM</strong><span>BLUEPRINT 001</span></div>
-      <svg class="fq-blueprint__drawing" viewBox="0 0 190 85" role="img" aria-label="Blueprint animation of a film frame becoming an editing timeline" xmlns="http://www.w3.org/2000/svg">
-        <rect class="fq-blueprint__base" x="24" y="8" width="142" height="69" rx="2"/>
-        <path class="fq-blueprint__mesh" d="M47 9v67M70 9v67M94 9v67M117 9v67M141 9v67M25 25h140M25 43h140M25 60h140"/>
-        <path class="fq-blueprint__guide" d="M9 15h24M9 15v18M182 15h-24M182 15v18M9 70h24M9 70V51M182 70h-24M182 70V51"/>
-        <path class="fq-blueprint__cut" d="M33 34 61 21 87 34 116 20 151 32"/>
-        <path class="fq-blueprint__wave" d="M31 55h13l5-5 5 12 6-17 5 13 6-4h10l5-8 5 15 7-9 7 4h9l6-8 5 12 6-5h21"/>
-        <path class="fq-blueprint__crosshair" d="M88 42h14M95 35v14"/>
-        <rect class="fq-blueprint__sweep" x="33" y="66" width="29" height="3" rx="1"/>
-        <circle class="fq-blueprint__sweep" cx="157" cy="16" r="3"/>
+    <div class="fq-blueprint" data-phase="capture" aria-label="Production blueprint across the composition: raw footage, editing, then final film.">
+      <svg class="fq-blueprint__schematic" viewBox="0 0 1200 720" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <!-- Frame-size guides + deliberately broken technical lines -->
+        <g fill="none" stroke="#b8cdff" stroke-width="1" stroke-opacity=".38">
+          <path d="M52 150v48M52 150h49M1148 150h-49M1148 150v48M52 573v-48M52 573h49M1148 573h-49M1148 573v-48" />
+          <path d="M61 345h140l51 27h95M1140 381h-155l-36 38h-68M110 545h160l55-33h80" stroke-dasharray="4 8"/>
+          <path d="M130 260h60M1010 294h82M145 604h95" stroke-opacity=".25"/>
+          <circle cx="201" cy="345" r="3"/><circle cx="949" cy="419" r="3"/><circle cx="270" cy="545" r="3"/>
+        </g>
+        <g class="fq-blueprint__phase--capture" stroke="#add8ff" stroke-width="1.6" fill="none">
+          <path d="M52 345h150M201 345l-9-6m9 6-9 6"/>
+          <path d="M113 297v-16h16m-16 16v16h16"/>
+        </g>
+        <g class="fq-blueprint__phase--craft" stroke="#a8b9ff" stroke-width="1.6" fill="none">
+          <path d="M1140 381H986M986 381l10-6m-10 6 10 6"/>
+          <path d="M1070 321l9-7m-9 7 9 7"/>
+        </g>
+        <g class="fq-blueprint__phase--deliver" stroke="#96e8dc" stroke-width="1.6" fill="none">
+          <path d="M110 545h156l52-34M318 511l-12 3m12-3-7 10"/>
+          <path d="M190 595h110"/>
+        </g>
       </svg>
-      <p class="fq-blueprint__caption">THE ANATOMY OF A FRAME</p>
-      <div class="fq-blueprint__steps" role="list" aria-label="Three production stages">
-        <span class="fq-blueprint__step" data-blueprint-step="capture" role="listitem">01 / RAW</span>
-        <span class="fq-blueprint__step" data-blueprint-step="craft" role="listitem">02 / CRAFT</span>
-        <span class="fq-blueprint__step" data-blueprint-step="deliver" role="listitem">03 / FEEL</span>
+      <span class="fq-blueprint__annotation fq-blueprint__annotation--one"><b>01</b> / SOURCE FOOTAGE</span>
+      <span class="fq-blueprint__annotation fq-blueprint__annotation--two"><b>02</b> / ARRANGE + REFINE</span>
+      <span class="fq-blueprint__annotation fq-blueprint__annotation--three"><b>03</b> / FINAL DELIVERY</span>
+      <span class="fq-blueprint__edge-title">FQ / EDITORIAL ANATOMY <i>·</i> RAW → CRAFT → FEEL</span>
+      <div class="fq-blueprint__sequence" role="list" aria-label="Editing process advances as you scroll">
+        <span role="listitem" data-blueprint-step="capture">01  INGEST</span>
+        <span role="listitem" data-blueprint-step="craft">02  CUT / GRADE</span>
+        <span role="listitem" data-blueprint-step="deliver">03  FINISH</span>
       </div>
-      <div class="fq-blueprint__footer"><span>24 FPS · 16:9</span><span>FQ. / STORY DESIGN</span></div>
-    </aside>
+    </div>
     <div class="cinema-frame showreel-shell" aria-label="Five-second random excerpts from Fiqri\u0027s video portfolio" data-video-src="">
       <div class="showreel-visual">
         <div class="showreel-montage" role="group" aria-label="Random samples from published video projects">
