@@ -206,3 +206,22 @@ The actual media is a native `<video>` using `object-fit: cover`, `playsinline`,
 ## Next steps
 
 Replace the concept artwork with Fiqri's approved original films and case studies, add short video previews and meaningful project detail pages, optimize performance, then update SEO metadata and indexability for production.
+
+## Video delivery for sharing the public portfolio
+
+Use **GitHub Pages for HTML/CSS/JS**, not as a warehouse for raw video renders. Keep a small poster image and compressed thumbnail/loop for quick visual impact, and host full reels elsewhere.
+
+- **Cloudinary**: good for short, optimized MP4/WebM preview clips and CDN delivery. The free plan currently uses shared monthly credits (storage, transformations and bandwidth), so monitor usage.
+- **Cloudflare R2**: an alternative object storage/CDN origin for a larger library, with a standard-storage free allowance; operations and configuration require attention.
+- **YouTube (unlisted/public)**: convenient for complete case studies via embedded player; unlisted is link-accessible, not private.
+
+To connect a self-hosted preview file, use the existing `data-video-src` on the showreel/floating video wrappers. An absolute HTTPS video URL works just like a repository-relative file:
+
+```html
+<div class="float-reel-card__media" data-video-src="https://YOUR-CDN.example/videos/product-preview.mp4">
+```
+
+Do **not** use Git LFS as an asset-delivery solution for GitHub Pages: Git LFS is not supported on GitHub Pages sites.
+
+Recommended first-release budget (guidelines, **not GitHub hard limits**): 1–3 MB splash, 0.5–2 MB per floating preview, 5–12 MB short main reel; postpone any full-length autoplay. Prefer poster-first/lazy-loading and user-triggered playback for large video.
+
