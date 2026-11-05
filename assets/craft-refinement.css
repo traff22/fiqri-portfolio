@@ -1,0 +1,303 @@
+/* FQ / CRAFT REFINEMENT V2
+   A whole-frame editorial blueprint, real-work film stills, a spacious
+   purpose-built mini studio, and a pointer-follow spotlight on the portrait. */
+
+/* BLUEPRINT / composition-wide notation, NEVER a floating interface card. */
+#cinema-wrap .fq-blueprint{
+  position:absolute;inset:0!important;top:0!important;bottom:0!important;
+  left:0!important;right:0!important;
+  display:block!important;z-index:7;width:auto!important;max-width:none!important;
+  height:auto!important;padding:0!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;backdrop-filter:none!important;opacity:1!important;
+  transform:none!important;pointer-events:none;
+}
+#cinema-wrap .fq-blueprint::before,
+#cinema-wrap .fq-blueprint::after{content:none!important;display:none!important}
+.fq-blueprint__schematic{
+  position:absolute;inset:7% 2.5% 7%;
+  width:95%;height:86%;
+  overflow:visible;opacity:.9;
+}
+.fq-blueprint__phase--capture,.fq-blueprint__phase--craft,.fq-blueprint__phase--deliver{
+  transition:opacity .45s ease;opacity:.24;
+}
+.fq-blueprint[data-phase="capture"] .fq-blueprint__phase--capture,
+.fq-blueprint[data-phase="craft"] .fq-blueprint__phase--craft,
+.fq-blueprint[data-phase="deliver"] .fq-blueprint__phase--deliver{opacity:1}
+.fq-blueprint__annotation,.fq-blueprint__edge-title{
+  position:absolute;
+  font:600 clamp(8px,.7vw,10px)/1.4 "Space Grotesk",sans-serif;
+  color:#c1d4fd;letter-spacing:.13em;text-transform:uppercase;
+  text-shadow:0 3px 20px #020713;
+  white-space:nowrap;
+}
+.fq-blueprint__annotation b{color:#91e9d9;margin-right:5px;font-weight:700}
+.fq-blueprint__annotation--one{left:6%;top:28%}
+.fq-blueprint__annotation--two{right:5.4%;top:38%}
+.fq-blueprint__annotation--three{left:8%;bottom:28%}
+.fq-blueprint__edge-title{bottom:4.7%;left:4.5%;color:#8da9dc}
+.fq-blueprint__edge-title i{color:#91e6d8;font-style:normal;margin:0 9px}
+.fq-blueprint__sequence{
+  position:absolute;left:4.5%;top:16%;display:flex;align-items:center;gap:15px;
+  color:#89a0d1;
+}
+.fq-blueprint__sequence span{
+  display:inline-block;padding-top:6px;border-top:1px solid #92aafa3e;
+  font:600 8px/1.45 "Space Grotesk",sans-serif;letter-spacing:.12em;
+  transition:color .3s,border-color .3s;
+}
+.fq-blueprint[data-phase="capture"] [data-blueprint-step="capture"],
+.fq-blueprint[data-phase="craft"] [data-blueprint-step="craft"],
+.fq-blueprint[data-phase="deliver"] [data-blueprint-step="deliver"]{
+  color:#e4f4ff;border-top-color:#a6c4ff;
+}
+
+/* Restore three authentic project thumbnails as spatial references,
+   not fake floating app widgets. Keep the real moving film as the hero. */
+#cinema-wrap .float-reel-card{
+  pointer-events:auto!important;
+  filter:none!important;
+}
+@media (min-width:1100px){
+  #cinema-wrap .float-reel-card--one,
+  #cinema-wrap .float-reel-card--two,
+  #cinema-wrap .float-reel-card--three{display:block!important;opacity:.91!important;scale:1!important;filter:none!important}
+  #cinema-wrap .float-reel-card--one{
+    left:4.8%!important;right:auto!important;top:35%!important;bottom:auto!important;
+    width:clamp(112px,9vw,142px)!important;
+    z-index:9!important;--float-base-rot:-6deg;
+  }
+  #cinema-wrap .float-reel-card--two{
+    left:auto!important;right:3.7%!important;top:45%!important;bottom:auto!important;
+    width:clamp(160px,13vw,195px)!important;
+    z-index:10!important;--float-base-rot:6deg;
+  }
+  #cinema-wrap .float-reel-card--three{
+    left:6.4%!important;right:auto!important;top:auto!important;bottom:10.5%!important;
+    width:clamp(144px,11.5vw,176px)!important;
+    z-index:9!important;--float-base-rot:4deg;
+  }
+}
+#cinema-wrap .float-reel-card__inner{
+  border:1px solid #aec6ffab!important;
+  background:#0c1735;
+  box-shadow:0 20px 55px #02091bbf!important;
+  border-radius:11px!important;
+  animation:none!important;
+  translate:none!important;
+}
+#cinema-wrap .float-reel-card__poster{filter:brightness(.98) saturate(1.03)}
+#cinema-wrap .float-reel-card__meta{
+  padding:9px 10px;
+  color:#e7f0ff;font-size:9px;letter-spacing:.08em;
+  background:#101c40;
+}
+#cinema-wrap .float-reel-card:hover .float-reel-card__inner{
+  border-color:#e2eaff!important;
+  box-shadow:0 28px 70px #010717df,0 0 32px #677ef03c!important;
+}
+@media (min-width:701px) and (max-width:1099px){
+  #cinema-wrap .float-reel-card--one,
+  #cinema-wrap .float-reel-card--two{display:block!important;scale:1!important;opacity:.87!important;filter:none!important}
+  #cinema-wrap .float-reel-card--one{
+    left:2%!important;right:auto!important;top:40%!important;
+    width:clamp(94px,10vw,122px)!important;z-index:9!important;
+  }
+  #cinema-wrap .float-reel-card--two{
+    right:1.6%!important;left:auto!important;top:51%!important;
+    width:clamp(116px,13vw,155px)!important;z-index:9!important;
+  }
+  #cinema-wrap .float-reel-card--three{display:none!important}
+  .fq-blueprint__annotation--three{display:none}
+}
+
+/* ABOUT / spacious wide diorama and a comfortable story column. */
+#about .about-grid{
+  grid-template-columns:minmax(0,1.5fr) minmax(0,.88fr);
+  gap:clamp(32px,4.8vw,80px);align-items:start;
+}
+#about .fq-studio-column{width:100%;min-width:0}
+#about .fq-studio{
+  width:100%;max-width:none;overflow:hidden;
+  border-radius:17px;border:1px solid #94aaff68;
+  box-shadow:0 38px 95px #01081bc2,0 0 85px #4567e51d;
+}
+#about .fq-studio__head{
+  padding:17px 21px 7px;
+  font-size:10px;
+}
+#about .fq-studio__art{
+  padding:1px 10px 0;overflow:visible;
+  touch-action:pan-y;
+  perspective:1100px;
+}
+#about .fq-studio__art svg{
+  width:100%;height:auto;max-width:100%;
+  transform:rotateX(var(--fq-room-rx,0deg)) rotateY(var(--fq-room-ry,0deg));
+  transform-origin:center 53%;
+  transform-style:preserve-3d;
+  transition:transform .28s ease-out;
+  filter:drop-shadow(0 14px 19px #02091d40);
+}
+#about .fq-studio__controls{padding:4px 19px 14px;gap:9px}
+#about .fq-studio__button{
+  min-height:43px;min-width:90px;font-size:11px;letter-spacing:.02em;
+  border-radius:9px;
+}
+#about .fq-studio__note{
+  min-height:51px;padding:12px 21px 16px;font-size:12px;
+}
+#about .about-grid>div:last-child>p:first-child{max-width:37ch}
+#about .about-grid>div:last-child>p{line-height:1.55}
+#about .career{margin-top:25px}
+#about .fq-studio-column>.eyebrow{margin-bottom:16px}
+
+/* SVG interactivity — hovering a monitor, a coffee mug, or mini Fiqri
+   triggers a real response; buttons offer the equivalent on touch/keyboard. */
+.fq-studio__art [data-studio-object]{cursor:pointer;outline:none}
+.fq-studio__art [data-studio-object]:focus-visible{
+  filter:drop-shadow(0 0 13px #bfd0ff);
+}
+.fq-studio__art .fq-workspace__avatar{
+  transform-origin:746px 420px;
+  transition:transform .55s cubic-bezier(.22,.8,.2,1),filter .3s;
+}
+.fq-studio__art .fq-workspace__avatar-head{
+  transform-origin:748px 354px;
+  animation:fq-mini-nod 2.7s ease-in-out infinite;
+}
+.fq-studio__art .fq-workspace__avatar-arm{
+  transform-origin:704px 390px;
+  animation:fq-mini-type .42s ease-in-out infinite alternate;
+}
+.fq-studio__art .fq-monitor-playhead{
+  animation:fq-playhead 4.4s linear infinite;
+}
+.fq-studio__art .fq-render-progress{
+  opacity:0;transition:opacity .3s;
+}
+.fq-studio__art .fq-render-bar{
+  transform-origin:495px 242px;
+  transform:scaleX(.05);
+}
+.fq-studio__art .fq-coffee-steam{opacity:0;transition:opacity .25s}
+.fq-studio__art .fq-workspace__cursor{animation:fq-mini-blink 1.15s steps(1) infinite}
+.fq-studio__art [data-studio-object]:hover{
+  filter:drop-shadow(0 0 13px #8caafa91);
+}
+.fq-studio__art .fq-workspace__screen{transition:filter .25s}
+.fq-studio__art .fq-workspace__coffee{transform-origin:675px 371px;transition:transform .4s}
+.fq-studio[data-mode="render"] .fq-render-progress{opacity:1}
+.fq-studio[data-mode="render"] .fq-render-bar{
+  animation:fq-mini-export 3.5s ease-in-out forwards;
+}
+.fq-studio[data-mode="render"] .fq-workspace__avatar{
+  transform:translateY(-4px) rotate(-2deg);
+}
+.fq-studio[data-mode="render"] .fq-workspace__avatar-arm,
+.fq-studio[data-mode="coffee"] .fq-workspace__avatar-arm{animation:none}
+.fq-studio[data-mode="render"] .fq-monitor-playhead,
+.fq-studio[data-mode="coffee"] .fq-monitor-playhead{animation-play-state:paused}
+.fq-studio[data-mode="coffee"] .fq-workspace__avatar{
+  transform:translate(17px,-1px) rotate(2deg);
+}
+.fq-studio[data-mode="coffee"] .fq-coffee-steam{
+  opacity:1;animation:fq-mini-steam 2.2s ease-out infinite;
+}
+.fq-studio[data-mode="coffee"] .fq-workspace__coffee{transform:translateY(-4px)}
+.fq-studio.is-waving .fq-workspace__avatar-arm{
+  animation:fq-mini-wave .34s ease-in-out 4 alternate;
+}
+@keyframes fq-mini-nod{0%,100%{transform:translateY(0)}50%{transform:translateY(2.4px)}}
+@keyframes fq-mini-type{from{transform:rotate(-3deg)}to{transform:rotate(4deg) translateY(3px)}}
+@keyframes fq-mini-blink{50%{opacity:0}}
+@keyframes fq-mini-export{from{transform:scaleX(.05)}to{transform:scaleX(1)}}
+@keyframes fq-mini-steam{0%{transform:translateY(5px);opacity:0}35%{opacity:.9}100%{transform:translateY(-11px);opacity:0}}
+@keyframes fq-mini-wave{to{transform:translate(-7px,-9px) rotate(-17deg)}}
+
+/* HERO / a real pointer-following moving spotlight across the photograph.
+   It illuminates the image, not the front cover's text. */
+.hero .portrait-card__face--front{isolation:isolate}
+.hero .portrait-card__face--front::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  border-radius:inherit;
+  background:
+    radial-gradient(ellipse 32% 27% at var(--hover-x,50%) var(--hover-y,50%),
+       #d8ecff89 0%,#9ebafa50 37%,transparent 78%);
+  mix-blend-mode:screen;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+@media(hover:hover) and (pointer:fine){
+ .hero .portrait-card:hover .portrait-card__face--front::after,
+ .hero .portrait-card:focus-within .portrait-card__face--front::after{opacity:.85}
+ .hero .portrait-card:hover .portrait-card__face--front{
+   border-color:#d4e7ffec!important;
+   box-shadow:0 43px 112px #000d,0 0 72px #729dff80!important;
+ }
+}
+.hero .portrait-card.is-flipped .portrait-card__face--front::after{opacity:0}
+
+/* No callout card floating over the main video on small screens.
+   The thumbnails live in the space BELOW the film. */
+@media(max-width:900px){
+ #about .about-grid{grid-template-columns:minmax(0,1fr);gap:31px}
+ #about .fq-studio{max-width:740px}
+ #about .fq-studio-column{order:0}
+}
+@media(max-width:700px){
+ #cinema-wrap .fq-blueprint{inset:0!important}
+ .fq-blueprint__schematic{opacity:.35;inset:10% 0 7%;width:100%;height:83%}
+ .fq-blueprint__annotation,.fq-blueprint__edge-title{display:none}
+ .fq-blueprint__sequence{
+   left:5%;right:5%;top:27%;gap:10px;justify-content:space-between;
+   font-size:8px;
+ }
+ .fq-blueprint__sequence span{font-size:8px}
+ #cinema-wrap .float-reel-card--one,
+ #cinema-wrap .float-reel-card--two{
+   display:block!important;
+   width:min(30vw,116px)!important;
+   z-index:10!important;opacity:1!important;scale:1!important;filter:none!important;
+   top:auto!important;bottom:18.5%!important;
+   --float-base-rot:0deg;
+   transform:none!important;
+   pointer-events:none!important;
+ }
+ #cinema-wrap .float-reel-card--one{left:8%!important;right:auto!important}
+ #cinema-wrap .float-reel-card--two{right:8%!important;left:auto!important}
+ #cinema-wrap .float-reel-card--three{display:none!important}
+ #cinema-wrap .float-reel-card--one .float-reel-card__media,
+ #cinema-wrap .float-reel-card--two .float-reel-card__media{
+   aspect-ratio:16/9!important;
+   height:auto!important;
+ }
+ #cinema-wrap .float-reel-card__inner{animation:none!important;border-radius:8px!important}
+ #cinema-wrap .float-reel-card__meta{padding:6px 5px;font-size:7px;letter-spacing:.01em}
+ #cinema-wrap .cinema-footer{bottom:8%!important}
+ #about .fq-studio__head{padding:12px 13px 4px;font-size:9px;letter-spacing:.09em}
+ #about .fq-studio__art{padding:0 3px}
+ #about .fq-studio__controls{padding:0 11px 12px;gap:6px}
+ #about .fq-studio__button{font-size:10px;min-width:65px;min-height:41px}
+ #about .fq-studio__note{padding:11px 13px 13px;font-size:11px}
+}
+@media(max-width:390px){
+  #cinema-wrap .float-reel-card--one,#cinema-wrap .float-reel-card--two{
+    width:31vw!important;bottom:18%!important;
+  }
+  #cinema-wrap .float-reel-card--one{left:7%!important}
+  #cinema-wrap .float-reel-card--two{right:7%!important}
+  .fq-blueprint__sequence{top:26.5%}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero .portrait-card__face--front::after{transition:none}
+  #about .fq-studio__art svg{transition:none!important;transform:none!important}
+  .fq-studio__art .fq-workspace__avatar-head,
+  .fq-studio__art .fq-workspace__avatar-arm,
+  .fq-studio__art .fq-monitor-playhead,
+  .fq-studio__art .fq-workspace__cursor,
+  .fq-studio__art .fq-render-bar,
+  .fq-studio__art .fq-coffee-steam{animation:none!important}
+  .fq-blueprint__phase--capture,.fq-blueprint__phase--craft,.fq-blueprint__phase--deliver{transition:none}
+}
