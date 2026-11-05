@@ -1,0 +1,420 @@
+/* ============================================================================
+   FIQRI / COLOR STUDY 01 — MIDNIGHT EDITORIAL × FILM COPPER
+   A considered finishing layer, not a theme template.
+
+   60% / MIDNIGHT INK   — negative space, video-first canvas
+   30% / WEATHERED SLATE — quiet sectional rhythm and surfaces
+   10% / FILM COPPER     — the eye's route: hero, actions, selection
+   Warm paper + off-white are neutrals, NOT competing accent colors.
+   No global neon, gradient typography, or indiscriminate glowing cards.
+   ============================================================================ */
+
+:root {
+  --bg:#0b141b;
+  --ink:#f3f0e9;
+  --sub:#b3bbc0;
+  --line:#344550;
+  --surface:#13222d;
+  --surface-2:#1b2b36;
+  --accent:#dda582;
+  --accent-strong:#c98b67;
+  --accent-muted:#dda58276;
+  --fq-copper:#dda582;
+  --fq-copper-light:#ebbb9c;
+  --fq-ink:#0b141b;
+  --fq-slate:#1b2b36;
+  --fq-paper:#eee9df;
+  --fq-text:#f3f0e9;
+  --fq-secondary:#abb6bd;
+}
+
+html{scroll-padding-top:82px}
+body {background:var(--fq-ink);color:var(--fq-text)}
+::selection,body::selection{background:#dda582;color:#151b1f}
+button:focus-visible,a:focus-visible {
+  outline:2px solid var(--fq-copper-light);
+  outline-offset:4px;
+}
+
+/* 01 / HEADER — quiet chrome, precise wayfinding */
+.topbar {
+  background:#0b141bec;
+  border-bottom:1px solid #b2b8bb21;
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+}
+.topbar .logo,.footer .logo {color:var(--fq-text)}
+.topbar .logo i,.footer .logo i {color:var(--fq-copper)}
+.topbar .links>a:not(.nav-cta){
+  position:relative;
+  color:#d7dce0;
+  transition:color .22s ease;
+}
+.topbar .links>a:not(.nav-cta)::after{
+  content:"";
+  position:absolute;
+  left:0;right:100%;bottom:6px;
+  height:1px;background:var(--fq-copper);
+  transition:right .26s cubic-bezier(.23,.73,.2,1);
+}
+.topbar .links>a:not(.nav-cta):hover,
+.topbar .links>a:not(.nav-cta):focus-visible{color:var(--fq-text)}
+.topbar .links>a:not(.nav-cta):hover::after,
+.topbar .links>a:not(.nav-cta):focus-visible::after{right:0}
+.topbar .nav-cta {
+  background:transparent;
+  border:1px solid #b1bdc180;
+  border-radius:10px;
+  color:var(--fq-text);
+  font-weight:600;
+  transition:background .2s ease,border-color .2s ease,color .2s ease;
+}
+.topbar .nav-cta:hover,
+.topbar .nav-cta:focus-visible {
+  background:#25323a;
+  border-color:var(--fq-copper);
+  color:var(--fq-paper);
+}
+.mobile-menu{
+  border:1px solid #78858b78;
+  border-radius:9px;
+  background:#1b2b36;
+}
+.progress{
+  height:2px;
+  background:var(--fq-copper);
+}
+
+/* 02 / HERO — deliberate focal hierarchy: name → point of view → action */
+.hero {
+  background:
+    radial-gradient(ellipse 62% 73% at 85% 42%,#3c526025,transparent 70%),
+    linear-gradient(153deg,#0b141b 4%,#11212b 61%,#0c1720 100%);
+}
+.hero::before{opacity:.09}
+.hero::after{opacity:.43}
+.hero-blob{opacity:.48}
+.hero-top .mono.accent{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  color:var(--fq-copper);
+  letter-spacing:.14em;
+}
+.hero-top .mono.accent::before{
+  content:"";
+  display:block;
+  height:2px;
+  width:24px;
+  flex:0 0 24px;
+  background:var(--fq-copper);
+}
+.hero .available{
+  color:#d2dadf;
+  font-size:11px;
+  letter-spacing:.035em;
+}
+.hero .dot{
+  background:var(--fq-copper);
+  box-shadow:0 0 0 4px #dda58212;
+}
+.hero h1{color:var(--fq-text)}
+.hero h1 em,
+.hero h1 .hero-line:last-child em{
+  color:var(--fq-copper-light);
+  text-shadow:none;
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:400;
+  font-style:italic;
+  font-size:.81em;
+  letter-spacing:-.072em;
+}
+.hero p{color:#bbc5ca;line-height:1.7}
+.hero .actions{gap:24px}
+.button,
+.intro .button{
+  min-height:50px;
+  align-items:center;
+  justify-content:center;
+  background:var(--fq-copper);
+  border:1px solid var(--fq-copper);
+  border-radius:10px;
+  color:#111b21;
+  font-weight:700;
+  box-shadow:none;
+  transition:background .22s ease,transform .22s ease,border-color .22s ease;
+}
+.button:hover,
+.intro .button:hover{
+  background:#efc0a2;
+  border-color:#efc0a2;
+  box-shadow:none;
+  transform:translateY(-2px);
+}
+.hero .simple-link{
+  color:var(--fq-paper);
+  border-bottom:1px solid #dda58291;
+  transition:border-color .2s ease,color .2s ease;
+}
+.hero .simple-link:hover{color:var(--fq-copper-light);border-color:var(--fq-copper-light)}
+.hero-foot{color:#8fa0aa}
+.hero-foot .mono:last-child{letter-spacing:.11em}
+
+/* A real photograph remains the hero artwork. Chrome becomes almost invisible. */
+.poster.hero-photo-stage .portrait-card__face--front {
+  border-color:#b1c0c354;
+  box-shadow:0 30px 80px #02070b8f;
+}
+.poster.hero-photo-stage .portrait-card__face--back{
+  border-color:#d5b39873;
+  background:
+    radial-gradient(ellipse 72% 65% at 88% 12%,#8c685230,transparent 76%),
+    linear-gradient(147deg,#23323c,#14242e 68%,#0e1920);
+}
+.portrait-card__back-kicker,
+.portrait-card__back-quote em{color:var(--fq-copper-light)}
+.portrait-card__back-top,
+.portrait-card__back-bottom{color:#d7b99f}
+.portrait-card__back-note{color:#bac5c9;border-color:#cfb1983e}
+.portrait-card__face--back::before{border-color:#cfb19843}
+.portrait-skill{
+  background:#14222cea;
+  border-color:#b9c4c53f;
+  box-shadow:0 10px 25px #02070ab8;
+  color:var(--fq-text);
+}
+.portrait-skill svg{color:var(--fq-copper)}
+.poster.hero-photo-stage:hover .portrait-skill{
+  background:#1c2b35ec;
+  border-color:#d6ac8963;
+}
+
+/* 03 / SCENE ONE — supportive, not competition with the video frame */
+#cinema-wrap{background:#101b25}
+#cinema-wrap .cinema-stick{
+  background:
+    radial-gradient(ellipse at 51% 50%,#4c637020,transparent 60%),
+    linear-gradient(155deg,#0c1822,#172632 60%,#0b151e);
+}
+#cinema-wrap .cinema-copy .eyebrow.accent{color:var(--fq-copper)}
+#cinema-wrap .cinema-deck{color:#bcc5ca}
+#cinema-wrap .cinema-frame.showreel-shell{
+  border-color:#b5c5c57c!important;
+  box-shadow:0 36px 100px #0009,0 0 40px #60778017!important;
+}
+#cinema-wrap .cinema-view-work{
+  background:#14232ac9;
+  border:1px solid #dda58291;
+  border-radius:10px;
+  color:var(--fq-text);
+  transition:background .2s ease,border-color .2s ease;
+}
+#cinema-wrap .cinema-view-work:hover{
+  background:#273039;
+  border-color:var(--fq-copper-light);
+  color:var(--fq-paper);
+}
+
+/* 04 / SELECTED WORK — editorial filters, image-first thumbnails */
+#work{
+  background:#13212a;
+  border-top:1px solid #bec3c026;
+  border-bottom:1px solid #bec3c026;
+}
+.section .eyebrow.accent,
+#work .eyebrow.accent{color:var(--fq-copper)}
+.section h2{color:var(--fq-text)}
+.section-lead{color:#aeb8bf}
+#work .section-header .eyebrow.accent{
+  display:inline-flex;align-items:center;gap:12px;
+}
+#work .section-header .eyebrow.accent::before{
+  content:"";
+  display:inline-block;flex:0 0 18px;
+  width:18px;height:1px;
+  background:currentColor;
+}
+#work .filterbar{gap:8px}
+#work .filter{
+  border:1px solid transparent;
+  border-bottom:1px solid #8792978c;
+  background:transparent;
+  border-radius:0;
+  color:#b7c0c5;
+  padding:12px 8px 10px;
+  margin-right:6px;
+  font:600 12px/1.2 "Space Grotesk",sans-serif;
+  letter-spacing:.015em;
+  transform:none;
+  transition:border-color .22s ease,color .22s ease,background .22s ease;
+}
+#work .filter:hover{
+  color:var(--fq-paper);
+  border-color:transparent;
+  border-bottom-color:#dda58299;
+  background:transparent;
+  transform:none;
+}
+#work .filter[aria-pressed="true"]{
+  color:var(--fq-paper);
+  background:transparent;
+  border-color:transparent;
+  border-bottom:2px solid var(--fq-copper);
+  padding-bottom:9px;
+  transform:none;
+}
+#work .filter:focus-visible{outline:2px solid var(--fq-copper-light);outline-offset:2px}
+#work .work-filter-status{color:#9ba8af;letter-spacing:.13em}
+#work .work-card{
+  border-color:#c3c8c32e;
+  box-shadow:0 9px 26px #02070b4f;
+  transition:transform .27s ease,border-color .27s ease,box-shadow .27s ease;
+}
+#work .work-card:hover,
+#work .work-card:focus-within{
+  border-color:#dda58299;
+  box-shadow:0 18px 40px #02070b8c;
+}
+#work .work-meta{color:#e2b592}
+#work .work-titleline h3{
+  color:#f8f6ef!important;
+  text-shadow:0 2px 12px #000e;
+}
+#work .work-media .work-play-cue{
+  color:#f6f2e9;
+  background:#101c23bf;
+  border-color:#b4c0c277;
+  box-shadow:0 7px 24px #0008;
+}
+#work .work-card:hover .work-play-cue{
+  color:#f7ece0;
+  background:#2a3032de;
+  border-color:#dfad89;
+}
+#work .easter-work-note{
+  background:linear-gradient(142deg,#0b1823f5,#1c2e38f2);
+}
+#work .easter-work-note__eyebrow{color:var(--fq-copper-light)}
+
+/* 05 / EXPERTISE & ABOUT — breath and rhythm instead of decorative panels */
+.expertise{
+  background:#0d181f;
+  border-color:#9caeb322;
+}
+.expertise .skill{
+  border-color:#8e9ea64c;
+}
+.expertise .skill h3{color:#f2efe9}
+.expertise .skill p{color:#aeb9c0}
+.expertise .skill:hover{
+  border-color:#d5ad895b;
+  box-shadow:none;
+}
+#about{background:#101f28}
+#about .career{border-color:#87999b52}
+#about .career-item{border-color:#87999b38}
+#about .career-item span{color:var(--fq-copper)}
+#about .career-item strong{color:#e4e6e5}
+
+/* 06 / CONTACT — a single matte paper break provides a confident finish */
+.contact{
+  background:#ece7dc;
+  background-image:none;
+  color:#14212b;
+  border-top:3px solid #d2a283;
+}
+.contact h2{color:#14212b}
+.contact .eyebrow{color:#936d53}
+.contact .section-lead,
+.contact .muted{color:#4a5960}
+.contact .mail{
+  color:#16232e;
+  border-bottom:2px solid #b47752;
+  transition:color .2s ease,border-color .2s ease;
+}
+.contact .mail:hover{color:#955a37;border-color:#955a37}
+.contact .whatsapp-contact{
+  background:#172831;
+  background-image:none;
+  color:#f7f2eb;
+  border:1px solid #172831;
+  border-radius:10px;
+  box-shadow:0 10px 26px #0e22232d;
+}
+.contact .whatsapp-contact:hover{
+  background:#24363e;
+  border-color:#24363e;
+  box-shadow:0 14px 32px #0e222344;
+}
+.contact .whatsapp-contact__icon,
+.contact .whatsapp-contact__arrow{color:#e9b18e}
+.contact .whatsapp-contact__copy strong{color:#f6f3ee}
+.contact .whatsapp-contact__copy>span{color:#c8d1d1}
+.contact .linkedin-contact{
+  color:#21303b;
+  border-bottom:1px solid #a27b61;
+}
+.contact .linkedin-contact:hover{color:#905b3d;border-color:#905b3d}
+.contact .whatsapp-contact:focus-visible,
+.contact .linkedin-contact:focus-visible{
+  outline:3px solid #986b4f;outline-offset:4px;
+}
+
+/* 07 / CREDITS — the small personal details share the same color language */
+.footer{color:#aab6bc}
+.footer a:hover,
+.footer .replay:hover{color:var(--fq-copper-light)}
+.footer-final-note{color:#a5b3b9}
+.footer-final-note__star{color:var(--fq-copper)}
+.footer-final-note__fin{color:#af8e76}
+.directors-cut{
+  border-color:#b6ac9b76!important;
+  background:
+    radial-gradient(ellipse at 88% 0%,#61524324,transparent 60%),
+    linear-gradient(155deg,#13232e,#0a171e)!important;
+  box-shadow:0 24px 80px #000a!important;
+}
+.directors-cut__topline,
+.directors-cut__title em,
+.directors-cut__time{color:var(--fq-copper-light)}
+.directors-cut__end::before{background:var(--fq-copper)}
+.directors-cut__close{background:#26343d;border-color:#b0b3b060}
+.directors-cut__close:hover{background:#34444c}
+
+/* 08 / INTRO — no competing third palette or unrelated visual system */
+.intro{
+  background:radial-gradient(ellipse at 50% 42%,#24323a,#0b141b 72%);
+}
+.intro h2 span{
+  color:var(--fq-copper-light);
+  text-shadow:none;
+}
+.intro p{color:#b9c4c6}
+.intro .eyebrow.accent{color:var(--fq-copper)}
+.intro-orbit{border-color:#e0b08c3a;box-shadow:0 0 0 70px #dca47c08,0 0 0 150px #dca47c06}
+
+/* Mobile polish follows the exact same design logic, never a second theme. */
+@media(max-width:700px){
+  .topbar .links{background:#111e26}
+  .topbar .links>a:not(.nav-cta)::after{bottom:8px}
+  .topbar .links .nav-cta{
+    background:#253039;
+    border-color:#ac9f9587;
+    min-height:46px;
+  }
+  .hero-top .mono.accent{font-size:9px;gap:8px}
+  .hero-top .mono.accent::before{width:15px;flex-basis:15px}
+  .hero h1 em,.hero h1 .hero-line:last-child em{font-size:.85em}
+  .hero .available{border-color:#b9aaa459;background:#18272c91;color:#dee0dc}
+  #work .filter{min-height:44px;padding:12px 7px 9px;margin-right:7px}
+  #work .filter[aria-pressed="true"]{padding-bottom:8px}
+  #work .section-header .eyebrow.accent::before{width:13px;flex-basis:13px}
+  #work .work-meta{color:#e1b18d}
+  .contact{padding-block:80px}
+  .contact .mail{font-size:clamp(20px,5.5vw,30px)}
+  .contact .whatsapp-contact{border-radius:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .topbar .links>a:not(.nav-cta)::after,
+  .button,#work .filter,#work .work-card {transition:none!important}
+}
