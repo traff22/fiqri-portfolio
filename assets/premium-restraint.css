@@ -1,0 +1,167 @@
+/* FIQRI / EDITORIAL RESTRAINT — v2.1
+   Quiet depth, meaningful motion and less UI chrome.
+   Portrait, real work and the showreel do the storytelling.
+   NO particles, confetti, animated grids or ornamental satellite footage. */
+:root {
+  --fq-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+}
+.hero {
+  background:radial-gradient(ellipse 53% 55% at 79% 48%, #344d5b35, transparent 82%),
+             linear-gradient(145deg,#0b141b 0%,#101e27 68%,#0b141b 100%);
+}
+.hero::before {display:none!important}
+.hero::after {opacity:.18!important;background:radial-gradient(ellipse 40% 56% at 78% 40%,#82909c3a,transparent 85%)!important}
+.hero .hero-ambience{
+  inset:0!important;z-index:1;
+  overflow:hidden!important;opacity:.065;
+  background-image:var(--fq-grain);
+  background-size:160px 160px;
+  background-repeat:repeat;
+  filter:grayscale(1);
+}
+.hero-ambience .hero-blob{display:none!important}
+.hero .shell{transform:none!important;will-change:auto!important}
+.hero-top .available{
+  background:transparent!important;border:0!important;
+  padding:0!important;min-height:unset!important;
+  border-radius:0!important;box-shadow:none!important;
+  color:#c0c9cd!important;letter-spacing:.06em;
+}
+.hero .available .dot{width:6px;height:6px;flex:0 0 6px;box-shadow:none!important}
+.hero-grid{gap:clamp(25px,3.8vw,70px)}
+.hero h1{margin-top:33px;max-width:720px}
+.hero p{max-width:48ch;line-height:1.65}
+.hero .actions{margin-top:30px}
+.hero .simple-link{font-weight:600}
+.hero .hero-foot{margin-top:clamp(35px,4vw,70px)}
+.hero-foot .mono:last-child{display:none!important}
+.hero .poster.hero-photo-stage{filter:none}
+.hero .portrait-halo{display:none!important}
+.hero .portrait-card{animation:none!important;translate:none!important}
+.hero .portrait-skills{display:none!important}
+.hero .portrait-card__heading{letter-spacing:.13em}
+.hero .portrait-card__foot{gap:8px}
+.hero .portrait-card__foot strong{letter-spacing:-.055em}
+
+/* One quiet film stage rather than a visual effects demo. */
+#cinema-wrap{height:145svh;background:#0b1820}
+#cinema-wrap .cinema-stick{
+  background:linear-gradient(180deg,#101c25 0%,#14242e 54%,#0c1820 100%);
+}
+#cinema-wrap .cinema-stick::before {
+  inset:0!important;
+  background-image:var(--fq-grain)!important;
+  background-size:160px 160px!important;
+  background-repeat:repeat!important;
+  opacity:.045!important;
+  transform:none!important;
+  filter:grayscale(1);
+}
+#cinema-wrap .cinema-atmosphere,
+#cinema-wrap .cinema-orbit,
+#cinema-wrap .cinema-light-streak,
+#cinema-wrap .cinema-spark,
+#cinema-wrap .showreel-glow,
+#cinema-wrap .float-reel-card {
+  display:none!important;
+}
+#cinema-wrap .cinema-copy{top:10%}
+#cinema-wrap .cinema-copy h2{
+  font-weight:600;letter-spacing:-.065em;
+  text-shadow:none!important;
+}
+#cinema-wrap .cinema-deck{max-width:43ch;line-height:1.55}
+#cinema-wrap .cinema-frame.showreel-shell {
+  width:min(66vw,930px);
+  border-radius:14px!important;
+  box-shadow:0 30px 75px #0008!important;
+  will-change:auto;
+}
+#cinema-wrap .showreel-visual{border-radius:inherit}
+#cinema-wrap .cinema-view-work{box-shadow:none}
+
+/* Film takes focus. A plain surface is enough behind real video frames. */
+#work{background:#111e27}
+#work .work-card::before,
+#work .work-card .work-media::before{display:none!important}
+#work .work-card{
+  box-shadow:0 8px 23px #02070b36;
+  border-color:#e0dbd028;
+}
+#work .work-card:hover,
+#work .work-card:focus-within {
+  box-shadow:0 16px 34px #02070b73;
+  transform:translateY(-2px);
+}
+#work .work-media .work-poster {
+  filter:brightness(.95) saturate(.93);
+  transition:filter .28s,transform .4s ease;
+}
+#work .work-card:hover .work-poster{
+  filter:brightness(.87) saturate(.97);
+  transform:scale(1.025);
+}
+#work .work-media .work-play-cue{
+  width:42px;height:42px;
+  background:#0d1824b9;border-color:#ece6da8f;
+  backdrop-filter:blur(3px);
+}
+#work .work-card:hover .work-play-cue{transform:translate(-50%,-50%) scale(1.04)}
+/* The gallery has enough visual interest in its actual thumbnails. */
+
+/* Subtle typographic rhythm instead of moving decoration. */
+.expertise .skill:hover{transform:none!important;box-shadow:none!important}
+.expertise .skill{transition:border-color .2s}
+.expertise .skill h3{font-size:clamp(21px,2vw,27px);letter-spacing:-.045em}
+.expertise .skill p{max-width:36ch;line-height:1.7}
+#about .about-grid{gap:clamp(35px,5vw,85px)}
+#about .about-grid>div:last-child>p:first-child{max-width:34ch}
+#about .career-item{align-items:baseline}
+#about .career-item strong{line-height:1.4}
+.contact h2{letter-spacing:-.07em}
+.footer-final-note{letter-spacing:.03em}
+
+/* Mobile: short and purposeful chapter; no dead scroll theatre. */
+@media(max-width:850px){
+  .hero{min-height:auto;padding-top:108px;padding-bottom:58px}
+  .hero .shell{transform:none!important}
+  .hero h1{margin-top:24px}
+  #cinema-wrap{height:130svh}
+  #cinema-wrap .cinema-copy{top:8%}
+  #cinema-wrap .cinema-frame.showreel-shell{
+    width:min(92vw,760px);top:46%;
+    border-radius:12px!important;
+  }
+  #cinema-wrap .cinema-footer{bottom:14%}
+  .hero-foot{margin-top:20px!important}
+}
+@media(max-width:620px){
+  .hero{padding-top:98px;padding-bottom:52px}
+  .hero-top{gap:9px}
+  .hero .hero-grid{gap:17px}
+  .hero h1{font-size:clamp(39px,10.7vw,60px);line-height:1.045}
+  .hero p{font-size:15px;line-height:1.6}
+  .hero .actions{gap:17px;margin-top:22px}
+  .poster.hero-photo-stage{margin-top:15px!important;margin-bottom:8px!important}
+  .hero .portrait-card__foot strong{font-size:clamp(23px,6.3vw,28px)}
+  #cinema-wrap{height:125svh}
+  #cinema-wrap .cinema-copy{top:8%}
+  #cinema-wrap .cinema-copy h2{font-size:clamp(33px,9vw,44px)}
+  #cinema-wrap .cinema-deck{max-width:315px;font-size:12px}
+  #cinema-wrap .cinema-frame.showreel-shell{top:44%;width:92vw}
+  #cinema-wrap .cinema-footer{bottom:13%}
+  #work{padding-top:66px;padding-bottom:70px}
+  #work .filterbar{margin-bottom:5px}
+  #work .work-media .work-play-cue{width:37px;height:37px}
+  .expertise .skill{padding-top:16px}
+  .expertise .skills{gap:21px}
+}
+@media(max-width:390px) and (max-height:750px){
+  #cinema-wrap .cinema-copy{top:6%}
+  #cinema-wrap .cinema-frame.showreel-shell{top:43%}
+  #cinema-wrap .cinema-footer{bottom:11%}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero .portrait-card,.hero .portrait-halo,#cinema-wrap .cinema-frame.showreel-shell{will-change:auto!important}
+  #work .work-poster{transition:none!important}
+}
