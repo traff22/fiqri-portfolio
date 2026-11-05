@@ -200,7 +200,17 @@
 .fq-studio[data-mode="render"] .fq-monitor-playhead,
 .fq-studio[data-mode="coffee"] .fq-monitor-playhead{animation-play-state:paused}
 .fq-studio[data-mode="coffee"] .fq-workspace__avatar{
-  transform:translate(17px,-1px) rotate(2deg);
+  transform:translate(-24px,-1px) rotate(-3deg);
+}
+.fq-studio[data-mode="coffee"] .fq-workspace__avatar-arm{
+  transform:translate(-10px,-11px) rotate(-10deg);
+}
+@media(hover:hover) and (pointer:fine){
+  .fq-studio.is-curious .fq-workspace__avatar-head{
+    animation:none;
+    transform:translateY(-4px) rotate(-7deg);
+    transition:transform .25s ease-out;
+  }
 }
 .fq-studio[data-mode="coffee"] .fq-coffee-steam{
   opacity:1;animation:fq-mini-steam 2.2s ease-out infinite;
