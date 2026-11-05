@@ -1,8 +1,8 @@
 import {chromium} from "playwright";
 import fs from "node:fs";
 
-/* A visual restraint regression test: no generated scene particles or
-   blocking intro, and the actual editorial content remains visible. */
+/* Verify the luminous motion direction: real optical depth, no particles,
+   one desktop film still, visible content and safe mobile dimensions. */
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const report=[];
 fs.mkdirSync("screenshots",{recursive:true});
@@ -30,7 +30,7 @@ try{
       return {
         oldParticles:document.querySelectorAll(".editorial-atmosphere,.ed-particle").length,
         heroBlob:css(".hero-blob").display,
-        heroGrain:css(".hero .hero-ambience").backgroundImage,
+        ambientLight:getComputedStyle($(".hero .hero-ambience"),"::before").backgroundImage,
         portraitHalo:css(".portrait-halo").display,
         portraitChips:css(".portrait-skills").display,
         introHidden:$("#intro").hidden,
@@ -38,7 +38,8 @@ try{
         actionVisible:css(".hero .actions .button").visibility,
         frame:!!$("#cinema-wrap .showreel-shell"),
         footageVideo:!!$("#cinema-wrap .showreel-visual"),
-        frameCard:css("#cinema-wrap .float-reel-card").display,
+        sideCard:css("#cinema-wrap .float-reel-card--two").display,
+        otherCards:[css("#cinema-wrap .float-reel-card--one").display,css("#cinema-wrap .float-reel-card--three").display],
         chapterHeight:stage.getBoundingClientRect().height,
         viewportHeight:innerHeight,
         overflow:document.documentElement.scrollWidth-innerWidth
@@ -47,13 +48,23 @@ try{
     check(result.oldParticles===0,name+": floating particle nodes still present");
     check(result.heroBlob==="none",name+": animated glow blob remains");
     check(result.portraitHalo==="none"&&result.portraitChips==="none",name+": redundant hero chrome remains");
-    check(result.heroGrain.includes("data:image/svg+xml"),name+": static film texture missing");
+    check(result.ambientLight.includes("radial-gradient"),name+": luminous film-light backdrop missing");
     check(result.introHidden,name+": opening splash blocks the portfolio");
     check(result.heading&&result.actionVisible==="visible",name+": hero content lost");
     check(result.frame&&result.footageVideo,name+": video stage lost");
-    check(result.frameCard==="none",name+": satellite film cards remain");
+    check(result.otherCards.every(x=>x==="none"),name+": excess satellite cards visible");
+    check((result.sideCard!=="none")===(!mobile),name+": single desktop reel depth cue missing or exposed on mobile");
     check(result.overflow<=1,name+": horizontal overflow "+result.overflow);
     if(mobile)check(result.chapterHeight<=result.viewportHeight*1.33,name+": sticky chapter is too tall");
+
+    const initial=await page.locator(".hero").evaluate(el=>el.style.getPropertyValue("--ek-ambient-y"));
+    await page.evaluate(()=>scrollTo({top:Math.min(420,document.documentElement.scrollHeight-innerHeight),behavior:"instant"}));
+    await page.waitForTimeout(230);
+    const scrolled=await page.locator(".hero").evaluate(el=>el.style.getPropertyValue("--ek-ambient-y"));
+    check(Boolean(scrolled)&&scrolled!==initial,name+": hero ambient depth did not respond to scroll");
+
+    await page.evaluate(()=>scrollTo({top:0,behavior:"instant"}));
+    await page.waitForTimeout(120);
 
     await page.locator(".hero").screenshot({
       path:"screenshots/restraint-"+name+"-hero.png",animations:"disabled"
