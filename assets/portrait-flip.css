@@ -1,5 +1,27 @@
-/* A small story behind the frame — interactive portrait flip.
-   The outer portrait keeps its existing subtle tilt; only the inner faces turn. */
+/* A hidden story behind the frame.
+   The stationary tilt container has NO border. Both rotating faces carry their
+   own borders and shadows, so the complete outlined card turns in 3D. */
+.poster.hero-photo-stage .portrait-card,
+.poster.hero-photo-stage .portrait-card:hover {
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  overflow:visible;
+}
+.portrait-card__face--front,
+.portrait-card__face--back {
+  border:1px solid #b6d5ff78;
+  box-shadow:0 35px 95px #010716af,0 0 64px #4a88d725;
+}
+.portrait-card__face--back {
+  border-color:#bedbff83;
+  box-shadow:0 35px 95px #010716bf,0 0 65px #4a88d730;
+}
+@media (hover:hover) and (pointer:fine) {
+  .portrait-card:hover .portrait-card__face {
+    box-shadow:0 44px 110px #010716cf,0 0 78px #68a3f536;
+  }
+}
 .portrait-card {
   isolation:isolate;
 }
@@ -123,32 +145,6 @@
   outline:3px solid #cce7ff;
   outline-offset:-7px;
 }
-.portrait-card__flip-cue {
-  position:absolute;
-  z-index:10;
-  top:65px;
-  right:clamp(18px,2.8vw,29px);
-  max-width:60%;
-  padding:6px 9px;
-  border:1px solid #b9dbff7a;
-  border-radius:99px;
-  background:#09192dc9;
-  color:#e3f2ff;
-  font:700 9px/1.15 "Space Grotesk",sans-serif;
-  letter-spacing:.11em;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .2s ease;
-}
-.portrait-card.is-flippable .portrait-card__flip-cue {opacity:.9}
-.portrait-card__flip-cue--back {display:none}
-.portrait-card.is-flipped .portrait-card__flip-cue--front {display:none}
-.portrait-card.is-flipped .portrait-card__flip-cue--back {display:block}
-@media (hover:hover) and (pointer:fine) {
-  .portrait-card__flip-cue {opacity:0!important}
-  .portrait-card:hover .portrait-card__flip-cue,
-  .portrait-card:focus-within .portrait-card__flip-cue {opacity:.9!important}
-}
 @media (max-width:700px) {
   .portrait-card__face--back {padding:clamp(19px,5vw,29px);}
   .portrait-card__back-quote {
@@ -160,7 +156,6 @@
   .portrait-card__back-note {font-size:11px;line-height:1.55;padding-top:12px}
   .portrait-card__back-top,.portrait-card__back-bottom {font-size:8px}
   .portrait-card__back-bottom {padding-top:9px}
-  .portrait-card__flip-cue {top:50px;right:16px;font-size:8px}
 }
 @media (max-width:359px) {
   .portrait-card__face--back {padding:17px}
@@ -175,5 +170,4 @@
   .portrait-card__face--back {visibility:hidden;opacity:0}
   .portrait-card.is-flipped .portrait-card__face--front {visibility:hidden;opacity:0}
   .portrait-card.is-flipped .portrait-card__face--back {visibility:visible;opacity:1}
-  .portrait-card__flip-cue {transition:none!important}
 }
