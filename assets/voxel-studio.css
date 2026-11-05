@@ -1,0 +1,61 @@
+/* FQ / ABOUT — the 3D voxel editing room floats freely in the section.
+   No card: no border, panel background or header strip. The room sits on a
+   soft pool of light with a contact shadow; the controls are quiet chips. */
+#about .fq-studio{
+  position:relative;overflow:visible!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+#about .fq-studio::before,#about .fq-studio::after{content:none!important}
+#about .fq-studio__head{display:none!important}
+#about .fq-studio__art.fq-studio__art--voxel{
+  position:relative;padding:0!important;
+  aspect-ratio:4/3;width:100%;
+  perspective:none;touch-action:pan-y;
+}
+/* light pool + contact shadow under the floating diorama */
+#about .fq-studio__art--voxel::before{
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  left:8%;right:8%;top:12%;bottom:4%;
+  background:
+    radial-gradient(ellipse 50% 22% at 52% 82%,#02061599,transparent 70%),
+    radial-gradient(ellipse 60% 55% at 50% 52%,#4a5fe03a,transparent 72%);
+  filter:blur(6px);
+}
+#about .fq-voxel__canvas{
+  position:relative;z-index:1;display:block;
+  width:100%!important;height:100%!important;
+  cursor:grab;outline:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#about .fq-voxel__canvas:active{cursor:grabbing}
+#about .fq-studio__controls{
+  justify-content:center;flex-wrap:wrap;
+  padding:6px 0 0!important;gap:8px!important;
+}
+#about .fq-studio__button{
+  min-height:40px;min-width:0!important;padding:0 16px;
+  border-radius:999px!important;
+  border:1px solid #93a8ff4d!important;
+  background:#0f1838a6!important;color:#d9e3ff!important;
+  font:600 11px/1 "Space Grotesk",sans-serif!important;letter-spacing:.06em;
+  transition:background .25s,border-color .25s,color .25s;
+}
+#about .fq-studio__button:hover{border-color:#c4d1ff!important;background:#1c2a5ccc!important}
+#about .fq-studio__button[aria-pressed="true"]{
+  background:#b5c4ff!important;border-color:#b5c4ff!important;color:#0a1230!important;
+}
+#about .fq-studio__note{
+  text-align:center;border:0!important;background:transparent!important;
+  min-height:0!important;padding:10px 0 0!important;
+  font-size:12px;color:#aebce0;
+}
+@media(max-width:900px){
+  #about .fq-studio{max-width:none!important}
+}
+@media(max-width:700px){
+  #about .fq-studio__art.fq-studio__art--voxel{aspect-ratio:1/1;margin:0 -2vw}
+  #about .fq-studio__button{padding:0 13px;font-size:10.5px!important;min-height:40px}
+}
+#about .fq-studio__button{flex:0 0 auto!important}

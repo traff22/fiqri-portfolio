@@ -252,3 +252,47 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - `montage-smoke.mjs` asserts that the opening long-form film lights the editorial clip.
 - All suites pass locally. `ui-smoke` was run with the YouTube API stubbed, because YouTube is blocked in the sandbox.
 - Real thumbnails and real playback still need checking outside the sandbox.
+
+### 2026-11-06 (WIB) — Blueprint background fill + 3D voxel About room, merged to live (Claude Code)
+**Owner feedback (verbatim intent):**
+- "review sekilas apakah masuk logika dan perintah gw mau blueprintuh biar belakangnya nggak kosong kesannya". Honest review: the connectors were logically right, but the large background areas were still empty, so the intent was only partly met.
+- "Animasi little about me itu gw pengen 3 d voxel interactive dan jalan sendiri nggak perlu di card gitu ... sebelumnya gpt kureng". Owner authorised merging straight to live ("langsung merge ke live karna webnya juga belum ku sebar").
+
+**Chapter One background:**
+- A drafting-paper grid sits on `.fq-blueprint::before`: 24px minor / 120px major lines, centred on the film and radially masked, so the connectors and labels are never faded.
+- A construction drawing is computed from the real film box:
+  - dashed extension lines from the picture edges, stopping before the headline, ruler and CTA;
+  - a dash-dot centre line;
+  - a `16 : 9` dimension line under the caption strip;
+  - registration targets top-right and bottom-left, skipped where a thumbnail sits.
+- Phones keep only the grid.
+
+**About — 3D voxel room (`assets/voxel-studio.js`, `assets/voxel-studio.css`):**
+- Everything is built from first-party voxels with InstancedMesh, using an orthographic isometric camera:
+  - room with plinth, window over Jakarta at night, walnut desk, two monitors with live canvas feeds (timeline with playhead / program monitor / render bar / "BRB");
+  - warm desk lamp as a real light, PC with teal LED, chair, coffee station, shelf with books and a clapperboard, "FQ." poster, plant, camera on a tripod with blinking REC.
+- Mini Fiqri follows the portrait: black swept fringe falling to one side, charcoal sweater, white collar, ears and nape visible (hair replaces skin voxels, so no helmet silhouette).
+- Autonomous loop: edit 9s (typing, glances over the shoulder) → render (leans back, hands behind head, render bar to "EXPORTED") → edit 7s → coffee (stands, walks, picks up the mug in the right hand, turns to the camera, sips twice with voxel steam, returns the mug, sits).
+- Interaction:
+  - drag turns the room (azimuth, plus elevation on mouse);
+  - clicks on the left monitor = edit, right monitor = render, coffee or mug = coffee, Fiqri = wave (the chair spins to face the viewer);
+  - the buttons trigger the same actions.
+- Autonomous state changes update the note with `aria-live="off"`; visitor actions use `polite`.
+- Paused off-screen and in hidden tabs. `prefers-reduced-motion`: no autonomous routine and no camera drift; poses switch instantly.
+- Lazy-loaded: Three.js r170 is vendored (`assets/vendor/three.module.min.js`, ≈690KB, ≈171KB gzipped, MIT licence alongside) and only fetched when About is within 700px of the viewport. Without WebGL, the SVG room is used.
+- No card: `#fq-studio` has no border/background/shadow and the header strip is hidden. The diorama floats on a light pool with a contact shadow. Buttons are quiet chips.
+
+**QA:**
+- `creators-lab-smoke.mjs` rewritten to test the voxel path at 1440 / 390 / 320:
+  - canvas present, no card, real rendered pixels;
+  - the autonomous routine reaches "render" after the first edit, and those changes are not announced;
+  - coffee / render / wave (keyboard) / edit buttons work;
+  - SVG fallback with WebGL stubbed out, hotspots and buttons working.
+- A separate in-scene click probe hit all four targets.
+- Reduced motion stays on "edit" after 20s.
+- All suites pass locally (`ui-smoke` with the YouTube API stubbed). The SwiftShader frame rate in the sandbox is very low (software GL), so real-device smoothness must be checked live.
+
+**Open points for the owner:**
+- Is mini Fiqri's likeness close enough?
+- Is the room palette too blue overall?
+- Should the drafting grid sit behind the headline, or be masked away from it?

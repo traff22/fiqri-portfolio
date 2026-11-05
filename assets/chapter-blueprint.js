@@ -33,6 +33,15 @@
   const show=(node,on)=>{if(on)node.removeAttribute("display");else node.setAttribute("display","none")};
 
   /* ---------- persistent SVG nodes (so the draw animation survives scroll) ---------- */
+  // Drafting layer first so it sits behind the cut lines.
+  const construct=make("path",{class:"fq-blueprint__construct"},svg);
+  const centre=make("path",{class:"fq-blueprint__centre"},svg);
+  const reg=make("path",{class:"fq-blueprint__reg"},svg);
+  const dim=make("path",{class:"fq-blueprint__dim"},svg);
+  const dimLabel=Object.assign(make("text",{class:"fq-blueprint__dim-label","text-anchor":"middle"},svg),{textContent:"16 : 9"});
+  const sequence=layer.querySelector(".fq-blueprint__sequence");
+  const copy=scene.querySelector(".cinema-copy");
+  const cta=scene.querySelector(".cinema-view-work");
   const crop=make("path",{class:"fq-blueprint__crop"},svg);
   const links=cards.map(card=>{
     const key=card.className.match(/float-reel-card--(\w+)/)?.[1]||"";
@@ -100,6 +109,59 @@
     crop.setAttribute("d",d);
   }
 
+  function placeConstruct(f,frame,w,h,compact,shift){
+    // Technical-drawing construction around the shot: extension lines from the
+    // picture edges, a centre line, a dimension line under the film and two
+    // registration targets. Desktop/landscape only — phones keep the grid.
+    if(compact){[construct,centre,reg,dim].forEach(n=>n.setAttribute("d",""));show(dimLabel,false);return}
+    const blockers=[sequence,copy,cta].filter(Boolean).map(n=>shift(n.getBoundingClientRect()));
+    const blockedAbove=(x,from)=>blockers.filter(b=>x>=b.left-6&&x<=b.right+6&&b.bottom<=from)
+      .reduce((y,b)=>Math.max(y,b.bottom+16),24);
+    const blockedBelow=(x,from)=>blockers.filter(b=>x>=b.left-6&&x<=b.right+6&&b.top>=from)
+      .reduce((y,b)=>Math.min(y,b.top-14),h-24);
+    let d="";
+    // Horizontal extension lines along the picture's top and bottom edges.
+    for(const y of [f.top,f.bottom]){
+      if(f.left-30>40)d+=`M24 ${r1(y)}H${r1(f.left-30)}`;
+      if(w-24-(f.right+30)>16)d+=`M${r1(f.right+30)} ${r1(y)}H${r1(w-24)}`;
+    }
+    // Vertical extension lines from the picture's side edges.
+    for(const x of [f.left,f.right]){
+      const top=blockedAbove(x,f.top-30);
+      if(f.top-30-top>16)d+=`M${r1(x)} ${r1(top)}V${r1(f.top-30)}`;
+      const bottom=blockedBelow(x,frame.bottom+12);
+      if(bottom-(frame.bottom+12)>10)d+=`M${r1(x)} ${r1(frame.bottom+12)}V${r1(bottom)}`;
+    }
+    construct.setAttribute("d",d);
+    // Centre line (dash-dot) below the film.
+    const cx=f.left+f.width/2,low=blockedBelow(cx,frame.bottom+10);
+    centre.setAttribute("d",low-(frame.bottom+10)>12?`M${r1(cx)} ${r1(frame.bottom+10)}V${r1(low)}`:"");
+    // Dimension line under the caption strip: |<—— 16 : 9 ——>|
+    const y=frame.bottom+20;
+    if(y<=h-12){
+      const gap=34,a=f.left,b=f.right,m=cx;
+      dim.setAttribute("d",
+        `M${r1(a)} ${r1(y-5)}v10M${r1(b)} ${r1(y-5)}v10`+
+        `M${r1(a)} ${r1(y)}H${r1(m-gap)}M${r1(m+gap)} ${r1(y)}H${r1(b)}`+
+        `M${r1(a+7)} ${r1(y-3)}L${r1(a)} ${r1(y)}L${r1(a+7)} ${r1(y+3)}`+
+        `M${r1(b-7)} ${r1(y-3)}L${r1(b)} ${r1(y)}L${r1(b-7)} ${r1(y+3)}`);
+      dimLabel.setAttribute("x",r1(m));dimLabel.setAttribute("y",r1(y+3));show(dimLabel,true);
+    }else{dim.setAttribute("d","");show(dimLabel,false)}
+    // Registration targets: top-right mirrors the process ruler, bottom-left
+    // closes the composition. Skipped wherever a thumbnail sits.
+    const cardBoxes=links.filter(L=>getComputedStyle(L.card).display!=="none").map(L=>shift(L.card.getBoundingClientRect()));
+    const seq=sequence?shift(sequence.getBoundingClientRect()):{top:120,bottom:140};
+    const targets=[[w-56,(seq.top+seq.bottom)/2],[56,h-44]];
+    let rd="";
+    for(const [x,ty] of targets){
+      const hit=[...cardBoxes,...blockers].some(b=>x+16>b.left&&x-16<b.right&&ty+16>b.top&&ty-16<b.bottom);
+      if(hit||ty>h-20)continue;
+      rd+=`M${r1(x+7)} ${r1(ty)}A7 7 0 1 0 ${r1(x-7)} ${r1(ty)}A7 7 0 1 0 ${r1(x+7)} ${r1(ty)}`+
+          `M${r1(x-12)} ${r1(ty)}H${r1(x+12)}M${r1(x)} ${r1(ty-12)}V${r1(ty+12)}`;
+    }
+    reg.setAttribute("d",rd);
+  }
+
   let raf=0,settleUntil=0;
   function paint(){
     raf=0;
@@ -124,6 +186,7 @@
       show(L.g,drawn);
     }
     placeCrop(f,compact,host.width);
+    placeConstruct(f,frame,host.width,host.height,compact,shift);
     // Cards ease their scale/opacity over ~160ms; keep following briefly.
     if(performance.now()<settleUntil)schedule();
   }

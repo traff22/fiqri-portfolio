@@ -52,8 +52,26 @@
   opacity:1!important;transform:none!important;
   pointer-events:none;
 }
-#cinema-wrap .fq-blueprint::before,
 #cinema-wrap .fq-blueprint::after{content:none!important;display:none!important}
+/* Drafting paper behind the whole composition, so the stage never reads as an
+   empty void: a fine 24px grid with 120px major lines, centred on the film and
+   faded out towards the edges. Lives on ::before so the mask never fades the
+   connectors or labels; the layer's own background stays transparent. */
+#cinema-wrap .fq-blueprint::before{
+  content:""!important;display:block!important;
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  opacity:1!important;transform:none!important;animation:none!important;
+  background:
+    linear-gradient(#8ea8ff1c 1px,transparent 1px),
+    linear-gradient(90deg,#8ea8ff1c 1px,transparent 1px),
+    linear-gradient(#8ea8ff0d 1px,transparent 1px),
+    linear-gradient(90deg,#8ea8ff0d 1px,transparent 1px)!important;
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px!important;
+  background-position:calc(50% - 60px) calc(var(--fq-yc) - 60px)!important;
+  -webkit-mask-image:radial-gradient(ellipse 75% 72% at 50% 58%,#000 40%,transparent 92%);
+          mask-image:radial-gradient(ellipse 75% 72% at 50% 58%,#000 40%,transparent 92%);
+}
 #cinema-wrap .fq-blueprint__links{
   position:absolute;inset:0;width:100%;height:100%;
   overflow:visible;opacity:1;
@@ -67,6 +85,13 @@
 }
 .fq-blueprint__tag--in{fill:#91e9d9}
 .fq-blueprint__crop{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.45}
+/* Construction drawing: extension lines from the film edges, centre lines,
+   a dimension line and registration targets — the drafting around the shot. */
+.fq-blueprint__construct{fill:none;stroke:#9db4f0;stroke-width:1;stroke-opacity:.2;stroke-dasharray:2 6}
+.fq-blueprint__centre{fill:none;stroke:#9db4f0;stroke-width:1;stroke-opacity:.28;stroke-dasharray:14 4 2 4}
+.fq-blueprint__dim{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.5}
+.fq-blueprint__dim-label{fill:#9fb4e6;font:600 9px/1 "Space Grotesk",sans-serif;letter-spacing:.2em}
+.fq-blueprint__reg{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.42}
 
 /* FOLLOW THE EDIT — the clip whose kind of film is on screen is the source;
    its cut line draws into the frame, the other clips step back. */

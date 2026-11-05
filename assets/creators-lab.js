@@ -1,7 +1,8 @@
-/* FQ / Creator's Lab 01 — progressive, accessible scene interactions.
- * Loads first-party SVG illustration. Buttons change mini editor actions;
- * scrolling through Chapter One advances the captured/cut/deliver blueprint.
- * No animation framework or WebGL dependency. */
+/* FQ / Creator's Lab — progressive, accessible scene interactions.
+ * About: loads the real-time 3D voxel editing room (assets/voxel-studio.js,
+ * Three.js vendored) when the section comes near; falls back to the
+ * first-party SVG room without WebGL. Buttons trigger the same actions.
+ * Chapter One: scrolling advances the ingest / cut / finish ruler. */
 (()=>{"use strict";
   const studio=document.getElementById("fq-studio");
   const art=document.getElementById("fq-studio-art");
@@ -13,14 +14,20 @@
   const messages={
     edit:{title:"On the timeline.",body:"Cut by cut, finding the rhythm."},
     render:{title:"Rendering...",body:"Final_final_v7. Probably."},
-    coffee:{title:"Coffee break.",body:"The best idea might arrive in five minutes."}
+    coffee:{title:"Coffee break.",body:"The best idea might arrive in five minutes."},
+    wave:{title:"Oh, hey there!",body:"Back to the timeline in a second."}
   };
-  function setMode(mode){
+  let voxel=null;
+  // Reflect what mini Fiqri is doing. Autonomous changes update the UI quietly;
+  // only visitor-triggered changes are announced to screen readers.
+  function setMode(mode,{byUser=false}={}){
     if(!Object.prototype.hasOwnProperty.call(messages,mode))return;
-    studio.dataset.mode=mode;
+    if(mode!=="wave")studio.dataset.mode=mode;
+    studio.dataset.state=mode;
     studio.querySelectorAll("[data-studio-mode]").forEach(button=>{
-      button.setAttribute("aria-pressed",String(button.dataset.studioMode===mode));
+      button.setAttribute("aria-pressed",String(button.dataset.studioMode===(mode==="wave"?"wave":studio.dataset.mode)));
     });
+    note.setAttribute("aria-live",byUser?"polite":"off");
     const bold=document.createElement("strong");
     bold.textContent=messages[mode].title+" ";
     note.replaceChildren(bold,document.createTextNode(messages[mode].body));
@@ -32,37 +39,39 @@
       bar.style.animation="";
     }
   }
+  function svgWave(){
+    studio.classList.remove("is-waving");
+    void studio.getBoundingClientRect();
+    studio.classList.add("is-waving");
+    setTimeout(()=>studio.classList.remove("is-waving"),1800);
+  }
   studio.querySelectorAll("[data-studio-mode]").forEach(button=>{
-    button.addEventListener("click",()=>setMode(button.dataset.studioMode));
+    button.addEventListener("click",()=>{
+      const mode=button.dataset.studioMode;
+      if(voxel){voxel.trigger(mode);return}
+      if(mode==="wave")svgWave();
+      setMode(mode,{byUser:true});
+    });
   });
   setMode("edit");
 
-  // First-party, same-origin SVG is editable artwork, not an external asset
-  // or a fake raster of an interactive scene.
-  fetch("assets/creator-workspace.svg?v=2.0.0")
+  // Fallback: the first-party 2.5D SVG room, used when WebGL is unavailable.
+  function loadSvgRoom(){
+    studio.dataset.engine="svg";
+    return fetch("assets/creator-workspace.svg?v=2.0.0")
     .then(response=>{if(!response.ok)throw Error("Artwork unavailable");return response.text()})
     .then(source=>{
       const xml=new DOMParser().parseFromString(source,"image/svg+xml");
       const svg=xml.documentElement;
       if(svg.localName!=="svg"||xml.querySelector("parsererror"))throw Error("Artwork is invalid");
       art.replaceChildren(document.importNode(svg,true));
-      // The diorama is explorable. Hovering gently tilts the ROOM; selecting
-      // visible props works with mouse, touch or keyboard.
       art.querySelectorAll("[data-studio-object]").forEach(object=>{
         const action=()=>{
           const which=object.dataset.studioObject;
-          if(which==="screen")setMode("edit");
-          else if(which==="render")setMode("render");
-          else if(which==="coffee")setMode("coffee");
-          else if(which==="avatar"){
-            studio.classList.remove("is-waving");
-            void studio.getBoundingClientRect();
-            studio.classList.add("is-waving");
-            setTimeout(()=>studio.classList.remove("is-waving"),1800);
-            const bold=document.createElement("strong");
-            bold.textContent="Oh, hey there! ";
-            note.replaceChildren(bold,document.createTextNode("Back to the timeline in a second."));
-          }
+          if(which==="screen")setMode("edit",{byUser:true});
+          else if(which==="render")setMode("render",{byUser:true});
+          else if(which==="coffee")setMode("coffee",{byUser:true});
+          else if(which==="avatar"){svgWave();setMode("wave",{byUser:true})}
         };
         object.addEventListener("click",action);
         object.addEventListener("keydown",e=>{
@@ -88,10 +97,30 @@
       });
     })
     .catch(()=>{
-      // Preserve a useful fallback instead of a blank interactive panel.
       art.textContent="A desk, two monitors, a timeline, and one more cut.";
       art.classList.add("fq-studio__fallback");
     });
+  }
+  const webgl=(()=>{try{const c=document.createElement("canvas");return Boolean(c.getContext("webgl2")||c.getContext("webgl"))}catch(_){return false}})();
+  // Primary: the real-time 3D voxel room, loaded only when About comes near.
+  function loadVoxelRoom(){
+    if(!webgl){loadSvgRoom();return}
+    studio.dataset.engine="loading";
+    import(new URL("assets/voxel-studio.js?v=1.0.0",document.baseURI).href)
+      .then(({mountVoxelStudio})=>{
+        art.replaceChildren();
+        art.classList.add("fq-studio__art--voxel");
+        voxel=mountVoxelStudio(art,{reducedMotion:reduced,onState:(mode,byUser)=>setMode(mode,{byUser})});
+        studio.dataset.engine="voxel";
+      })
+      .catch(()=>{art.classList.remove("fq-studio__art--voxel");loadSvgRoom()});
+  }
+  if("IntersectionObserver"in window){
+    const near=new IntersectionObserver(entries=>{
+      if(entries.some(e=>e.isIntersecting)){near.disconnect();loadVoxelRoom()}
+    },{rootMargin:"700px 0px"});
+    near.observe(studio);
+  }else loadVoxelRoom();
 
   // Scrub the hand-drawn production blueprint using real scroll progress.
   if(blueprint&&chapter){
