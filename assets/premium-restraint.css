@@ -99,7 +99,7 @@
 }
 #cinema-wrap .cinema-deck{max-width:43ch;line-height:1.55}
 #cinema-wrap .cinema-frame.showreel-shell {
-  width:min(66vw,930px);
+  width:min(62vw,870px);
   border-radius:14px!important;
   box-shadow:0 30px 75px #0008!important;
   will-change:auto;
