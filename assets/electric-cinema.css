@@ -554,7 +554,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #d2deff;outline-offset:4p
       linear-gradient(180deg,#121a3d,#090f24);
   }
   #work::before{opacity:.26}
-  #work .filter[aria-pressed="true"]{border-bottom-color:#b1bfff!important}
+  #work .filter[aria-pressed="true"]{border-bottom-color:#a8baff!important}
   #work .work-card:hover,#work .work-card:focus-within{transform:none}
   #contact.contact{
     background:
