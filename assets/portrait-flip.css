@@ -1,0 +1,179 @@
+/* A small story behind the frame — interactive portrait flip.
+   The outer portrait keeps its existing subtle tilt; only the inner faces turn. */
+.portrait-card {
+  isolation:isolate;
+}
+.portrait-card__rotator {
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  transform-style:preserve-3d;
+  -webkit-transform-style:preserve-3d;
+  transition:transform .82s cubic-bezier(.2,.78,.22,1);
+}
+.portrait-card.is-flipped .portrait-card__rotator {
+  transform:rotateY(180deg);
+}
+.portrait-card__face {
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  border-radius:inherit;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.portrait-card__face--front {
+  transform:rotateY(0deg);
+}
+.portrait-card__face--back {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:16px;
+  padding:clamp(22px,3.5vw,36px);
+  transform:rotateY(180deg);
+  color:#eaf4ff;
+  background:
+    radial-gradient(ellipse 70% 52% at 90% 12%,#547db446,transparent 85%),
+    radial-gradient(ellipse 72% 72% at 3% 99%,#315c873d,transparent 75%),
+    linear-gradient(160deg,#10223a 0%,#0b182a 54%,#07111e 100%);
+}
+.portrait-card__face--back::before {
+  content:"";
+  position:absolute;
+  inset:13px;
+  border:1px solid #9ecbfa26;
+  border-radius:15px;
+  pointer-events:none;
+}
+.portrait-card__face--back::after {
+  content:"";
+  position:absolute;
+  width:70%;
+  aspect-ratio:1;
+  left:15%;
+  top:19%;
+  border:1px solid #9ecbfa12;
+  border-radius:50%;
+  box-shadow:0 0 0 31px #a1c7f707,0 0 0 74px #a1c7f704;
+  pointer-events:none;
+}
+.portrait-card__back-top,.portrait-card__back-bottom {
+  z-index:1;
+  font:600 clamp(8px,.8vw,10px)/1.45 "Space Grotesk",sans-serif;
+  letter-spacing:.19em;
+  color:#a6cafa;
+}
+.portrait-card__back-top { text-transform:uppercase; }
+.portrait-card__back-bottom {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  border-top:1px solid #b8d8ff30;
+  padding-top:13px;
+}
+.portrait-card__back-body {
+  position:relative;
+  z-index:1;
+  max-width:320px;
+  margin:auto 0;
+}
+.portrait-card__back-kicker {
+  display:block;
+  margin-bottom:14px;
+  color:#9ecfff;
+  font:700 clamp(9px,.95vw,11px)/1.5 "Space Grotesk",sans-serif;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.portrait-card__back-quote {
+  margin:0 0 21px;
+  max-width:13ch;
+  font:500 clamp(25px,3.1vw,38px)/1.17 "Space Grotesk",sans-serif;
+  letter-spacing:-.055em;
+  text-wrap:balance;
+  color:#f4f8ff;
+}
+.portrait-card__back-quote em {font-style:normal;color:#a5d1ff}
+.portrait-card__back-note {
+  max-width:28ch;
+  margin:0;
+  padding-top:16px;
+  border-top:1px solid #b6d6ff46;
+  color:#b4c8e0;
+  font:400 clamp(11px,1.15vw,13px)/1.65 "DM Sans",Arial,sans-serif;
+}
+.portrait-card__flip-button {
+  position:absolute;
+  z-index:9;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  padding:0;
+  border:0;
+  border-radius:inherit;
+  cursor:pointer;
+  appearance:none;
+  background:transparent;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.portrait-card__flip-button:focus-visible {
+  outline:3px solid #cce7ff;
+  outline-offset:-7px;
+}
+.portrait-card__flip-cue {
+  position:absolute;
+  z-index:10;
+  top:65px;
+  right:clamp(18px,2.8vw,29px);
+  max-width:60%;
+  padding:6px 9px;
+  border:1px solid #b9dbff7a;
+  border-radius:99px;
+  background:#09192dc9;
+  color:#e3f2ff;
+  font:700 9px/1.15 "Space Grotesk",sans-serif;
+  letter-spacing:.11em;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .2s ease;
+}
+.portrait-card.is-flippable .portrait-card__flip-cue {opacity:.9}
+.portrait-card__flip-cue--back {display:none}
+.portrait-card.is-flipped .portrait-card__flip-cue--front {display:none}
+.portrait-card.is-flipped .portrait-card__flip-cue--back {display:block}
+@media (hover:hover) and (pointer:fine) {
+  .portrait-card__flip-cue {opacity:0!important}
+  .portrait-card:hover .portrait-card__flip-cue,
+  .portrait-card:focus-within .portrait-card__flip-cue {opacity:.9!important}
+}
+@media (max-width:700px) {
+  .portrait-card__face--back {padding:clamp(19px,5vw,29px);}
+  .portrait-card__back-quote {
+    max-width:14ch;
+    font-size:clamp(24px,6.5vw,31px);
+    margin-bottom:16px;
+  }
+  .portrait-card__back-kicker {font-size:9px;margin-bottom:10px}
+  .portrait-card__back-note {font-size:11px;line-height:1.55;padding-top:12px}
+  .portrait-card__back-top,.portrait-card__back-bottom {font-size:8px}
+  .portrait-card__back-bottom {padding-top:9px}
+  .portrait-card__flip-cue {top:50px;right:16px;font-size:8px}
+}
+@media (max-width:359px) {
+  .portrait-card__face--back {padding:17px}
+  .portrait-card__back-quote {font-size:23px}
+  .portrait-card__back-note {font-size:10.5px;line-height:1.5}
+  .portrait-card__back-top,.portrait-card__back-bottom {font-size:7px}
+}
+@media (prefers-reduced-motion:reduce) {
+  .portrait-card__rotator {transition:none!important;transform:none!important}
+  .portrait-card__face--front,
+  .portrait-card__face--back {transform:none!important;backface-visibility:visible!important}
+  .portrait-card__face--back {visibility:hidden;opacity:0}
+  .portrait-card.is-flipped .portrait-card__face--front {visibility:hidden;opacity:0}
+  .portrait-card.is-flipped .portrait-card__face--back {visibility:visible;opacity:1}
+  .portrait-card__flip-cue {transition:none!important}
+}
