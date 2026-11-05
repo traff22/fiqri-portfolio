@@ -352,6 +352,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #d2deff;outline-offset:4p
    is spatial, but no sparkles or animated template elements. */
 #work{
   isolation:isolate;
+  overflow:clip;
   background:
     radial-gradient(ellipse 38% 50% at 90% 3%,#2e3d9359,transparent 73%),
     linear-gradient(180deg,#0f1530 0%,#0b1429 53%,#0b1224 100%);
