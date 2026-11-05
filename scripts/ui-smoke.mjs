@@ -43,54 +43,15 @@ for (const [viewport, device] of [
 
  const chapterCopy=await page.locator("#cinema-wrap .cinema-copy").boundingBox();
  check(stageStart.width>200,device+": Chapter One main frame missing");
- const firstCard=await page.locator("#cinema-wrap .float-reel-card--one .float-reel-card__media").evaluate(el=>({
-   ratio:getComputedStyle(el).aspectRatio,
-   width:el.clientWidth,height:el.clientHeight
- }));
- if(device==="desktop")check(Math.abs(firstCard.width/firstCard.height-9/16)<.04,device+": portrait media must retain 9:16 before card rotation: "+JSON.stringify(firstCard));
-
- if(device==="desktop"){
-  const planes=await page.locator("#cinema-wrap").evaluate(scene=>{
-    return [1,2,3].map(i=>{
-     const el=scene.querySelector(".float-reel-card--"+["one","two","three"][i-1]);
-     const rect=el.getBoundingClientRect();
-     const style=getComputedStyle(el);
-     return {card:i,width:rect.width,height:rect.height,x:rect.x,y:rect.y,
-      z:Number(style.zIndex),opacity:Number(style.opacity),
-      visible:style.display!=="none",scale:style.scale};
-    });
-  });
-  const [far,near,mid]=planes;
-  check(planes.every(x=>x.visible),device+": satellite card is not visible "+JSON.stringify(planes));
-  check(near.width>mid.width*1.25&&mid.width>far.width*1.50,
-   device+": expected large / medium / small depth hierarchy: "+JSON.stringify(planes));
-  check(near.z>mid.z&&mid.z>far.z,
-   device+": cards do not have near/mid/far stacking order: "+JSON.stringify(planes));
-  check(near.x>mid.x&&far.x<near.x,
-   device+": depth cards not distributed on both sides: "+JSON.stringify(planes));
-  check(intersection(far,mid)<45,
-   device+": left-side cards physically overlap: "+JSON.stringify(planes));
-  report.push({device,depthCards:planes});
- }
-
+ const satellites=await page.locator("#cinema-wrap .float-reel-card").evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).display));
+ check(satellites.every(display=>display==="none"),device+": decorative satellite cards must stay hidden");
+ report.push({device,satelliteCardsVisible:false});
 
  check(intersection(stageStart,chapterCopy)<20,device+": Chapter One copy overlaps main frame at start");
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/"+device+"-chapter-start.png"});
  await page.evaluate(top=>window.scrollTo({top,behavior:"instant"}),sceneStart+sceneSpan*.82);
  await page.waitForTimeout(650);
  const stageAfter=await page.locator("#cinema-wrap .showreel-shell").boundingBox();
- if(device==="desktop"){
-  const transforms=await page.locator("#cinema-wrap").evaluate(scene=>["one","two","three"].map(name=>{
-    const el=scene.querySelector(".float-reel-card--"+name);
-    const r=el.getBoundingClientRect();
-    return {name,x:r.x,right:r.right,width:r.width,y:r.y,height:r.height,opacity:Number(getComputedStyle(el).opacity)};
-  }));
-  check(transforms.every(x=>x.width>40),device+": one of the 3 depth cards collapsed after scroll");
-  check(transforms.every(x=>x.x>=-12&&x.right<=viewport.width+12),
-    device+": scroll pushed a floating depth card outside the viewport: "+JSON.stringify(transforms));
-  report.push({device,depthScroll:transforms});
- }
-
  check(stageAfter.width>stageStart.width*(device==="mobile"?1.03:1.07)&&stageAfter.width<stageStart.width*1.23,
    device+": main frame scale not in the restrained zoom range, start "+stageStart.width+" end "+stageAfter.width);
  if(device==="desktop")console.log("CHAPTER_COLLISION_GEOMETRY="+JSON.stringify({stageAfter,chapterCopy,overlap:intersection(stageAfter,chapterCopy),scrollTop:await page.evaluate(()=>scrollY),css:await page.locator("#cinema-wrap").evaluate(el=>({section:el.getBoundingClientRect().toJSON(),scale:getComputedStyle(el.querySelector(".showreel-shell")).transform,copyOpacity:getComputedStyle(el.querySelector(".cinema-copy")).opacity,copyStyle:getComputedStyle(el.querySelector(".cinema-copy")).transform}))}));
