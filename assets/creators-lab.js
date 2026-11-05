@@ -46,6 +46,46 @@
       const svg=xml.documentElement;
       if(svg.localName!=="svg"||xml.querySelector("parsererror"))throw Error("Artwork is invalid");
       art.replaceChildren(document.importNode(svg,true));
+      // The diorama is explorable. Hovering gently tilts the ROOM; selecting
+      // visible props works with mouse, touch or keyboard.
+      art.querySelectorAll("[data-studio-object]").forEach(object=>{
+        const action=()=>{
+          const which=object.dataset.studioObject;
+          if(which==="screen")setMode("edit");
+          else if(which==="render")setMode("render");
+          else if(which==="coffee")setMode("coffee");
+          else if(which==="avatar"){
+            studio.classList.remove("is-waving");
+            void studio.getBoundingClientRect();
+            studio.classList.add("is-waving");
+            setTimeout(()=>studio.classList.remove("is-waving"),1800);
+            const bold=document.createElement("strong");
+            bold.textContent="Oh, hey there! ";
+            note.replaceChildren(bold,document.createTextNode("Back to the timeline in a second."));
+          }
+        };
+        object.addEventListener("click",action);
+        object.addEventListener("keydown",e=>{
+          if(e.key==="Enter"||e.key===" "){e.preventDefault();action()}
+        });
+        object.addEventListener("pointerenter",()=>{
+          if(object.dataset.studioObject==="avatar")studio.classList.add("is-curious");
+        });
+        object.addEventListener("pointerleave",()=>studio.classList.remove("is-curious"));
+      });
+      const fine=matchMedia("(hover: hover) and (pointer: fine)");
+      art.addEventListener("pointermove",e=>{
+        if(!fine.matches||reduced.matches||e.pointerType==="touch")return;
+        const r=art.getBoundingClientRect();
+        const x=(e.clientX-r.left)/Math.max(1,r.width)-.5;
+        const y=(e.clientY-r.top)/Math.max(1,r.height)-.5;
+        art.style.setProperty("--fq-room-ry",(x*3.3).toFixed(2)+"deg");
+        art.style.setProperty("--fq-room-rx",(-y*2.2).toFixed(2)+"deg");
+      },{passive:true});
+      art.addEventListener("pointerleave",()=>{
+        art.style.removeProperty("--fq-room-ry");
+        art.style.removeProperty("--fq-room-rx");
+      });
     })
     .catch(()=>{
       // Preserve a useful fallback instead of a blank interactive panel.
