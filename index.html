@@ -24,7 +24,8 @@
 <link rel="stylesheet" href="assets/premium-restraint.css?v=2.2.0">
 <link rel="stylesheet" href="assets/electric-cinema.css?v=3.1.0">
 <link rel="stylesheet" href="assets/creators-lab.css?v=1.0.0">
-<link rel="stylesheet" href="assets/craft-refinement.css?v=2.0.1">
+<link rel="stylesheet" href="assets/craft-refinement.css?v=2.1.0">
+<link rel="stylesheet" href="assets/chapter-blueprint.css?v=1.0.0">
 
 
 
@@ -36,7 +37,8 @@
 <script defer src="assets/work-gallery.js?v=1.7.0"></script><script defer src="assets/chapter-montage.js?v=1.7.0"></script>
 <script defer src="assets/easter-eggs.js?v=1.0.0"></script>
 <script defer src="assets/electric-cinema.js?v=3.0.0"></script>
-<script defer src="assets/creators-lab.js?v=2.0.1"></script></head>
+<script defer src="assets/creators-lab.js?v=2.0.1"></script>
+<script defer src="assets/chapter-blueprint.js?v=1.0.0"></script></head>
 <body id="top">
 <a class="skip" href="#main">Skip to main content</a><div id="progress" class="progress" aria-hidden="true"></div>
 <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Portfolio introduction" data-splash-src="" hidden>
@@ -102,32 +104,10 @@
       <h2 id="cinema-title"><span class="cinema-copy-line">Raw footage.</span><span class="cinema-copy-line accent">Real feeling.</span></h2>
       <p class="cinema-deck cinema-copy-line">The difference is in the details: what stays, what moves, and what makes you feel.</p>
     </header>
-    <div class="fq-blueprint" data-phase="capture" aria-label="Production blueprint across the composition: raw footage, editing, then final film.">
-      <svg class="fq-blueprint__schematic" viewBox="0 0 1200 720" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-        <!-- Frame-size guides + deliberately broken technical lines -->
-        <g fill="none" stroke="#b8cdff" stroke-width="1" stroke-opacity=".38">
-          <path d="M52 150v48M52 150h49M1148 150h-49M1148 150v48M52 573v-48M52 573h49M1148 573h-49M1148 573v-48" />
-          <path d="M61 345h140l51 27h95M1140 381h-155l-36 38h-68M110 545h160l55-33h80" stroke-dasharray="4 8"/>
-          <path d="M130 260h60M1010 294h82M145 604h95" stroke-opacity=".25"/>
-          <circle cx="201" cy="345" r="3"/><circle cx="949" cy="419" r="3"/><circle cx="270" cy="545" r="3"/>
-        </g>
-        <g class="fq-blueprint__phase--capture" stroke="#add8ff" stroke-width="1.6" fill="none">
-          <path d="M52 345h150M201 345l-9-6m9 6-9 6"/>
-          <path d="M113 297v-16h16m-16 16v16h16"/>
-        </g>
-        <g class="fq-blueprint__phase--craft" stroke="#a8b9ff" stroke-width="1.6" fill="none">
-          <path d="M1140 381H986M986 381l10-6m-10 6 10 6"/>
-          <path d="M1070 321l9-7m-9 7 9 7"/>
-        </g>
-        <g class="fq-blueprint__phase--deliver" stroke="#96e8dc" stroke-width="1.6" fill="none">
-          <path d="M110 545h156l52-34M318 511l-12 3m12-3-7 10"/>
-          <path d="M190 595h110"/>
-        </g>
-      </svg>
-      <span class="fq-blueprint__annotation fq-blueprint__annotation--one"><b>01</b> / SOURCE FOOTAGE</span>
-      <span class="fq-blueprint__annotation fq-blueprint__annotation--two"><b>02</b> / ARRANGE + REFINE</span>
-      <span class="fq-blueprint__annotation fq-blueprint__annotation--three"><b>03</b> / FINAL DELIVERY</span>
-      <span class="fq-blueprint__edge-title">FQ / EDITORIAL ANATOMY <i>·</i> RAW → CRAFT → FEEL</span>
+    <div class="fq-blueprint" data-phase="capture" aria-label="Production blueprint: each source clip is cut into the main film.">
+      <!-- Connectors are measured from the real thumbnails and film frame by
+           assets/chapter-blueprint.js, so they stay attached at every size. -->
+      <svg class="fq-blueprint__schematic fq-blueprint__links" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="fq-blueprint__sequence" role="list" aria-label="Editing process advances as you scroll">
         <span role="listitem" data-blueprint-step="capture">01  INGEST</span>
         <span role="listitem" data-blueprint-step="craft">02  CUT / GRADE</span>
@@ -151,34 +131,37 @@
         <div class="montage-progress" role="progressbar" aria-label="Preview progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><span></span></div>
       </div>
     </div>
-    <div class="float-reel-card float-reel-card--one" data-float-depth="1" aria-label="Product motion video slot">
+    <div class="float-reel-card float-reel-card--one" data-project-link="bitcoin-almanac" data-float-depth="1">
       <div class="float-reel-card__inner">
         <div class="float-reel-card__media float-reel-card__media--product" data-video-src="">
           <img class="float-reel-card__poster" src="https://i.ytimg.com/vi/DkounxK31EU/hqdefault.jpg" alt="" loading="lazy" decoding="async">
           <video muted loop playsinline preload="none" hidden aria-hidden="true"></video>
           <div class="float-reel-card__placeholder"><span class="float-geometric float-geometric--book" aria-hidden="true"></span></div>
         </div>
-        <div class="float-reel-card__meta"><span>PRODUCT MOTION</span></div>
+        <div class="float-reel-card__meta"><span>SRC · MOTION</span><span class="float-reel-card__go" aria-hidden="true">↗</span></div>
+        <button class="float-reel-card__open" type="button" aria-label="Watch product motion: ADS Astronacci — Bitcoin Almanac 2025"></button>
       </div>
     </div>
-    <div class="float-reel-card float-reel-card--two" data-float-depth="2" aria-label="YouTube storytelling video slot">
+    <div class="float-reel-card float-reel-card--two" data-project-link="cinematic-mancing" data-float-depth="2">
       <div class="float-reel-card__inner">
         <div class="float-reel-card__media float-reel-card__media--story" data-video-src="">
           <img class="float-reel-card__poster" src="https://i.ytimg.com/vi/c7GCJP2GcEE/hqdefault.jpg" alt="" loading="lazy" decoding="async">
           <video muted loop playsinline preload="none" hidden aria-hidden="true"></video>
           <div class="float-reel-card__placeholder"><span class="float-geometric float-geometric--story" aria-hidden="true"></span></div>
         </div>
-        <div class="float-reel-card__meta"><span>EDITORIAL STORIES</span></div>
+        <div class="float-reel-card__meta"><span>SRC · LONGFORM</span><span class="float-reel-card__go" aria-hidden="true">↗</span></div>
+        <button class="float-reel-card__open" type="button" aria-label="Watch editorial story: Cinematic Mancing"></button>
       </div>
     </div>
-    <div class="float-reel-card float-reel-card--three" data-float-depth="3" aria-label="Event film video slot">
+    <div class="float-reel-card float-reel-card--three" data-project-link="age-of-chaos" data-float-depth="3">
       <div class="float-reel-card__inner">
         <div class="float-reel-card__media float-reel-card__media--event" data-video-src="">
           <img class="float-reel-card__poster" src="https://i.ytimg.com/vi/c9wCgrjlUhk/hqdefault.jpg" alt="" loading="lazy" decoding="async">
           <video muted loop playsinline preload="none" hidden aria-hidden="true"></video>
           <div class="float-reel-card__placeholder"><span class="float-geometric float-geometric--event" aria-hidden="true"></span></div>
         </div>
-        <div class="float-reel-card__meta"><span>EVENT FILMS</span></div>
+        <div class="float-reel-card__meta"><span>SRC · EVENT</span><span class="float-reel-card__go" aria-hidden="true">↗</span></div>
+        <button class="float-reel-card__open" type="button" aria-label="Explore event film: Age of Chaos"></button>
       </div>
     </div>
     <div class="cinema-footer">

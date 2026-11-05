@@ -1,0 +1,246 @@
+/* FQ / CHAPTER ONE — "Cutting Room Marks", checkpoint 1.
+   Loads LAST. Owns the Chapter One composition: the film frame, the three
+   real project thumbnails (source clips) and the measured blueprint links.
+
+   Geometry contract (shared with assets/chapter-blueprint.js):
+   - The film frame never grows into the thumbnail lanes. Its width is capped
+     by the lanes AND by the viewport height so the caption strip stays on
+     screen at full zoom (--cinema-scale from main.js: 1 → 1.13, or 1.05 <850px).
+   - Thumbnails are positioned from the frame's final (zoomed) edges, so they
+     can never be swallowed by it. All thumbnails are 16:9.
+   - Connectors are drawn by JS from real bounding boxes, never hard-coded. */
+
+#cinema-wrap{
+  --fq-zoom:1.13;
+  --fq-lift:28px;
+  --fq-top:50%;
+  --fq-lane:clamp(200px,17vw,300px);
+  /* Breathing room between a source clip and the film edge (the cut line). */
+  --fq-gap:clamp(40px,4vw,80px);
+  /* Outer margin; covers the ≤18px outward scroll drift from chapter-one.js. */
+  --fq-edge:30px;
+  --fq-frame-w:min(58vw,930px,calc((100vw - 2 * var(--fq-lane)) / var(--fq-zoom)),calc(100svh - 92px));
+  /* Frame centre: top + 32% of its own height (translateY(-18%)), minus lift. */
+  --fq-yc:calc(var(--fq-top) + var(--fq-frame-w) * .18 - var(--fq-lift));
+  --fq-hh:calc(var(--fq-frame-w) * .28125 * var(--fq-zoom));
+  --fq-hw:calc(var(--fq-frame-w) * var(--fq-zoom) / 2);
+  /* Horizontal only: free space between the zoomed frame and the viewport edge. */
+  --fq-side:calc(50% - var(--fq-hw));
+}
+@media(max-width:849px){#cinema-wrap{--fq-zoom:1.05}}
+
+/* Headline clears the fixed navigation bar. */
+#cinema-wrap .cinema-copy{top:max(8.5%,92px)!important}
+
+/* FILM FRAME */
+#cinema-wrap .cinema-frame.showreel-shell{
+  width:var(--fq-frame-w)!important;
+  max-width:none!important;min-width:0!important;
+  top:var(--fq-top)!important;
+  transform:translate3d(-50%,calc(-18% + var(--frame-y,0px) - var(--fq-lift)),0)
+    scale(var(--cinema-scale,1))!important;
+}
+
+/* BLUEPRINT LAYER — transparent, full-section, never a card. */
+#cinema-wrap .fq-blueprint{
+  position:absolute;inset:0!important;
+  display:block!important;z-index:7;
+  width:auto!important;max-width:none!important;height:auto!important;
+  padding:0!important;margin:0!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;backdrop-filter:none!important;
+  opacity:1!important;transform:none!important;
+  pointer-events:none;
+}
+#cinema-wrap .fq-blueprint::before,
+#cinema-wrap .fq-blueprint::after{content:none!important;display:none!important}
+#cinema-wrap .fq-blueprint__links{
+  position:absolute;inset:0;width:100%;height:100%;
+  overflow:visible;opacity:1;
+}
+.fq-blueprint__link{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.55}
+.fq-blueprint__mark{fill:none;stroke:#91e9d9;stroke-width:1.5;stroke-linecap:square}
+.fq-blueprint__joint{fill:#0b1430;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.8}
+.fq-blueprint__tag{
+  fill:#9fb4e6;
+  font:600 9px/1 "Space Grotesk",sans-serif;letter-spacing:.14em;
+}
+.fq-blueprint__tag--in{fill:#91e9d9}
+
+/* Process ruler — legible, still driven by data-phase from creators-lab.js. */
+#cinema-wrap .fq-blueprint__sequence{
+  position:absolute;left:4.5%;top:16%;
+  display:flex;align-items:center;gap:18px;
+  color:#8ea5d6;
+}
+#cinema-wrap .fq-blueprint__sequence span{
+  display:inline-block;padding-top:7px;
+  border-top:1px solid #92aafa3e;
+  font:600 10.5px/1.45 "Space Grotesk",sans-serif;letter-spacing:.13em;
+  white-space:pre;
+  transition:color .3s,border-color .3s;
+}
+.fq-blueprint[data-phase="capture"] [data-blueprint-step="capture"],
+.fq-blueprint[data-phase="craft"] [data-blueprint-step="craft"],
+.fq-blueprint[data-phase="deliver"] [data-blueprint-step="deliver"]{
+  color:#e4f4ff;border-top-color:#a6c4ff;
+}
+
+/* SOURCE THUMBNAILS — shared card styling */
+#cinema-wrap .float-reel-card{
+  display:none!important;
+  right:auto!important;bottom:auto!important;
+  z-index:12!important;
+  scale:1!important;translate:none;
+  opacity:1!important;filter:none!important;
+  pointer-events:auto!important;
+}
+#cinema-wrap .float-reel-card .float-reel-card__media,
+#cinema-wrap .float-reel-card--one .float-reel-card__media{
+  aspect-ratio:16/9!important;height:auto!important;
+}
+#cinema-wrap .float-reel-card__poster{
+  object-fit:cover!important;object-position:50% 50%!important;
+  filter:brightness(.98) saturate(1.03);
+}
+#cinema-wrap .float-reel-card__inner{
+  position:relative;
+  border:1px solid #aec6ffab!important;
+  background:#0c1735;
+  box-shadow:0 20px 55px #02091bbf!important;
+  border-radius:11px!important;
+  animation:none!important;translate:none!important;
+}
+#cinema-wrap .float-reel-card__meta{
+  display:flex!important;justify-content:space-between;align-items:center;gap:8px;
+  padding:9px 11px!important;
+  color:#e7f0ff;background:#101c40;
+  font:600 9px/1.2 "Space Grotesk",sans-serif!important;letter-spacing:.14em!important;
+  white-space:nowrap;
+}
+@media(max-width:1299px){#cinema-wrap .float-reel-card__meta{letter-spacing:.09em!important;padding:8px 9px!important}}
+#cinema-wrap .float-reel-card__go{color:#91e9d9;font-size:11px;transition:transform .25s ease}
+#cinema-wrap .float-reel-card__open{
+  position:absolute;inset:0;z-index:4;
+  margin:0;padding:0;border:0;border-radius:inherit;
+  background:transparent;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#cinema-wrap .float-reel-card__open:focus-visible{outline:2px solid #d9e6ff;outline-offset:3px}
+#cinema-wrap .float-reel-card:hover .float-reel-card__inner,
+#cinema-wrap .float-reel-card:focus-within .float-reel-card__inner{
+  border-color:#e2eaff!important;
+  box-shadow:0 28px 70px #010717df,0 0 32px #677ef03c!important;
+}
+#cinema-wrap .float-reel-card:hover .float-reel-card__go,
+#cinema-wrap .float-reel-card:focus-within .float-reel-card__go{transform:translate(2px,-2px)}
+
+/* DESKTOP ≥1100 — three source clips in lanes either side of the film. */
+@media(min-width:1100px){
+  #cinema-wrap .float-reel-card--one,
+  #cinema-wrap .float-reel-card--two,
+  #cinema-wrap .float-reel-card--three{display:block!important}
+  #cinema-wrap .float-reel-card--one{
+    --w:min(196px,calc(var(--fq-side) - var(--fq-gap) - var(--fq-edge)));
+    width:var(--w)!important;
+    left:calc(var(--fq-side) - var(--fq-gap) - var(--w))!important;
+    top:calc(var(--fq-yc) - var(--fq-hh) * .88)!important;
+    --float-base-rot:-4deg;
+  }
+  #cinema-wrap .float-reel-card--three{
+    --w:min(180px,calc(var(--fq-side) - var(--fq-gap) - var(--fq-edge) - 14px));
+    width:var(--w)!important;
+    left:calc(var(--fq-side) - var(--fq-gap) - var(--w) - 14px)!important;
+    top:calc(var(--fq-yc) + var(--fq-hh) * .9)!important;
+    translate:0 -100%;
+    --float-base-rot:3deg;
+  }
+  #cinema-wrap .float-reel-card--two{
+    --w:min(236px,calc(var(--fq-side) - var(--fq-gap) - var(--fq-edge)));
+    width:var(--w)!important;
+    left:calc(50% + var(--fq-hw) + var(--fq-gap))!important;
+    top:calc(var(--fq-yc) - var(--fq-hh) * .02)!important;
+    translate:0 -50%;
+    --float-base-rot:4deg;
+  }
+}
+
+/* "Explore selected work" sits in the right lane, never on the film. */
+@media(min-width:1100px),(min-width:701px) and (orientation:landscape){
+  #cinema-wrap .cinema-footer{
+    left:calc(50% + var(--fq-hw) + var(--fq-side) / 2)!important;right:auto!important;
+    bottom:5%!important;width:max-content!important;
+    translate:-50% 0;justify-content:center!important;
+  }
+}
+
+/* LANDSCAPE TABLET / SMALL LAPTOP 701–1099 — two clips in the side lanes. */
+@media(min-width:701px) and (max-width:1099px) and (orientation:landscape){
+  #cinema-wrap{--fq-lane:clamp(170px,19vw,220px);--fq-gap:30px}
+  #cinema-wrap .float-reel-card--one,
+  #cinema-wrap .float-reel-card--two{display:block!important}
+  #cinema-wrap .float-reel-card--one{
+    --w:min(170px,calc(var(--fq-side) - var(--fq-gap) - var(--fq-edge)));
+    width:var(--w)!important;
+    left:calc(var(--fq-side) - var(--fq-gap) - var(--w))!important;
+    top:calc(var(--fq-yc) - var(--fq-hh) * .62)!important;
+    --float-base-rot:-4deg;
+  }
+  #cinema-wrap .float-reel-card--two{
+    --w:min(190px,calc(var(--fq-side) - var(--fq-gap) - var(--fq-edge)));
+    width:var(--w)!important;
+    left:calc(50% + var(--fq-hw) + var(--fq-gap))!important;
+    top:calc(var(--fq-yc) + var(--fq-hh) * .18)!important;
+    translate:0 -50%;
+    --float-base-rot:4deg;
+  }
+  #cinema-wrap .fq-blueprint__sequence{left:3.5%;top:15%;gap:12px}
+  #cinema-wrap .fq-blueprint__sequence span{font-size:9.5px}
+}
+
+/* PHONES + PORTRAIT TABLETS — two clips docked directly beneath the film,
+   aligned to its edges, joined to it by short vertical cut lines. */
+@media(max-width:700px),(min-width:701px) and (max-width:1099px) and (orientation:portrait){
+  #cinema-wrap{
+    --fq-lift:0px;
+    --fq-top:45%;
+    --fq-frame-w:min(92vw,540px);
+  }
+  #cinema-wrap .float-reel-card--one,
+  #cinema-wrap .float-reel-card--two{display:block!important}
+  #cinema-wrap .float-reel-card--one,
+  #cinema-wrap .float-reel-card--two{
+    --w:min(calc((var(--fq-frame-w) - 12px) / 2),220px);
+    width:var(--w)!important;
+    /* Below the zoomed film + caption strip (38px on phones, 48px tablets). */
+    top:calc(var(--fq-yc) + var(--fq-hh) + var(--fq-caption,48px) * var(--fq-zoom) + 26px)!important;
+    transform:none!important;
+    --float-base-rot:0deg;
+  }
+  #cinema-wrap .float-reel-card--one{left:calc(50% - 6px - var(--w))!important}
+  #cinema-wrap .float-reel-card--two{left:calc(50% + 6px)!important}
+  #cinema-wrap .float-reel-card__inner{border-radius:9px!important}
+  #cinema-wrap .float-reel-card__meta{padding:7px 9px!important;font-size:8px!important;letter-spacing:.12em!important}
+  #cinema-wrap .fq-blueprint__sequence{
+    left:calc(50% - var(--fq-frame-w) / 2);right:calc(50% - var(--fq-frame-w) / 2);
+    top:calc(var(--fq-yc) - var(--fq-hh) - 34px);
+    gap:10px;justify-content:space-between;
+  }
+  #cinema-wrap .fq-blueprint__sequence span{font-size:9.5px;letter-spacing:.11em}
+  #cinema-wrap .cinema-footer{
+    left:0!important;right:0!important;bottom:3.5%!important;
+    width:auto!important;justify-content:center!important;
+  }
+}
+@media(min-width:701px) and (max-width:1099px) and (orientation:portrait){
+  #cinema-wrap{--fq-top:40%}
+}
+@media(max-width:700px){
+  #cinema-wrap{--fq-caption:38px}
+  #cinema-wrap .cinema-copy{top:max(8.5%,80px)!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #cinema-wrap .fq-blueprint__sequence span,
+  #cinema-wrap .float-reel-card__go{transition:none}
+}

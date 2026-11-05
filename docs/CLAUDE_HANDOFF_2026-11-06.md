@@ -184,3 +184,49 @@ Before editing code, respond in Indonesian:
 4. **Do not claim a complete redesign, build, deployment or visual QA until actually performed.** Ask no repeated preference questions: the owner's requirements above are already answered.
 
 After each future owner-approved iteration, append a dated entry here summarizing exact feedback, implementation, QA, commit and any rejected idea. Keep this file updated so subsequent sessions never have to reconstruct the full conversation again.
+
+---
+
+## 10. Iteration log
+
+### 2026-11-06 (WIB) — Chapter One "Cutting Room Marks", checkpoint 1 (Claude Code)
+**Branch:** `ccr-b4af4c1b-o7t4qv` (not merged to `main`, not deployed). **Owner visual approval: pending.**
+
+**Audit findings that drove the change (screenshots 1440/1920/1180/390/320):**
+- The old blueprint was a fixed 1200×720 SVG with `preserveAspectRatio="none"`, while thumbnails were placed with CSS `%`/`clamp()`. The lines only lined up at one viewport: at 1920 an arrow ran through the Editorial card, and at 1180 most lines were hidden behind the film.
+- At full scroll zoom the film covered the EVENT card, the "03 / FINAL DELIVERY" label and the edge title. At 900px tall the caption/Next strip was cut off at the bottom.
+- Process labels (Source → Arrange → Final delivery) sat next to project-category cards, so "Event Films = final delivery" read as one story. That was confusing.
+- On mobile the blueprint was effectively invisible, and the two thumbnails were stranded at the far left/right edges.
+
+**Owner decisions (this session):**
+1. Start with Chapter One. Concept "Cutting Room Marks" was accepted: the blueprint shows *a source clip being cut into the film*, not decoration.
+2. **PRODUCT thumbnail is 16:9** (it was a 9:16 crop). Note: its project, *ADS Astronacci — Bitcoin Almanac 2025*, is a vertical short. Its YouTube still is shown with `object-fit: cover`, so check the real crop on the live site.
+3. **Thumbnails are clickable** and open the existing Selected Work dialogs (video or event).
+4. Work in two checkpoints. Checkpoint 1 = structure only. Checkpoint 2 = montage sync (the active category lights its clip and draws its line), line-draw animation, and crop marks on the frame.
+
+**Implementation:**
+- `assets/chapter-blueprint.css` (NEW, loads LAST) owns Chapter One:
+  - Film width is capped by side lanes **and** viewport height, so the caption strip always stays on screen at zoom 1.13.
+  - Thumbnails are positioned from the film's zoomed edges (CSS vars `--fq-frame-w/--fq-yc/--fq-hh/--fq-hw/--fq-side/--fq-gap`).
+  - Layouts: ≥1100 three cards in lanes; 701–1099 landscape two cards in lanes; phones and portrait tablets two cards docked under the film with short vertical cut lines.
+  - The "Explore selected work" CTA moved into the right lane.
+- `assets/chapter-blueprint.js` (NEW):
+  - Measures real `getBoundingClientRect()` boxes and draws orthogonal connectors with `]` OUT / `[` IN marks (labels are dropped when a line is too short). Redraws on scroll, resize and ResizeObserver.
+  - Thumbnail buttons click the matching `#work .work-card[data-project] .work-trigger` and return focus to the thumbnail when the dialog closes.
+- `index.html`:
+  - Static schematic, the 01/02/03 category annotations and the "EDITORIAL ANATOMY" edge title were removed. The INGEST / CUT / GRADE / FINISH ruler is kept (now 10.5px) and still driven by `data-phase` from `creators-lab.js`.
+  - Card meta now reads `SRC · MOTION / LONGFORM / EVENT`, plus an accessible `<button class="float-reel-card__open">`.
+- `assets/craft-refinement.css`: Chapter One rules moved out (not stacked again). About and spotlight rules are untouched.
+
+**Trade-off to watch:** at 1440×900 the film starts at ~806px wide instead of ~868px. That buys clear lanes and a fully visible caption strip at full zoom. It is larger at 1920×1080.
+
+**QA:**
+- New `scripts/chapter-blueprint-smoke.mjs` (added to CI) passes at 1440×900, 1920×1080, 1180×820, 768×1024, 390×844 and 320×740 at scroll 0/0.5/1. It checks:
+  - no thumbnail/film/CTA collision;
+  - the strip stays inside the viewport;
+  - every connector starts at a thumbnail edge and ends at the film edge;
+  - all thumbnails are 16:9;
+  - clicking a thumbnail opens its dialog and focus comes back.
+- Other suites pass locally: color-study, easter-eggs, montage, atmosphere, creators-lab.
+- `ui-smoke.mjs` is flaky in the Claude sandbox **on baseline too**, because YouTube is blocked there ("Preview unavailable"). With the YouTube API stubbed it passes fully on both baseline and this branch.
+- Real YouTube stills could not be viewed from the sandbox. **Verify the real imagery in CI screenshots or on the live site.**
