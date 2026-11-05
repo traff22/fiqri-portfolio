@@ -7,7 +7,8 @@ const splash=one("#intro"),reduced=window.matchMedia("(prefers-reduced-motion: r
 let introTimeout=null,exitTimeout=null;
 function enter(){if(!splash||splash.hidden)return;splash.classList.add("exit");document.body.classList.remove("intro-active");try{sessionStorage.setItem(key,"yes")}catch{}clearTimeout(introTimeout);clearTimeout(exitTimeout);exitTimeout=setTimeout(()=>{splash.hidden=true;splash.classList.remove("exit")},720)}
 function startIntro(force=false){if(!splash)return;const seen=(()=>{try{return sessionStorage.getItem(key)==="yes"}catch{return false}})();if(reduced.matches){splash.hidden=true;document.body.classList.remove("intro-active");return}if(!force&&seen){splash.hidden=true;document.body.classList.remove("intro-active");return}splash.hidden=false;splash.classList.remove("exit");document.body.classList.add("intro-active");one("#enter")?.focus();clearTimeout(introTimeout);introTimeout=setTimeout(enter,4200)}
-if(splash){const video=splash.querySelector("video"),src=splash.dataset.splashSrc;if(src&&video){video.src=src;video.classList.remove("hidden");video.play().catch(()=>{})}startIntro(false)}
+/* No forced opening screen: let the work appear immediately. Intro remains discoverable with Replay Intro in the footer. */
+if(splash){const video=splash.querySelector("video"),src=splash.dataset.splashSrc;if(src&&video){video.src=src;video.classList.remove("hidden")}splash.hidden=true;document.body.classList.remove("intro-active")}
 one("#enter")?.addEventListener("click",enter);one("#skip-intro")?.addEventListener("click",enter);
 one("#replay")?.addEventListener("click",()=>{try{sessionStorage.removeItem(key)}catch{}window.scrollTo({top:0,behavior:reduced.matches?"instant":"smooth"});startIntro(true)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")enter()});
