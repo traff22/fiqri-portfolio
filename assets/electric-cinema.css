@@ -528,7 +528,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #d2deff;outline-offset:4p
   .hero h1{color:#fff}
   .hero h1 em,.hero h1 .hero-line:last-child em{
     font-size:.82em;
-    color:#c9ceff;
+    color:#c1c8ff;
     text-shadow:0 5px 28px #6985ff57;
   }
   .hero .poster.hero-photo-stage::after{transform:translate3d(10px,6px,-40px) rotate(4deg)}
