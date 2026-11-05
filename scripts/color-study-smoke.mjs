@@ -38,6 +38,8 @@ try{
         buttonBackground:button.backgroundColor,
         buttonRadius:button.borderRadius,
         contactBackground:contact.backgroundColor,
+        contactBackgroundImage:contact.backgroundImage,
+        contactText:contact.color,
         filterBackground:active.backgroundColor,
         filterBottom:active.borderBottomColor,
         filterBottomWidth:active.borderBottomWidth,
@@ -47,13 +49,13 @@ try{
         bodyOverflow:document.body.scrollWidth-doc.clientWidth
       };
     });
-    assert(result.accent==="#dda582",name+": palette token not applied");
-    assert(color(result.heroAccent)==="rgb(235,187,156)",name+": hero signature color missing");
-    assert(color(result.buttonBackground)==="rgb(221,165,130)",name+": CTA not emphasized");
+    assert(result.accent==="#a8baff",name+": electric accent token not applied");
+    assert(color(result.heroAccent)==="rgb(193,200,255)",name+": hero signature color missing");
+    assert(color(result.buttonBackground)==="rgb(181,196,255)",name+": cobalt CTA not emphasized");
     assert(result.buttonRadius==="10px",name+": CTA still generic pill");
-    assert(color(result.contactBackground)==="rgb(236,231,220)",name+": paper contrast section missing");
+    assert(result.contactBackgroundImage.includes("linear-gradient")&&color(result.contactText)==="rgb(249,250,255)",name+": contemporary blue contact section missing");
     assert(result.filterBottomWidth==="2px",name+": selected filter lacks underline");
-    assert(color(result.filterBottom)==="rgb(221,165,130)",name+": selected filter lacks signal color");
+    assert(color(result.filterBottom)==="rgb(168,186,255)",name+": selected filter lacks electric signal color");
     assert(result.overflow<=1,name+": document horizontal overflow "+result.overflow);
     assert(result.bodyOverflow<=1,name+": body horizontal overflow "+result.bodyOverflow);
     if(mobile){
