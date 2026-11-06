@@ -4,3 +4,6 @@
 #   npx skills add Leonxlnx/taste-skill -s "*" -a claude-code -y --copy
 .claude/skills/design-taste-frontend/assets/
 .claude/skills/design-taste-frontend/scripts/
+
+# smoke-test output (CI uploads it as an artifact)
+screenshots/
