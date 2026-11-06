@@ -138,12 +138,11 @@ The opening titles play on the first open of a session (`assets/splash.css`, log
 
 ## Section cuts (between every chapter)
 
-Chapters are separated the way a screenplay separates scenes, not by flat rules (`assets/section-cuts.css/.js`, test `scripts/section-cuts-smoke.mjs`).
-- **The slug.** A right-aligned transition in a typewriter face, as in a script: `CUT TO: THE REEL`, `MATCH CUT TO: SELECTED WORK`, `DISSOLVE TO: THE CRAFT`, `SMASH CUT TO: THE EDIT BAY`, `FADE TO: YOUR STORY`. The footer's `FIN.` closes the script.
-- **The strip.** A strip of film (sprocket holes, dark base) lies across the seam at about 2 degrees, alternating direction. Its frames are real Selected Work thumbnails (`mqdefault`, loaded only when the cut is within 800px). A cobalt playhead stays put while the frames run under it; frames fade toward the edges.
-- **Parallax.** Three speeds: the frames run sideways with scroll (SMASH faster, DISSOLVE slower), the slug and the timecode drift in opposite directions, and the timecode counts (chapter number as the hour).
-- **No seam shows.** A cut takes no height; it sits on the seam so the two grounds meet under the strip (this is what hides the edge of the blue Contact). Neighbouring sections get the room as padding. Chapter One is a pinned scene, so it gets no extra padding; cut 1 sits a little higher and cut 2 starts where the scene ends.
-- Reduced motion: everything still. Decorative only (`aria-hidden`, no pointer events).
+Chapters meet on a slant, not a flat rule (`assets/section-cuts.css/.js`, test `scripts/section-cuts-smoke.mjs`). Owner direction, 2026-11-06: "cuma shape aja, agak miring, parallax, simple". No film strips, no transition text, no repeating patterns.
+- **The edge.** Each chapter's top edge is cut on a diagonal (`clip-path`), `--slant` = 32 to 84px, alternating which side is high. The section overlaps the one above by the slant, so the real grounds meet on the angle in every daypart (this is how the blue Contact gets its slanted top).
+- **The plane.** One soft cobalt-tinted slab (`--ambient`, 5 to 16% alpha) sits behind each edge, a little steeper, so a wedge of light shows above the seam. On scroll it drifts at its own speed (up to 0.7 x slant), which is the parallax. Nothing else moves.
+- Selected Work does not overlap the pinned Chapter One scene above it (film controls sit near its bottom); it only takes the slant.
+- Reduced motion: the plane stays still. Decorative only (`aria-hidden`, no pointer events).
 
 ## Share card and icons
 
@@ -160,4 +159,4 @@ Chapters are separated the way a screenplay separates scenes, not by flat rules 
 
 ## Retired, do not bring back
 
-Particle backgrounds; the flat beige/copper "premium restraint" look; the boxed blueprint card; the boxed 2.5D room card (the SVG stays only as the no-WebGL fallback); iris/violet accents; "tap to flip" hints; uppercase, letter-spaced eyebrow labels on every section.
+Film-strip / screenplay-slug section dividers (tried 2026-11-06, owner: "jelek, aneh"); particle backgrounds; the flat beige/copper "premium restraint" look; the boxed blueprint card; the boxed 2.5D room card (the SVG stays only as the no-WebGL fallback); iris/violet accents; "tap to flip" hints; uppercase, letter-spaced eyebrow labels on every section.

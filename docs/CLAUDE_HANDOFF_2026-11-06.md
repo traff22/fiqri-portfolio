@@ -417,3 +417,9 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
   - Chapter One is pinned and its tests measure scroll span, so `#cinema-wrap` keeps zero padding; cut 1 is lifted 32px, cut 2 starts at the scene's end.
 - **QA:** new `scripts/section-cuts-smoke.mjs` (in CI): five cuts in chapter order, a slug each, strips filled, strip moves with scroll (still under reduced motion), no heading/text/control under the strip, no horizontal scroll, at 1440, 390, 320 and reduced motion. All other suites pass locally (ui-smoke with the YouTube mock), and `prune-css --check` is clean. Local screenshots use a stand-in image because the sandbox blocks `i.ytimg.com`; live, the strips show the real thumbnails.
 
+### 2026-11-06 (WIB): section cuts redone as plain slanted shapes
+**Owner** (on the film-strip version): "Jelek aneh gajelas gw cumn pengen shape aja kaya agak mirinh paralax dll yang enak simple, jangan ada repeating aneh strip film lah dll jangan seperti itu pahami dah".
+- **Rejected and removed:** the film strip, the screenplay slugs ("CUT TO:" etc.), the timecode and the repeated thumbnail frames. Do not bring back literal film props as dividers; the owner wants shape, not illustration.
+- **Now:** each chapter's top edge is a diagonal (`clip-path`, alternating side), overlapping the section above by `--slant` so the real grounds meet on the angle. One tinted plane behind each seam drifts with scroll (the only motion). Selected Work keeps its place under the pinned Chapter One. See DESIGN.md "Section cuts".
+- **QA:** `scripts/section-cuts-smoke.mjs` rewritten: five slanted chapter tops, no flat border, the slant clips no content, the plane drifts with scroll (still with reduced motion), no horizontal scroll, at 1440/390/320 and reduced motion. All other suites pass locally (ui-smoke with the YouTube mock); `prune-css --check` clean.
+

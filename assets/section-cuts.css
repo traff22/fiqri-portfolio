@@ -1,97 +1,37 @@
 /* FQ / Section cuts.
- * Between chapters the page cuts the way a script does: a right-aligned
- * transition slug (CUT TO:, MATCH CUT TO:, ...) and a strip of real frames from
- * the work, laid across the seam at a slight angle. On scroll the strip runs
- * sideways, the slug drifts slower and the timecode counts, so the layers
- * separate in depth. Reduced motion keeps everything still. */
-/* sizes live on :root because the neighbouring sections need them too */
-:root{--cut-h:clamp(150px,15vw,220px);--cut-room:clamp(56px,6vw,84px)}
-.fq-cut{
-  --tilt:-2.2deg;--frame-w:clamp(112px,11vw,172px);--gap:clamp(6px,.7vw,10px);
-  position:relative;z-index:2;height:var(--cut-h);margin:calc(var(--cut-h) * -.5) 0;
-  overflow:hidden;pointer-events:none;contain:layout paint;
-}
-.fq-cut[data-dir="right"]{--tilt:1.8deg}
-/* The cut takes no height: it sits on the seam, the two grounds meet under the
- * strip, and the sections on either side make room for it. The closed
- * project dialogs sit between Selected Work and its cut's next section. */
-.fq-cut + section,.fq-cut ~ dialog + section{border-top:0!important;padding-top:calc(var(--cut-h) * .5 + var(--cut-room))!important}
-section:has(+ .fq-cut){padding-bottom:calc(var(--cut-h) * .5 + var(--cut-room))!important}
+ * Chapters meet on a slant instead of a flat rule: the next section's top edge
+ * is cut at an angle (alternating side), and a soft tinted plane sits just
+ * behind that edge. On scroll the plane drifts at its own speed, so the seam
+ * gains depth. One shape per seam, no lines, no repeats; reduced motion keeps
+ * it still. */
+:root{--slant:clamp(32px,6vw,84px)}
+.fq-cut{position:relative;z-index:1;height:0;pointer-events:none}
 
-/* the strip of film: dark base, sprocket holes top and bottom, depth shadow */
-.fq-cut__strip{
-  position:absolute;left:-15%;right:-15%;top:50%;
-  padding:calc(var(--gap) + 9px) 0;
-  background:
-    radial-gradient(circle at 50% 50%,#04060a 0 2.6px,transparent 3.1px) 0 4px/14px 9px repeat-x,
-    radial-gradient(circle at 50% 50%,#04060a 0 2.6px,transparent 3.1px) 0 calc(100% - 4px)/14px 9px repeat-x,
-    linear-gradient(180deg,#1a2436,#111a2a 50%,#1a2436);
-  box-shadow:0 1px 0 #9ec0ff1f inset,0 -1px 0 #00000080 inset,0 18px 30px -14px #000000c0;
-  transform:translateY(-50%) rotate(var(--tilt));
+/* the next section is cut on the diagonal and laid over the previous one */
+.fq-cut + section,.fq-cut ~ dialog + section{
+  position:relative;z-index:2;border-top:0!important;
+  margin-top:calc(var(--slant) * -1);
+  clip-path:polygon(0 var(--slant),100% 0,100% 100%,0 100%);
 }
-.fq-cut__reel{
-  display:flex;gap:var(--gap);width:max-content;
-  transform:translate3d(var(--x,0px),0,0);will-change:transform;
-}
-/* frames fade into the film base toward the edges, so the eye stays on the playhead */
-.fq-cut__window{
-  overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent 8%,#000 26%,#000 74%,transparent 92%);
-          mask-image:linear-gradient(90deg,transparent 8%,#000 26%,#000 74%,transparent 92%);
-}
-.fq-cut__frame{
-  position:relative;flex:none;width:var(--frame-w);aspect-ratio:16/9;margin:0;
-  background:#070b12;border-radius:2px;overflow:hidden;
-  box-shadow:0 0 0 1px #00000099;
-}
-.fq-cut__frame img{
-  display:block;width:100%;height:100%;object-fit:cover;
-  filter:grayscale(.45) brightness(.62) contrast(1.06);
-}
-.fq-cut__frame.is-empty img{display:none}
-.fq-cut__frame span{
-  position:absolute;left:5px;bottom:3px;font:600 9px/1 var(--font-text);letter-spacing:.08em;
-  color:#cfe0ff8c;font-variant-numeric:tabular-nums;
-}
+.fq-cut[data-dir="right"] + section{clip-path:polygon(0 0,100% var(--slant),100% 100%,0 100%)}
+/* Selected Work follows the pinned Chapter One scene, whose film controls sit
+ * near its bottom: it keeps its place and only takes the slant. The ground above
+ * that seam is ink, so nothing shows through. */
+.fq-cut + #work{margin-top:0}
 
-/* the screenplay transition: right-aligned, typewriter face, as in a script */
-.fq-cut__slug{
-  position:absolute;right:max(16px,calc((100vw - 1180px)/2));top:6px;z-index:1;
-  font:700 clamp(12px,1.05vw,15px)/1 "Courier Prime","Courier New",ui-monospace,monospace;
-  letter-spacing:.06em;color:var(--c-ice,#cfe0ff);text-transform:uppercase;
-  transform:translate3d(0,var(--y,0px),0);
+/* the plane: a tinted slab behind the edge, steeper than it, so a wedge of
+ * light shows above the seam and changes size as it drifts. It reaches well
+ * below the seam so its bottom never shows while it moves. */
+.fq-cut__plane{
+  position:absolute;left:0;right:0;bottom:calc(var(--slant) * -2);height:calc(var(--slant) * 3.4);
+  background:linear-gradient(90deg,rgb(var(--ambient,37 99 235)/.16),rgb(var(--ambient,37 99 235)/.05));
+  clip-path:polygon(0 37%,100% 0,100% 100%,0 100%);
+  transform:translate3d(0,var(--drift,0px),0);will-change:transform;
 }
-.fq-cut__slug b{font-weight:700;color:var(--c-blue-soft,#7aa6ff)}
-.fq-cut__tc{
-  position:absolute;left:max(16px,calc((100vw - 1180px)/2));bottom:8px;z-index:1;
-  font:600 10px/1 var(--font-text);letter-spacing:.14em;color:#aabbe48c;
-  font-variant-numeric:tabular-nums;transform:translate3d(0,calc(var(--y,0px) * -1),0);
-}
-.fq-cut__tc::before{content:"";display:inline-block;width:6px;height:6px;margin-right:8px;border-radius:50%;background:var(--c-blue,#2563eb);vertical-align:1px}
-
-/* the playhead: a fixed mark the frames run under */
-.fq-cut__playhead{
-  position:absolute;left:50%;top:50%;width:2px;height:62%;z-index:1;
-  background:var(--c-blue,#2563eb);transform:translate(-50%,-50%) rotate(var(--tilt));
-}
-.fq-cut__playhead::before{
-  content:"";position:absolute;left:50%;top:-1px;width:10px;height:8px;transform:translateX(-50%);
-  background:var(--c-blue,#2563eb);clip-path:polygon(0 0,100% 0,50% 100%);
-}
-
-@media(max-width:700px){
-  :root{--cut-h:140px;--cut-room:40px}
-  .fq-cut{--frame-w:96px}
-  .fq-cut__slug{top:4px;font-size:11px}
-  .fq-cut__tc{bottom:6px;font-size:9px}
+.fq-cut[data-dir="right"] .fq-cut__plane{
+  background:linear-gradient(270deg,rgb(var(--ambient,37 99 235)/.16),rgb(var(--ambient,37 99 235)/.05));
+  clip-path:polygon(0 0,100% 37%,100% 100%,0 100%);
 }
 @media(prefers-reduced-motion:reduce){
-  .fq-cut__reel,.fq-cut__slug,.fq-cut__tc{transform:none!important;will-change:auto}
+  .fq-cut__plane{transform:none!important;will-change:auto}
 }
-/* Chapter One is a pinned scene sized to the viewport: extra padding would push
- * the film below the fold when it pins. Its heading already has air above it,
- * so the cut simply overlaps the top of the drafting grid. The cut after it starts
- * where the scene ends (film controls stay clear); both grounds are ink there. */
-.fq-cut + #cinema-wrap,#cinema-wrap:has(+ .fq-cut){padding-top:0!important;padding-bottom:0!important}
-.fq-cut[data-chapter="1"]{margin-top:calc(var(--cut-h) * -.5 - 32px);margin-bottom:calc(var(--cut-h) * -.5 + 32px)}
-.fq-cut[data-chapter="2"]{margin-top:0;margin-bottom:calc(var(--cut-h) * -.5)}

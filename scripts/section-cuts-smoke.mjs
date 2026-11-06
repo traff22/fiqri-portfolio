@@ -1,6 +1,6 @@
-// Section cuts: one between every chapter, filled with real work frames, the
-// strip runs with scroll (and stands still with reduced motion), covers no
-// content, and adds no horizontal scroll.
+// Section cuts: every chapter starts on a slant (no flat rule), the tinted
+// plane behind each seam drifts with scroll (still with reduced motion), the
+// slant clips no content, and nothing adds horizontal scroll.
 import {chromium} from "playwright";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
@@ -14,25 +14,30 @@ try{
     await page.goto("http://127.0.0.1:4173/",{waitUntil:"load"});
     const res=await page.evaluate(async()=>{
       const wait=ms=>new Promise(r=>setTimeout(r,ms)),out=[];
-      for(const c of document.querySelectorAll(".fq-cut")){
+      const ids=["cinema-wrap","work","expertise","about","contact"];
+      const cuts=[...document.querySelectorAll(".fq-cut")];
+      for(const [i,c] of cuts.entries()){
+        const sec=document.getElementById(ids[i]);
+        const plane=c.querySelector(".fq-cut__plane");
         const top=c.getBoundingClientRect().top+scrollY;
-        const x=()=>parseFloat(getComputedStyle(c).getPropertyValue("--x"));
-        const at=async y=>{scrollTo({top:y,behavior:"instant"});await wait(150);for(let i=0;i<20&&isNaN(x());i++)await wait(100);return x()};
-        const mid=await at(top-innerHeight/2+c.offsetHeight/2),late=await at(top-innerHeight*.15);
-        await at(top-innerHeight/2+c.offsetHeight/2);
-        const s=c.querySelector(".fq-cut__strip").getBoundingClientRect(),sl=c.querySelector(".fq-cut__slug").getBoundingClientRect();
-        const hits=[...document.querySelectorAll("h1,h2,h3,p,a,button,.eyebrow")].filter(e=>!c.contains(e)&&e.offsetParent).filter(e=>{const r=e.getBoundingClientRect();return r.width&&r.bottom>Math.min(s.top,sl.top)+4&&r.top<s.bottom-4}).map(e=>(e.textContent||"").trim().slice(0,24));
-        out.push({ch:c.dataset.chapter,next:(c.nextElementSibling.tagName==="SECTION"?c.nextElementSibling:document.getElementById("expertise")).id,slug:c.querySelector(".fq-cut__slug").textContent,frames:c.querySelectorAll(".fq-cut__frame").length,moved:Math.abs(late-mid),hits});
+        const drift=async y=>{scrollTo({top:y,behavior:"instant"});await wait(250);return new DOMMatrix(getComputedStyle(plane).transform).m42};
+        const a=await drift(top-innerHeight*.75),b=await drift(top-innerHeight*.25);
+        const cs=getComputedStyle(sec);
+        const secTop=sec.getBoundingClientRect().top;
+        // first visible content in the section must start below the deepest point of the slant
+        const first=[...sec.querySelectorAll("h2,.eyebrow,.chapter-mark,p,a,button")].filter(e=>e.offsetParent&&e.getBoundingClientRect().height>0).map(e=>e.getBoundingClientRect().top-secTop);
+        out.push({id:sec.id,clip:cs.clipPath,border:cs.borderTopWidth,moved:Math.abs(b-a),
+          clearance:Math.min(...first),slant:Math.max(...(cs.clipPath.match(/\d+(\.\d+)?px/g)||["0"]).map(parseFloat))});
       }
-      return {cuts:out,sw:document.documentElement.scrollWidth,vw:document.documentElement.clientWidth};
+      return {cuts:out,count:cuts.length,sw:document.documentElement.scrollWidth,vw:document.documentElement.clientWidth};
     });
-    assert(res.cuts.map(c=>c.next).join()==="cinema-wrap,work,expertise,about,contact","a chapter is missing its cut "+JSON.stringify(res.cuts.map(c=>c.next)));
+    assert(res.count===5,name+": expected 5 cuts, got "+res.count);
     for(const c of res.cuts){
-      assert(/TO:/.test(c.slug),name+": cut "+c.ch+" has no transition slug");
-      assert(c.frames>=10,name+": cut "+c.ch+" strip not filled ("+c.frames+")");
-      assert(!c.hits.length,name+": cut "+c.ch+" covers content "+JSON.stringify(c.hits));
-      if(motion==="reduce")assert(c.moved===0,"reduced motion: cut "+c.ch+" still moves");
-      else assert(c.moved>15,name+": cut "+c.ch+" strip does not follow scroll ("+c.moved+")");
+      assert(/^polygon/.test(c.clip)&&c.slant>=24,name+": "+c.id+" does not start on a slant "+c.clip);
+      assert(c.border==="0px",name+": "+c.id+" still has a flat border-top");
+      assert(c.clearance>c.slant,name+": "+c.id+" slant clips content ("+Math.round(c.clearance)+" <= "+c.slant+")");
+      if(motion==="reduce")assert(c.moved===0,"reduced motion: plane at "+c.id+" still moves");
+      else assert(c.moved>5,name+": plane at "+c.id+" does not drift with scroll ("+c.moved+")");
     }
     assert(res.sw<=res.vw,name+": horizontal scroll "+res.sw+">"+res.vw);
     assert(!errors.length,name+": runtime errors "+errors.join(" | "));
