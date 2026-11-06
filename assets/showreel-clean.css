@@ -30,19 +30,6 @@
   animation:fiqri-clean-glow 8s ease-in-out infinite alternate;
 }
 @keyframes fiqri-clean-glow{from{transform:translateX(-17%)}to{transform:translateX(17%)}}
-#cinema-wrap .showreel-shell video.montage-clip{
-  position:absolute!important;inset:0!important;
-  z-index:2!important;
-  display:block!important;
-  width:100%!important;height:100%!important;
-  object-fit:cover!important;object-position:center;
-  pointer-events:none;user-select:none;
-  opacity:0!important;
-  visibility:visible!important;
-  filter:brightness(.87) saturate(.98);
-  transition:opacity .5s ease!important;
-}
-#cinema-wrap .showreel-shell video.montage-clip.is-current{opacity:1!important;z-index:3!important}
 #cinema-wrap .showreel-shell .showreel-montage::after{
   position:absolute;inset:0;z-index:5;
   content:"";pointer-events:none;
@@ -112,14 +99,7 @@
 #cinema-wrap .showreel-shell .montage-skip:focus-visible{outline:3px solid #d2e8ff;outline-offset:-5px}
 #cinema-wrap .showreel-shell .montage-skip:active span{transform:scale(.97)}
 /* Even if old CSS survives a stale browser cache, no YouTube UI is visible. */
-#cinema-wrap .showreel-shell .showreel-topline,
-#cinema-wrap .showreel-shell .showreel-bottomline,
-#cinema-wrap .showreel-shell .showreel-vignette,
-#cinema-wrap .showreel-shell .showreel-frame-lines,
-#cinema-wrap .showreel-shell .showreel-placeholder,
-#cinema-wrap .showreel-shell .montage-credit,
-#cinema-wrap .showreel-shell .montage-youtube-panel,
-#cinema-wrap .showreel-shell .montage-shot{display:none!important}
+#cinema-wrap .showreel-shell .showreel-placeholder{display:none!important}
 @media(max-width:700px){
   #cinema-wrap .showreel-shell .montage-title{font-size:clamp(15px,4vw,21px)!important;max-width:70%}
   #cinema-wrap .showreel-shell .montage-overlay{left:13px;right:13px;bottom:17px;gap:8px}
@@ -129,7 +109,6 @@
 }
 @media(prefers-reduced-motion:reduce){
   #cinema-wrap .showreel-shell .montage-fallback::after{animation:none}
-  #cinema-wrap .showreel-shell video.montage-clip{transition:none!important}
 }
 
 /* Display the project name at all times, including before pointer hover. */
@@ -186,7 +165,6 @@
 #cinema-wrap .showreel-shell .montage-skip{z-index:11!important}
 #cinema-wrap .showreel-shell .montage-progress{z-index:13!important}
 #cinema-wrap .showreel-shell .montage-fallback::after{animation:none!important}
-#cinema-wrap .showreel-shell[data-preview-state="blocked"] .montage-skip span,
 #cinema-wrap .showreel-shell .showreel-montage[data-playback="blocked"] .montage-skip span{
  opacity:1!important;transform:none!important;
 }

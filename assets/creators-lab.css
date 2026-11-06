@@ -23,41 +23,11 @@
  background:linear-gradient(90deg,#afc9ffa8,transparent);
  opacity:.8;
 }
-.fq-blueprint__top{
- display:flex;justify-content:space-between;align-items:center;gap:8px;
- font:600 8px/1.3 "Archivo",sans-serif;letter-spacing:.12em;
-}
-.fq-blueprint__top strong{color:#e1ebff;font-weight:600}
-.fq-blueprint__top span{color:#89acdf;font-size:7px}
-.fq-blueprint__drawing{display:block;width:100%;height:auto;margin:11px auto 9px;overflow:visible}
-.fq-blueprint__base{fill:#0f244965;stroke:#9bbfff9c;stroke-width:1.3}
-.fq-blueprint__mesh{stroke:#7cacee66;stroke-width:.7;fill:none}
-.fq-blueprint__guide{stroke:#c7dcffac;stroke-width:1;fill:none;stroke-dasharray:2.8 4}
-.fq-blueprint__cut{stroke:#b9d5ff;stroke-width:2;fill:none;stroke-linecap:round;stroke-dasharray:27 37;animation:fq-drafting 5s linear infinite}
-.fq-blueprint__wave{fill:none;stroke:#a9cdff;stroke-width:1.3;opacity:.6}
-.fq-blueprint__crosshair{stroke:#d9e9ff;stroke-width:1.2;fill:none}
-.fq-blueprint__sweep{fill:#b4c9ff;opacity:.35;transform-origin:50% 50%;animation:fq-sweep 5.2s ease-in-out infinite alternate}
-.fq-blueprint__caption{margin:0 0 9px;font:600 8px/1.35 "Archivo",sans-serif;letter-spacing:.09em;color:#a2b7de}
-.fq-blueprint__steps{display:flex;flex-wrap:wrap;gap:5px}
-.fq-blueprint__step{
- flex:1;min-width:0;padding:6px 2px;text-align:center;
- border-top:1px solid #819cce55;
- color:#8fafd6;
- font:700 7px/1.2 "Archivo",sans-serif;letter-spacing:.08em;
- transition:color .28s,border-color .28s,background .28s;
-}
 .fq-blueprint[data-phase="capture"] [data-blueprint-step="capture"],
 .fq-blueprint[data-phase="craft"] [data-blueprint-step="craft"],
 .fq-blueprint[data-phase="deliver"] [data-blueprint-step="deliver"]{
  color:#f5f8ff;border-top-color:#b7d8ff;background:#b6c9ff1a;
 }
-.fq-blueprint__footer{
- margin-top:12px;
- display:flex;justify-content:space-between;gap:5px;
- color:#8eaad5;font:600 7px/1.3 "Archivo",sans-serif;letter-spacing:.1em;
-}
-@keyframes fq-drafting{to{stroke-dashoffset:-128}}
-@keyframes fq-sweep{to{opacity:.8;transform:translateX(9px)}}
 
 /* ABOUT / asymmetric editorial composition with a handmade miniature. */
 #about .about-grid{grid-template-columns:minmax(0,1.06fr) minmax(0,1.04fr);gap:clamp(28px,4.4vw,78px);align-items:center}
@@ -107,40 +77,20 @@
  color:#b6c8e6;font:500 11px/1.55 "Archivo",sans-serif;letter-spacing:0;
 }
 #about .fq-studio__note strong{color:#e8eeff;font-weight:700}
-.fq-studio__art .fq-pixel{shape-rendering:crispEdges}
-.fq-studio__art .fq-pixel-shadow{filter:drop-shadow(0 9px 13px #02091f9e)}
-.fq-studio__art .fq-monitor-glow{filter:drop-shadow(0 0 17px #617af95c)}
 .fq-studio__art .fq-monitor-playhead{
  animation:fq-playhead 4s linear infinite;
 }
-.fq-studio__art .fq-timeline-row{
- animation:fq-track 3s ease-in-out infinite alternate;
-}
-.fq-studio__art .fq-timeline-row:nth-child(2){animation-delay:-1.3s}
-.fq-studio__art .fq-avatar-bob{animation:fq-keyboard-bob 1.45s ease-in-out infinite;transform-origin:364px 298px}
-.fq-studio__art .fq-avatar-arm{animation:fq-typing .26s ease-in-out infinite alternate;transform-origin:366px 275px}
-.fq-studio__art .fq-cursor{animation:fq-cursor-blink .9s steps(1) infinite}
 .fq-studio__art .fq-coffee-steam{opacity:0;transition:opacity .3s}
 .fq-studio[data-mode="coffee"] .fq-coffee-steam{opacity:.85;animation:fq-steam 2s ease-out infinite}
-.fq-studio[data-mode="coffee"] .fq-avatar-arm{animation:none;transform:rotate(-14deg)}
-.fq-studio[data-mode="coffee"] .fq-avatar-bob{animation:fq-keyboard-bob 2.8s ease-in-out infinite}
-.fq-studio[data-mode="render"] .fq-avatar-arm{animation:none}
 .fq-studio[data-mode="render"] .fq-monitor-playhead{animation:none;transform:translateX(80px)}
 .fq-studio[data-mode="render"] .fq-render-progress{opacity:1}
 .fq-studio[data-mode="render"] .fq-render-bar{animation:fq-render-fill 3.8s ease-in-out forwards}
 .fq-studio[data-mode="edit"] .fq-render-progress,
 .fq-studio[data-mode="coffee"] .fq-render-progress{opacity:0}
-.fq-studio[data-mode="coffee"] .fq-monitor-playhead,
-.fq-studio[data-mode="coffee"] .fq-timeline-row{animation-play-state:paused}
-.fq-studio[data-mode="coffee"] .fq-mini-mug{animation:fq-mug 2.2s ease-in-out infinite alternate;transform-origin:441px 282px}
+.fq-studio[data-mode="coffee"] .fq-monitor-playhead{animation-play-state:paused}
 @keyframes fq-playhead{from{transform:translateX(0)}to{transform:translateX(98px)}}
-@keyframes fq-track{from{opacity:.7}to{opacity:1}}
-@keyframes fq-keyboard-bob{50%{transform:translateY(-2px)}}
-@keyframes fq-typing{to{transform:translate(2px,3px)}}
-@keyframes fq-cursor-blink{50%{opacity:0}}
 @keyframes fq-render-fill{from{transform:scaleX(.06)}to{transform:scaleX(1)}}
 @keyframes fq-steam{0%{transform:translateY(10px);opacity:0}35%{opacity:.75}100%{transform:translateY(-17px);opacity:0}}
-@keyframes fq-mug{to{transform:translateY(-4px)}}
 
 /* Surrounding about copy should remain readable and editorial, not a UI card. */
 #about .about-grid>div:last-child>p:first-child{max-width:33ch}
@@ -165,33 +115,16 @@
    background:#111e3eda;
  }
  #cinema-wrap .fq-blueprint::after{display:none}
- .fq-blueprint__top{grid-column:1/-1;font-size:8px}
- .fq-blueprint__drawing{width:60px;height:44px;grid-row:2/5;margin:0}
- .fq-blueprint__caption{font-size:8px;margin:6px 0 0}
- .fq-blueprint__steps{gap:3px}
- .fq-blueprint__step{font-size:7px;padding:5px 1px}
- .fq-blueprint__footer{margin-top:2px;font-size:7px}
  #about .fq-studio{margin:auto;max-width:520px}
  #about .fq-studio-column>.eyebrow{margin-bottom:13px}
 }
 @media(max-width:390px){
  #cinema-wrap .fq-blueprint{bottom:18.5%;left:12px;right:12px;padding:7px 9px}
- .fq-blueprint__top{font-size:7px}
- .fq-blueprint__drawing{width:51px}
- .fq-blueprint__step{font-size:6.5px}
  #about .fq-studio__head{padding:12px 11px 0;font-size:8px}
  .fq-studio__controls{padding:0 10px 10px;gap:5px}
  .fq-studio__button{padding:8px 4px;font-size:9px;min-height:38px}
  #about .fq-studio__note{padding:10px 12px 13px;font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){
- .fq-blueprint__cut,.fq-blueprint__sweep,
- .fq-studio__art .fq-monitor-playhead,
- .fq-studio__art .fq-timeline-row,
- .fq-studio__art .fq-avatar-bob,
- .fq-studio__art .fq-avatar-arm,
- .fq-studio__art .fq-cursor,
- .fq-studio__art .fq-coffee-steam,
- .fq-studio__art .fq-render-bar,
- .fq-studio__art .fq-mini-mug{animation:none!important;transition:none!important;transform:none!important}
+ .fq-studio__art .fq-monitor-playhead,.fq-studio__art .fq-coffee-steam,.fq-studio__art .fq-render-bar{animation:none!important;transition:none!important;transform:none!important}
 }

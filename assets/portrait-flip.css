@@ -80,51 +80,6 @@
   box-shadow:0 0 0 31px #a1c7f707,0 0 0 74px #a1c7f704;
   pointer-events:none;
 }
-.portrait-card__back-top,.portrait-card__back-bottom {
-  z-index:1;
-  font:600 clamp(8px,.8vw,10px)/1.45 "Archivo",sans-serif;
-  letter-spacing:.19em;
-  color:#a6cafa;
-}
-.portrait-card__back-top { text-transform:uppercase; }
-.portrait-card__back-bottom {
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  border-top:1px solid #b8d8ff30;
-  padding-top:13px;
-}
-.portrait-card__back-body {
-  position:relative;
-  z-index:1;
-  max-width:320px;
-  margin:auto 0;
-}
-.portrait-card__back-kicker {
-  display:block;
-  margin-bottom:14px;
-  color:#9ecfff;
-  font:700 clamp(9px,.95vw,11px)/1.5 "Archivo",sans-serif;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-}
-.portrait-card__back-quote {
-  margin:0 0 21px;
-  max-width:13ch;
-  font:500 clamp(25px,3.1vw,38px)/1.17 "Archivo",sans-serif;
-  letter-spacing:-.055em;
-  text-wrap:balance;
-  color:#f4f8ff;
-}
-.portrait-card__back-quote em {font-style:normal;color:#a5d1ff}
-.portrait-card__back-note {
-  max-width:28ch;
-  margin:0;
-  padding-top:16px;
-  border-top:1px solid #b6d6ff46;
-  color:#b4c8e0;
-  font:400 clamp(11px,1.15vw,13px)/1.65 "Archivo",Arial,sans-serif;
-}
 .portrait-card__flip-button {
   position:absolute;
   z-index:9;
@@ -147,21 +102,9 @@
 }
 @media (max-width:700px) {
   .portrait-card__face--back {padding:clamp(19px,5vw,29px);}
-  .portrait-card__back-quote {
-    max-width:14ch;
-    font-size:clamp(24px,6.5vw,31px);
-    margin-bottom:16px;
-  }
-  .portrait-card__back-kicker {font-size:9px;margin-bottom:10px}
-  .portrait-card__back-note {font-size:11px;line-height:1.55;padding-top:12px}
-  .portrait-card__back-top,.portrait-card__back-bottom {font-size:8px}
-  .portrait-card__back-bottom {padding-top:9px}
 }
 @media (max-width:359px) {
   .portrait-card__face--back {padding:17px}
-  .portrait-card__back-quote {font-size:23px}
-  .portrait-card__back-note {font-size:10.5px;line-height:1.5}
-  .portrait-card__back-top,.portrait-card__back-bottom {font-size:7px}
 }
 @media (prefers-reduced-motion:reduce) {
   .portrait-card__rotator {transition:none!important;transform:none!important}

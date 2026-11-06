@@ -27,7 +27,6 @@
     flex-direction: column; align-items: flex-start;
     justify-content: flex-start; gap: 12px;
   }
-  .hero-top .mono { font-size: 10px; letter-spacing: .12em; }
   .hero-top .available {
     display: inline-flex; max-width: 100%; min-height: 32px;
     padding: 7px 10px; border: 1px solid #7aafe45c;
@@ -50,8 +49,6 @@
   .hero .button { min-height: 48px; padding: 13px 20px; }
   .hero .simple-link { padding: 12px 0; }
   .poster.hero-photo-stage { width: min(90vw, 380px); margin: 22px auto 18px; }
-  .hero-foot { margin-top: 12px; gap: 10px; }
-  .hero-foot .mono { font-size: 9px; letter-spacing: .09em; }
   .section { padding: 74px 0; }
   .section h2 { font-size: clamp(39px, 10vw, 60px); line-height: 1.04; }
   .section-lead { font-size: 14px; line-height: 1.7; }
@@ -134,7 +131,6 @@
   .hero h1 { font-size: clamp(38px,10.7vw,45px); }
   .hero .actions { gap: 14px; }
   .hero .button { justify-content: center; }
-  .hero-foot .mono:last-child { text-align: right; }
   .portrait-skill { padding: 9px 8px; gap: 5px; font-size: 9px; }
   .portrait-skills { gap: 5px; left: 0; right: 0; }
   .portrait-card__foot strong { font-size: 24px; }

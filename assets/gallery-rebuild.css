@@ -149,7 +149,7 @@
   transform:none!important;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
 }
-#work .work-featured,#work .work-availability{display:none!important}
+#work .work-featured{display:none!important}
 #work .work-card>p{display:none!important}
 
 /* Desktop Highlights: 1 native portrait + 1 large film + 2 landscape cards.
@@ -384,9 +384,6 @@ body.modal-open{overflow:hidden!important}
 #cinema-wrap .float-reel-card--two{right:-3%;top:43%}
 #cinema-wrap .float-reel-card--three{display:none!important}
 #cinema-wrap .cinema-frame.showreel-shell{z-index:9!important;overflow:hidden}
-#cinema-wrap .showreel-message{left:6%;bottom:12%;max-width:45%;z-index:7}
-#cinema-wrap .cinema-frame .showreel-message strong{font-size:clamp(19px,3vw,43px);line-height:1.04}
-#cinema-wrap .showreel-bottomline{z-index:9}
 #cinema-wrap .cinema-footer{z-index:12}
 
 /* Smaller viewports stay natural and dense, without fixed row spans. */
@@ -439,7 +436,6 @@ body.modal-open{overflow:hidden!important}
   .portfolio-dialog .event-feature-play{font-size:11px;gap:8px}
   .portfolio-dialog .video-player-frame.is-portrait{width:min(310px,100%)}
   #cinema-wrap .float-reel-card{display:none!important}
-  #cinema-wrap .showreel-message{max-width:53%}
 }
 @media(prefers-reduced-motion:reduce){
  #work .work-card,#work .work-poster,#work .work-play-cue,

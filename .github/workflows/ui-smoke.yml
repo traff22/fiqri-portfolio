@@ -13,6 +13,7 @@ on:
       - "scripts/design-system-smoke.mjs"
       - "scripts/easter-eggs-smoke.mjs"
       - "scripts/color-study-smoke.mjs"
+      - "tools/prune-css.cjs"
       - ".github/workflows/ui-smoke.yml"
   workflow_dispatch:
 jobs:
@@ -26,13 +27,14 @@ jobs:
           node-version: "22"
       - name: Install browser test dependencies
         run: |
-          npm install --no-save playwright@1.56.1
+          npm install --no-save playwright@1.56.1 postcss@8.5.6
           npx playwright install --with-deps chromium
       - name: Check layout in real Chromium
         run: |
           mkdir -p screenshots
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/fiqri-ui-server.log 2>&1 &
           sleep 2
+          node tools/prune-css.cjs . --check
           node scripts/color-study-smoke.mjs
           node scripts/easter-eggs-smoke.mjs
           node scripts/ui-smoke.mjs

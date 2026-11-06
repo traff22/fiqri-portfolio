@@ -111,7 +111,6 @@ body.directors-cut-open{overflow:hidden}
   pointer-events:none;
 }
 .footer-final-note.is-visible{opacity:1;transform:none}
-.footer-final-note__star{color:#a5d7ff;font-size:15px}
 .footer-final-note__fin{color:#7d9fbe;font-size:9px;letter-spacing:.18em}
 
 @media(max-width:700px){

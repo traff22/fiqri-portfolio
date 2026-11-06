@@ -369,3 +369,24 @@ After each future owner-approved iteration, append a dated entry here summarizin
   - `og-card.jpg`, favicons and the apple-touch icon, rendered from `tools/og.html`.
   - OG/Twitter meta (`summary_large_image`); theme-color `#04060a`. `noindex` untouched.
 - **QA:** `design-system-smoke.mjs` adds cameo (loaded, no overlap with painted contact text/controls), share card and icon serving, the robots guard and the night footer pose. All suites pass locally.
+
+### 2026-11-06 (WIB): CSS clean-up (idea #11)
+**Owner:** "Gas #11 rapihin CSS sekarang."
+
+**Method:**
+1. A deterministic screenshot parity harness: 24 shots covering 1440/390/320 full page, the "All work" filter, the flipped portrait, the video and event dialogs, Director's Cut, the mobile menu, the no-WebGL SVG room and a frozen splash frame. It runs with reduced motion, `?daypart=night`, the YouTube API blocked and thumbnails from a local file, with the random canvases hidden. Two baseline runs differ only in ~40 px of the splash playhead (known noise).
+2. `tools/prune-css.cjs` (PostCSS) removes only selectors that can never match: the class, id or attribute value appears in no HTML or SVG attribute and in no JS string literal (inline `<script>` included). Selector lists keep their live members; unreferenced `@keyframes` go.
+   - A first pass wrongly marked the daypart selectors, because the inline head script had not been scanned. Fixed before writing.
+   - No dynamically built class names exist (checked).
+3. After writing, parity was identical in 23/24 shots. The splash shot differs only by the known noise in the same box.
+
+**Result:**
+- 258 dead rules, 12 trimmed selector lists and 11 unused keyframes removed (old intro, portrait side cards, the first blueprint, the old SVG room animations, old montage credits, the old Expertise grid, the old portrait back).
+- CSS 228.7 KB → 203.6 KB (gzip 54.5 KB → 49.3 KB); `!important` 933 → 892.
+- All smoke suites pass.
+
+**Guard:** CI runs `tools/prune-css.cjs . --check`, verified to fail on an injected dead rule.
+
+**Not done (on purpose):**
+- Reducing `!important` and merging stylesheets. That means untangling the cascade file by file, and should be its own project with the same parity harness.
+- Hidden legacy DOM (cinema atmosphere spans, portrait skills) is also left in place, because existing tests still assert on it.

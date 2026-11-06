@@ -94,21 +94,6 @@ button:focus-visible,a:focus-visible {
 .hero::before{opacity:.09}
 .hero::after{opacity:.43}
 .hero-blob{opacity:.48}
-.hero-top .mono.accent{
-  display:inline-flex;
-  align-items:center;
-  gap:12px;
-  color:var(--fq-copper);
-  letter-spacing:.14em;
-}
-.hero-top .mono.accent::before{
-  content:"";
-  display:block;
-  height:2px;
-  width:24px;
-  flex:0 0 24px;
-  background:var(--fq-copper);
-}
 .hero .available{
   color:#d2dadf;
   font-size:11px;
@@ -157,8 +142,6 @@ button:focus-visible,a:focus-visible {
   transition:border-color .2s ease,color .2s ease;
 }
 .hero .simple-link:hover{color:var(--fq-copper-light);border-color:var(--fq-copper-light)}
-.hero-foot{color:#8fa0aa}
-.hero-foot .mono:last-child{letter-spacing:.11em}
 
 /* A real photograph remains the hero artwork. Chrome becomes almost invisible. */
 .poster.hero-photo-stage .portrait-card__face--front {
@@ -171,11 +154,6 @@ button:focus-visible,a:focus-visible {
     radial-gradient(ellipse 72% 65% at 88% 12%,#8c685230,transparent 76%),
     linear-gradient(147deg,#23323c,#14242e 68%,#0e1920);
 }
-.portrait-card__back-kicker,
-.portrait-card__back-quote em{color:var(--fq-copper-light)}
-.portrait-card__back-top,
-.portrait-card__back-bottom{color:#d7b99f}
-.portrait-card__back-note{color:#bac5c9;border-color:#cfb1983e}
 .portrait-card__face--back::before{border-color:#cfb19843}
 .portrait-skill{
   background:#14222cea;
@@ -301,15 +279,6 @@ button:focus-visible,a:focus-visible {
   background:#0d181f;
   border-color:#9caeb322;
 }
-.expertise .skill{
-  border-color:#8e9ea64c;
-}
-.expertise .skill h3{color:#f2efe9}
-.expertise .skill p{color:#aeb9c0}
-.expertise .skill:hover{
-  border-color:#d5ad895b;
-  box-shadow:none;
-}
 #about{background:#101f28}
 #about .career{border-color:#87999b52}
 #about .career-item{border-color:#87999b38}
@@ -365,7 +334,6 @@ button:focus-visible,a:focus-visible {
 .footer a:hover,
 .footer .replay:hover{color:var(--fq-copper-light)}
 .footer-final-note{color:#a5b3b9}
-.footer-final-note__star{color:var(--fq-copper)}
 .footer-final-note__fin{color:#af8e76}
 .directors-cut{
   border-color:#b6ac9b76!important;
@@ -391,7 +359,6 @@ button:focus-visible,a:focus-visible {
 }
 .intro p{color:#b9c4c6}
 .intro .eyebrow.accent{color:var(--fq-copper)}
-.intro-orbit{border-color:#e0b08c3a;box-shadow:0 0 0 70px #dca47c08,0 0 0 150px #dca47c06}
 
 /* Mobile polish follows the exact same design logic, never a second theme. */
 @media(max-width:700px){
@@ -402,8 +369,6 @@ button:focus-visible,a:focus-visible {
     border-color:#ac9f9587;
     min-height:46px;
   }
-  .hero-top .mono.accent{font-size:9px;gap:8px}
-  .hero-top .mono.accent::before{width:15px;flex-basis:15px}
   .hero h1 em,.hero h1 .hero-line:last-child em{font-size:.85em}
   .hero .available{border-color:#b9aaa459;background:#18272c91;color:#dee0dc}
   #work .filter{min-height:44px;padding:12px 7px 9px;margin-right:7px}

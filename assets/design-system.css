@@ -240,7 +240,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 .craft__clip:hover .craft__frame{border-color:#9ec0ff80}
 .craft__name{font:600 14px/1.35 "Archivo",sans-serif;color:var(--c-text);margin-top:6px}
 .craft__kind{font-size:13px;color:var(--c-muted)}
-.expertise .skills{display:none!important}
 @media(max-width:900px){
   .expertise .crafts{grid-template-columns:minmax(0,1fr)}
   .craft--lead{grid-row:auto}
@@ -278,7 +277,6 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 #cinema-wrap .float-reel-card:focus-within .float-reel-card__inner{box-shadow:0 26px 64px #000000d9!important}
 #cinema-wrap .float-reel-card.is-source .float-reel-card__inner{box-shadow:0 24px 62px #000000d9!important}
 #cinema-wrap .showreel-shell>.montage-overlay{box-shadow:0 20px 52px #000000b3!important}
-#cinema-wrap .montage-credit__name{text-shadow:0 2px 10px #000c!important}
 #contact.contact .mail{text-shadow:none!important}
 @media(hover:hover) and (pointer:fine){
   .hero .portrait-card:hover .portrait-card__face--front{box-shadow:0 43px 112px #000d,0 0 64px rgb(var(--ambient)/.45)!important}
@@ -286,7 +284,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 
 /* ---------- glass: topbar + the Chapter One lens only (audit #13, R-10) ---------- */
 dialog.portfolio-dialog::backdrop,dialog.directors-cut::backdrop{background:#02040acc!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#cinema-wrap .montage-credit,#work .work-media .arrow,#cinema-wrap .showreel-sound,.creators-lab .fq-studio__head,.fq-studio{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#cinema-wrap .showreel-sound,.fq-studio{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 
 /* WhatsApp: the real glyph (Simple Icons, CC0) at a square size, never squeezed. */
 #contact.contact .whatsapp-contact__icon,.whatsapp-contact__icon{
