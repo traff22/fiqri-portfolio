@@ -1,0 +1,96 @@
+/* FQ / OPENING TITLES — shown once per session on first open.
+   An editor's timeline draws between IN and OUT marks, the name comes up as a
+   title card, the playhead runs and the timecode counts; then the frame opens
+   like a letterbox and the site is there. 2.6 s in total, skippable.
+   The whole sequence is CSS, so the titles always clear themselves even if
+   JavaScript fails. <head> adds html.fq-splash-on (not on repeat visits in the
+   session, never with prefers-reduced-motion). */
+
+#intro.fq-splash{display:none!important}
+html.fq-splash-on #intro.fq-splash{
+  display:block!important;
+  position:fixed;inset:0;z-index:300;
+  background:transparent;color:var(--c-text,#edf2fa);
+  animation:fq-splash-gone 0s linear 2.65s forwards;
+  cursor:pointer;
+}
+/* the two halves of the frame (letterbox) */
+.fq-splash__half{
+  position:absolute;left:0;right:0;height:50.5%;
+  background:var(--c-ink,#04060a);
+  animation:fq-splash-open .56s cubic-bezier(.75,0,.2,1) 2.06s forwards;
+}
+.fq-splash__half--top{top:0}
+.fq-splash__half--bottom{bottom:0;--to:100%}
+.fq-splash__half--top{--to:-100%}
+/* a soft pool of light behind the titles, in the time-of-day ambient colour;
+   it belongs to the titles, so it leaves with them (no seam at the split) */
+.fq-splash__stage::before{
+  content:"";position:absolute;z-index:-1;left:-30%;right:-30%;top:-60%;bottom:-60%;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgb(var(--ambient,37 99 235)/.24),transparent 70%);
+}
+.fq-splash__stage{
+  position:absolute;left:50%;top:50%;z-index:2;
+  width:min(82vw,760px);translate:-50% -50%;
+  animation:fq-splash-out .2s ease-in 1.85s forwards;
+}
+.fq-splash__name{
+  margin:0 0 18px;
+  font:700 clamp(54px,9.5vw,128px)/.9 var(--font-text,"Archivo"),sans-serif;
+  font-stretch:72%;letter-spacing:-.018em;
+  clip-path:inset(100% 0 0 0);translate:0 .25em;
+  animation:fq-splash-rise .65s cubic-bezier(.2,.75,.2,1) .35s forwards;
+}
+.fq-splash__timeline{
+  display:flex;align-items:center;gap:10px;
+  font:600 18px/1 var(--font-text,"Archivo"),sans-serif;color:var(--c-ice,#cfe0ff);
+}
+.fq-splash__mark{opacity:0;animation:fq-splash-fade .2s ease-out forwards}
+.fq-splash__mark--in{animation-delay:.2s}
+.fq-splash__mark--out{animation-delay:.82s}
+.fq-splash__line{
+  position:relative;flex:1;height:1px;background:#9ec0ff8c;
+  transform-origin:left center;scale:0 1;
+  animation:fq-splash-draw .7s cubic-bezier(.3,.7,.2,1) .15s forwards;
+}
+.fq-splash__playhead{
+  position:absolute;left:0;top:-9px;width:2px;height:19px;background:var(--c-blue,#2563eb);
+  box-shadow:0 0 0 1px #04060a;opacity:0;
+  animation:fq-splash-play 1s linear .9s forwards;
+}
+.fq-splash__meta{
+  display:flex;justify-content:space-between;gap:16px;margin:14px 0 0;
+  font:500 13px/1.4 var(--font-text,"Archivo"),sans-serif;color:var(--c-muted,#94a3b8);
+  opacity:0;animation:fq-splash-fade .4s ease-out .7s forwards;
+}
+.fq-splash__tc{font-variant-numeric:tabular-nums;letter-spacing:.04em;color:#cfdcf0}
+.fq-splash__skip{
+  position:absolute;top:18px;right:18px;z-index:3;
+  min-width:44px;min-height:44px;padding:0 16px;
+  border:1px solid #9ec0ff55;border-radius:var(--r-2,12px);
+  background:transparent;color:#cfdcf0;cursor:pointer;
+  font:600 12px/1 var(--font-text,"Archivo"),sans-serif;letter-spacing:.02em;
+  opacity:0;animation:fq-splash-fade .3s ease-out .3s forwards,fq-splash-out .2s ease-in 1.85s forwards;
+}
+.fq-splash__skip:hover{border-color:var(--c-ice,#cfe0ff);color:#fff}
+
+/* Skip: open the frame now. */
+#intro.fq-splash.is-skipping .fq-splash__stage,
+#intro.fq-splash.is-skipping .fq-splash__skip{animation:fq-splash-out .15s ease-in forwards}
+#intro.fq-splash.is-skipping .fq-splash__half{animation:fq-splash-open .38s cubic-bezier(.75,0,.2,1) .05s forwards}
+html.fq-splash-on #intro.fq-splash.is-skipping{animation:fq-splash-gone 0s linear .45s forwards}
+
+@keyframes fq-splash-rise{to{clip-path:inset(0 0 0 0);translate:0 0}}
+@keyframes fq-splash-draw{to{scale:1 1}}
+@keyframes fq-splash-fade{to{opacity:1}}
+@keyframes fq-splash-out{to{opacity:0}}
+@keyframes fq-splash-play{0%{opacity:1;left:0}100%{opacity:1;left:calc(100% - 2px)}}
+@keyframes fq-splash-open{to{translate:0 var(--to)}}
+@keyframes fq-splash-gone{to{visibility:hidden;pointer-events:none}}
+
+@media(max-width:700px){
+  .fq-splash__meta{flex-direction:column;gap:6px}
+}
+@media(prefers-reduced-motion:reduce){
+  html.fq-splash-on #intro.fq-splash{display:none!important}
+}

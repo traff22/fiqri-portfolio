@@ -51,6 +51,12 @@ It stays one identity. Daypart changes the light, not the brand.
 - Both are **self-hosted** in `assets/fonts/` and declared in `assets/design-system.css`, with the main Archivo file preloaded. The Google Fonts `@import` (a render-blocking third-party request) is gone.
 - Retired: Space Grotesk (a common AI-default display face), DM Sans, and the accidental Georgia fallback.
 
+## Light and glass
+
+- **Coloured glow on two focal points only:** the showreel frame (the film is the subject) and the portrait on hover. Everything else gets a plain elevation shadow.
+- **Backdrop blur on two elements only:** the top bar, so text stays readable over footage, and the Chapter One lens vignette.
+- No sparkle (✦) glyphs.
+
 ## Shape
 
 The radius scale is **6 / 12 / 18**:
@@ -59,6 +65,20 @@ The radius scale is **6 / 12 / 18**:
 - 18: big frames such as the showreel, portrait and project cards.
 
 Round shapes are kept only for round icon buttons (the play cue). There are no pill buttons.
+
+## Opening titles (splash)
+
+The opening titles play on the first open of a session (`assets/splash.css`, logic in `assets/main.js`). They take 2.6 s:
+- an editor's timeline draws between `[` IN and `]` OUT;
+- "Fiqri Apriandi" rises as a condensed title card;
+- the playhead runs while a 24 fps timecode counts;
+- the frame splits and opens like a letterbox onto the site.
+
+**Rules:**
+- They are skippable by the Skip button, a click anywhere, or Esc, and replayable from "Replay intro" in the footer.
+- They never play under reduced motion, and they do not play again in the same session (`sessionStorage` key `fiqri-intro-seen`).
+- `<head>` decides before first paint (`html.fq-splash-on`), so the page never flashes first.
+- The sequence is pure CSS, so the titles always clear themselves even if JavaScript fails. Scrolling is only locked by JavaScript.
 
 ## Motion rules
 

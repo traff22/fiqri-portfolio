@@ -17,6 +17,7 @@ try{
   for(const [name,width,height,expected] of viewports){
     const touch=width<700;
     const page=await browser.newPage({viewport:{width,height},hasTouch:touch,isMobile:touch,reducedMotion:"no-preference"});
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     const errors=[];page.on("pageerror",e=>errors.push(e.message));
     await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
     const scene=page.locator("#cinema-wrap");

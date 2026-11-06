@@ -2,6 +2,7 @@ import { chromium } from "playwright";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:"no-preference"});
+ await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
  const errors=[];
  page.on("pageerror",e=>errors.push(e.message));
  await page.addInitScript(()=>{
@@ -32,9 +33,7 @@ try{
  });
  await page.goto("http://127.0.0.1:4173",{waitUntil:"domcontentloaded"});
  await page.evaluate(()=>{
-  const intro=document.querySelector("#intro");
-  if(intro)intro.hidden=true;
-  document.body.classList.remove("intro-active");
+  document.documentElement.classList.remove("fq-splash-on");
  });
  await page.locator("#cinema-wrap .showreel-shell").scrollIntoViewIfNeeded();
  await page.waitForFunction(()=>document.querySelector(".montage-stream.is-current"),{timeout:9000});

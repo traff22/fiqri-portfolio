@@ -267,3 +267,24 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 @media(prefers-reduced-motion:reduce){
   .craft__frame img{transition:none}
 }
+
+/* ---------- glow: two focal points only (audit #11, R-13) ----------
+   1. the showreel frame (the film is the subject), 2. the portrait on hover.
+   Everything else loses its coloured halo and keeps a plain elevation shadow. */
+.hero .portrait-card__face,.hero .portrait-card__face--front,.hero .portrait-card__outline,
+.poster.hero-photo-stage .portrait-card__face{box-shadow:0 30px 80px #000000b3!important}
+.hero .portrait-card__outline{box-shadow:none!important}
+#cinema-wrap .float-reel-card:hover .float-reel-card__inner,
+#cinema-wrap .float-reel-card:focus-within .float-reel-card__inner{box-shadow:0 26px 64px #000000d9!important}
+#cinema-wrap .float-reel-card.is-source .float-reel-card__inner{box-shadow:0 24px 62px #000000d9!important}
+#cinema-wrap .showreel-shell>.montage-overlay{box-shadow:0 20px 52px #000000b3!important}
+#cinema-wrap .montage-credit__name{text-shadow:0 2px 10px #000c!important}
+#contact.contact .mail{text-shadow:none!important}
+@media(hover:hover) and (pointer:fine){
+  .hero .portrait-card:hover .portrait-card__face--front{box-shadow:0 43px 112px #000d,0 0 64px rgb(var(--ambient)/.45)!important}
+}
+
+/* ---------- glass: topbar + the Chapter One lens only (audit #13, R-10) ---------- */
+dialog.portfolio-dialog::backdrop,dialog.directors-cut::backdrop{background:#02040acc!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#cinema-wrap .montage-credit,#work .work-media .arrow,#cinema-wrap .showreel-sound,.creators-lab .fq-studio__head,.fq-studio{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+

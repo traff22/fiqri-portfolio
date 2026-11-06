@@ -21,6 +21,7 @@ try{
   for(const [name,width,height] of [["desktop",1440,900],["mobile",390,844]]){
     const touch=width<700;
     const page=await browser.newPage({viewport:{width,height},hasTouch:touch,isMobile:touch,reducedMotion:"no-preference"});
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     const errors=[];page.on("pageerror",e=>errors.push(e.message));
     await page.addInitScript(youTubeMock);
     await page.goto("http://127.0.0.1:4173/?daypart=dusk",{waitUntil:"domcontentloaded"});
@@ -36,6 +37,18 @@ try{
     assert(copy.dashes===0,name+": "+copy.dashes+" em/en dashes in visible copy");
     const internalArrows=copy.arrows.filter(a=>!a.external);
     assert(!internalArrows.length,name+": ↗ on in-site controls "+JSON.stringify(internalArrows));
+
+    // Audit #10, #11, #13: no sparkle glyphs; glass on at most two elements;
+    // coloured glow (0 0 Npx halo) only on the showreel frame at rest.
+    const dose=await page.evaluate(()=>{
+      const all=[...document.querySelectorAll("body *")].filter(e=>{const r=e.getBoundingClientRect(),st=getComputedStyle(e);return r.width>0&&st.display!=="none"&&st.visibility!=="hidden"});
+      const glass=all.filter(e=>getComputedStyle(e).backdropFilter!=="none").map(e=>e.className.toString().split(" ")[0]);
+      const glow=all.filter(e=>/rgba?\([^)]*\) 0px 0px (\d{2,})px/.test(getComputedStyle(e).boxShadow)).map(e=>e.className.toString().split(" ")[0]);
+      return {sparkles:(document.body.innerText.match(/✦/g)||[]).length,glass:[...new Set(glass)],glow:[...new Set(glow)]};
+    });
+    assert(dose.sparkles===0,name+": sparkle glyphs remain");
+    assert(dose.glass.length<=2,name+": glassmorphism on "+dose.glass.length+" elements "+JSON.stringify(dose.glass));
+    assert(dose.glow.filter(c=>!/cinema-frame/.test(c)).length===0,name+": coloured glow outside the showreel frame "+JSON.stringify(dose.glow));
 
     // Portrait back: one line only (owner, K6).
     const back=await page.evaluate(()=>[...document.querySelector(".portrait-card__face--back").querySelectorAll("p,span,div")].map(e=>e.textContent.trim()).filter(Boolean));
@@ -106,10 +119,40 @@ try{
     console.log("DESIGN_SYSTEM_PASS="+JSON.stringify({name,arrows:copy.arrows.length}));
     await page.close();
   }
+  // Opening titles: first open of a session, gone by themselves in under 3 s,
+  // not again on reload, skippable, absent with reduced motion, replayable.
+  {
+    const page=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:"no-preference"});
+    await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+    const shown=await page.evaluate(()=>({on:document.documentElement.classList.contains("fq-splash-on"),display:getComputedStyle(document.querySelector("#intro")).display}));
+    assert(shown.on&&shown.display==="block","splash: opening titles did not show on first open "+JSON.stringify(shown));
+    assert(await page.locator("#skip-intro").isVisible(),"splash: skip button missing");
+    await page.waitForTimeout(3200);
+    const after=await page.evaluate(()=>({on:document.documentElement.classList.contains("fq-splash-on"),display:getComputedStyle(document.querySelector("#intro")).display,overflow:document.body.style.overflow,tc:document.querySelector("#fq-splash-tc").textContent}));
+    assert(!after.on&&after.display==="none"&&after.overflow==="","splash: titles did not clear themselves "+JSON.stringify(after));
+    assert(after.tc!=="00:00:00:00","splash: timecode never ran");
+    await page.reload({waitUntil:"domcontentloaded"});
+    assert(!await page.evaluate(()=>document.documentElement.classList.contains("fq-splash-on")),"splash: shown again in the same session");
+    await page.locator("#replay").click();
+    assert(await page.evaluate(()=>document.documentElement.classList.contains("fq-splash-on")),"splash: Replay intro did not replay");
+    await page.close();
+    const skip=await browser.newPage({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+    await skip.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+    await skip.locator("#skip-intro").tap();
+    await skip.waitForTimeout(700);
+    assert(!await skip.evaluate(()=>document.documentElement.classList.contains("fq-splash-on")),"splash: Skip did not open the site");
+    await skip.close();
+    const calm=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:"reduce"});
+    await calm.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+    assert(!await calm.evaluate(()=>document.documentElement.classList.contains("fq-splash-on")),"splash: shown despite reduced motion");
+    await calm.close();
+    console.log("SPLASH_PASS");
+  }
   // The mood follows the clock: night and day differ in ground colour.
   const grounds={};
   for(const part of ["night","day"]){
     const page=await browser.newPage({viewport:{width:1024,height:700}});
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     await page.goto("http://127.0.0.1:4173/?daypart="+part,{waitUntil:"domcontentloaded"});
     grounds[part]=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue("--c-ink").trim());
     await page.close();

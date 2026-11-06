@@ -336,3 +336,12 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - Reasons are in DESIGN.md, Typography.
 - **Pitfall hit and fixed:** inserting CSS inside the header comment of `design-system.css` silently broke the whole file. Keep new blocks *after* the closing `*/`.
 - Also fixed a pre-existing montage shuffle bug (the opening film could repeat as the third shot).
+
+### 2026-11-06 (WIB): audit #10, #11, #13 and opening titles
+**Owner:** fix #10, #11 and #13, and make sure there is a splash screen on first open.
+
+- Sparkles removed.
+- Glow limited to the showreel frame (rest) and the portrait (hover).
+- Glass limited to the top bar and the lens vignette; dialog backdrops are now solid.
+- The old intro (centred text, rotating orbit ring, Enter button) was disabled on first load. It is replaced by new opening titles (`#intro.fq-splash`, `assets/splash.css`, logic in `assets/main.js`): timeline with IN and OUT, a condensed name title card, playhead and 24 fps timecode, letterbox opening. They play once per session and are decided in `<head>` with `html.fq-splash-on`.
+- Existing tests set `fiqri-intro-seen` before load; `design-system-smoke.mjs` tests the titles themselves.

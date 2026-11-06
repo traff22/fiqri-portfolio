@@ -3,16 +3,46 @@ const one=(q)=>document.querySelector(q),all=(q)=>[...document.querySelectorAll(
 const menu=one("#mobile-menu"),nav=one("#navlinks");
 menu?.addEventListener("click",()=>{const open=nav.classList.toggle("open");menu.setAttribute("aria-expanded",String(open));menu.textContent=open?"Close":"Menu"});
 all("#navlinks a").forEach(a=>a.addEventListener("click",()=>{nav.classList.remove("open");menu?.setAttribute("aria-expanded","false");if(menu)menu.textContent="Menu"}));
+/* Opening titles (assets/splash.css). <head> decides whether they run
+   (once per session, never with reduced motion). The sequence itself is CSS;
+   this only counts the timecode, locks scrolling while they play, lets the
+   visitor skip, and replays them from the footer. */
 const splash=one("#intro"),reduced=window.matchMedia("(prefers-reduced-motion: reduce)"),key="fiqri-intro-seen";
-let introTimeout=null,exitTimeout=null;
-function enter(){if(!splash||splash.hidden)return;splash.classList.add("exit");document.body.classList.remove("intro-active");try{sessionStorage.setItem(key,"yes")}catch{}clearTimeout(introTimeout);clearTimeout(exitTimeout);exitTimeout=setTimeout(()=>{splash.hidden=true;splash.classList.remove("exit")},720)}
-function startIntro(force=false){if(!splash)return;const seen=(()=>{try{return sessionStorage.getItem(key)==="yes"}catch{return false}})();if(reduced.matches){splash.hidden=true;document.body.classList.remove("intro-active");return}if(!force&&seen){splash.hidden=true;document.body.classList.remove("intro-active");return}splash.hidden=false;splash.classList.remove("exit");document.body.classList.add("intro-active");one("#enter")?.focus();clearTimeout(introTimeout);introTimeout=setTimeout(enter,4200)}
-/* No forced opening screen: let the work appear immediately. Intro remains discoverable with Replay Intro in the footer. */
-if(splash){const video=splash.querySelector("video"),src=splash.dataset.splashSrc;if(src&&video){video.src=src;video.classList.remove("hidden")}splash.hidden=true;document.body.classList.remove("intro-active")}
-one("#enter")?.addEventListener("click",enter);one("#skip-intro")?.addEventListener("click",enter);
-one("#replay")?.addEventListener("click",()=>{try{sessionStorage.removeItem(key)}catch{}window.scrollTo({top:0,behavior:reduced.matches?"instant":"smooth"});startIntro(true)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")enter()});
-reduced.addEventListener?.("change",()=>{if(reduced.matches)enter();schedule()});
+const root=document.documentElement,tc=one("#fq-splash-tc");
+let splashDone=0,tcRaf=0;
+function finishSplash(){
+ if(!root.classList.contains("fq-splash-on"))return;
+ root.classList.remove("fq-splash-on");splash?.classList.remove("is-skipping");
+ document.body.style.overflow="";cancelAnimationFrame(tcRaf);clearTimeout(splashDone);
+}
+function skipSplash(){
+ if(!root.classList.contains("fq-splash-on")||splash.classList.contains("is-skipping"))return;
+ splash.classList.add("is-skipping");clearTimeout(splashDone);splashDone=setTimeout(finishSplash,480);
+}
+function runSplash(){
+ if(!splash||!root.classList.contains("fq-splash-on"))return;
+ try{sessionStorage.setItem(key,"yes")}catch{}
+ document.body.style.overflow="hidden";
+ // 24 fps timecode while the playhead runs (0.9 s to 1.9 s after start)
+ const start=performance.now();
+ const count=now=>{const t=Math.max(0,Math.min(1,(now-start-900)/1000)),f=Math.round(t*58);
+  if(tc)tc.textContent="00:00:"+String(Math.floor(f/24)).padStart(2,"0")+":"+String(f%24).padStart(2,"0");
+  if(now-start<1950)tcRaf=requestAnimationFrame(count)};
+ tcRaf=requestAnimationFrame(count);
+ one("#skip-intro")?.focus({preventScroll:true});
+ splashDone=setTimeout(finishSplash,2700);
+}
+splash?.addEventListener("click",skipSplash);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")skipSplash()});
+one("#replay")?.addEventListener("click",()=>{
+ if(reduced.matches)return;
+ window.scrollTo({top:0,behavior:"instant"});
+ splash.classList.remove("is-skipping");root.classList.remove("fq-splash-on");
+ void splash.offsetWidth; // restart the CSS sequence
+ root.classList.add("fq-splash-on");runSplash();
+});
+reduced.addEventListener?.("change",()=>{if(reduced.matches)finishSplash();schedule()});
+runSplash();
 /* Filter handling moved to work-gallery.js for multi-category projects. */
 const io=("IntersectionObserver"in window)?new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");io.unobserve(e.target)}}),{threshold:.08}):null;
 all(".reveal").forEach(el=>io?io.observe(el):el.classList.add("visible"));

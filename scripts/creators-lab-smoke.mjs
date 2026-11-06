@@ -7,6 +7,7 @@ fs.mkdirSync("screenshots",{recursive:true});
 try{
   for(const [name,width,height] of [["desktop",1440,900],["mobile",390,844],["small-mobile",320,740]]){
     const page=await browser.newPage({viewport:{width,height},reducedMotion:"no-preference"});
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     const errors=[];page.on("pageerror",e=>errors.push(e.message));
     await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
     await page.locator("#about").scrollIntoViewIfNeeded();
@@ -86,6 +87,7 @@ try{
   // Without WebGL the first-party SVG room is used, hotspots still work.
   {
     const page=await browser.newPage({viewport:{width:1440,height:900}});
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     await page.addInitScript(()=>{
       const original=HTMLCanvasElement.prototype.getContext;
       HTMLCanvasElement.prototype.getContext=function(type,...rest){return /webgl/.test(type)?null:original.call(this,type,...rest)};

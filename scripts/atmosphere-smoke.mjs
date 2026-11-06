@@ -18,6 +18,7 @@ try{
       reducedMotion:"no-preference",deviceScaleFactor:1
     });
     const page=await context.newPage();
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     const errors=[];
     page.on("pageerror",e=>errors.push(e.message));
     await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
