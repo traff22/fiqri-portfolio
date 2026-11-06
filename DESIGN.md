@@ -131,10 +131,12 @@ The opening titles play on the first open of a session (`assets/splash.css`, log
   - The right-hand monitor in the voxel room shows the film Chapter One last played (the `fq:shot` event now carries the YouTube id). Until then it cycles through the Selected Work highlights.
   - Frames are the project thumbnails, pixelated to match the voxels and loaded with CORS. If the CDN refuses, the painted feed stays.
   - Clicking that monitor opens the project. The PC tower is now the in-scene Render button.
-- **Cameo.** Stills rendered once from the same voxel model (`tools/render-cameos.mjs` + `tools/cameo.html`, output `assets/cameos/wave-*.webp`). No second WebGL scene runs.
-  - **Contact:** Fiqri stands in the empty right side (top-right on phones). He waves when you arrive and again when you reach for email, WhatsApp or LinkedIn.
-  - The footer "last frame" note has **no cameo**: the owner found the small voxel there ugly (2026-11-06). Keep it text only.
-  - Every flip is finite (no loops). Reduced motion keeps the first frame.
+- **Getting up.** Fiqri swivels the chair toward its open side (+x, the coffee corner), stands and steps off the front of the seat; sitting down is the reverse. He never moves through the backrest (owner bug report 2026-11-06; guarded by `creators-lab-smoke`).
+- **Contact cameo.** Stills rendered from the same voxel model (`tools/render-cameos.mjs`, then `tools/crop-cameos.py` crops every frame to one shared box so poses swap without jumping). No second WebGL scene runs.
+  - While Contact is on screen he loops a routine (owner asked for looping motion and "pose nyeleneh lucu dan cool"): wave, point toward the email, shades on with crossed arms, a dab, a victory hop. About 10 s per loop, ten WebP frames, about 70 KB.
+  - Reaching for email, WhatsApp or LinkedIn makes him point. He is his own pause button (a real `<button>`, `aria-pressed`); the loop also stops off screen and in background tabs.
+  - Reduced motion: a single still wave, button disabled.
+  - The footer "last frame" note has **no cameo** (owner, 2026-11-06).
 
 ## Section cuts (between every chapter)
 

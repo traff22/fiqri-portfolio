@@ -310,6 +310,15 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     // neck
     hv(L,-1,-1,-1,2,1,2,P.skinShade,.02);
   },{y:2.5});
+  // sunglasses: a cameo-only prop (the "cool" pose), never shown in the room
+  const shades=new THREE.Group();shades.visible=false;head.overlay.add(shades);
+  {
+    const G=[];
+    box(G,-1.625,1.0,1.5,3.25,.5,.25,"#070a12",.25,.02);         // frame across the eyes
+    box(G,-1.75,1.25,.25,.25,.25,1.25,"#070a12",.25,.02);box(G,1.5,1.25,.25,.25,.25,1.25,"#070a12",.25,.02); // temples
+    box(G,-1.25,1.25,1.75,.25,.25,.125,"#9ec0ff",.125,.02);box(G,.25,1.25,1.75,.25,.25,.125,"#9ec0ff",.125,.02); // glints
+    shades.add(instanced(G,{receive:false}));
+  }
   // mug that travels with the right hand during coffee breaks
   const mugGroup=new THREE.Group();
   {
@@ -364,15 +373,24 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     yield* to(dist/speed,[[fiqri.position,"x",x],[fiqri.position,"z",z]]);
     walking=false;
   }
+  // Getting in and out of the chair happens over its open side (+x, toward the
+  // coffee corner): he swivels the chair to face that way, then stands and
+  // steps off the front of the seat. Never through the backrest behind him.
+  const SIDE=new THREE.Vector3(SEAT.x+2.3,0,SEAT.z);
   function* standUp(){
     typing=false;
     yield* to(.45,[[armL.pivot.rotation,"x",0],[armR.pivot.rotation,"x",0],[torso.pivot.rotation,"x",0]]);
-    yield* to(.5,[[fiqri.position,"z",SEAT.z+1.6],[hips.position,"y",2],[legL.pivot.rotation,"x",0],[legR.pivot.rotation,"x",0],[chair.rotation,"y",.5]]);
+    yield* to(.45,[[chair.rotation,"y",-Math.PI/2],[fiqri.rotation,"y",Math.PI/2]]);
+    yield* to(.5,[[fiqri.position,"x",SIDE.x],[hips.position,"y",2],[legL.pivot.rotation,"x",0],[legR.pivot.rotation,"x",0],[torso.pivot.rotation,"x",.12]]);
+    yield* to(.2,[[torso.pivot.rotation,"x",0]]);
   }
   function* sitDown(){
-    yield* walkTo(SEAT.x,SEAT.z+1.6);
-    yield* to(.3,[[fiqri.rotation,"y",Math.PI]]);
-    yield* to(.55,[[fiqri.position,"x",SEAT.x],[fiqri.position,"z",SEAT.z],[hips.position,"y",2.25],[legL.pivot.rotation,"x",-Math.PI/2],[legR.pivot.rotation,"x",-Math.PI/2],[chair.rotation,"y",0]]);
+    yield* walkTo(SIDE.x,SIDE.z);
+    // turn his back to the seat while the chair swivels open toward him
+    yield* to(.35,[[fiqri.rotation,"y",fiqri.rotation.y+angle(Math.PI/2-fiqri.rotation.y)],[chair.rotation,"y",-Math.PI/2]]);
+    fiqri.rotation.y=Math.PI/2;
+    yield* to(.55,[[fiqri.position,"x",SEAT.x],[fiqri.position,"z",SEAT.z],[hips.position,"y",2.25],[legL.pivot.rotation,"x",-Math.PI/2],[legR.pivot.rotation,"x",-Math.PI/2]]);
+    yield* to(.45,[[chair.rotation,"y",0],[fiqri.rotation,"y",Math.PI]]);
     yield* to(.35,[[armL.pivot.rotation,"x",-1.25],[armR.pivot.rotation,"x",-1.25]]);
   }
   const seated=()=>Math.abs(hips.position.y-2.25)<.01&&fiqri.position.distanceTo(SEAT)<.05;
@@ -653,6 +671,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
       setRunning(false);job=null;typing=walking=sipping=false;
       scene.children.forEach(o=>{if(!o.isLight&&o!==sun.target)o.visible=o===fiqri||(pose==="sleep"&&o===chair)||(pose==="coffee"&&o===mugGroup)});
       [armL,armR,legL,legR,head,torso].forEach(p=>{p.overlay.rotation.set(0,0,0);p.overlay.position.set(0,0,0)});
+      shades.visible=false;
       fiqri.position.set(10,0,8);fiqri.rotation.set(0,0,0);
       head.pivot.rotation.set(0,0,0);torso.pivot.rotation.set(0,0,0);
       armL.pivot.rotation.set(0,0,.06);armR.pivot.rotation.set(0,0,-.06);
@@ -669,6 +688,34 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
         armR.pivot.rotation.set(frame%2?-2.15:-1.2,0,frame%2?.3:.12);
         mugGroup.rotation.set(-(armR.pivot.rotation.x),0,-armR.pivot.rotation.z);
         head.pivot.rotation.set(frame%2?-.18:0,0,0);
+      }else if(pose==="point"){
+        // "this way": left arm (viewer's left) out and down toward the email
+        fiqri.rotation.y=face;
+        armL.pivot.rotation.set(0,0,frame%2?-.95:-1.25);
+        armR.pivot.rotation.set(0,0,-.12);
+        head.pivot.rotation.set(0,-.32,frame%2?.06:0);
+        torso.pivot.rotation.set(0,0,.05);
+      }else if(pose==="cool"){
+        // shades on, arms crossed, a slow nod
+        fiqri.rotation.y=face;shades.visible=true;
+        armL.pivot.rotation.set(-1.4,0,.75);armR.pivot.rotation.set(-1.4,0,-.75);
+        head.pivot.rotation.set(frame%2?.1:-.04,frame%2?.08:.18,frame%2?.04:-.08);
+        legL.pivot.rotation.set(0,0,-.08);legR.pivot.rotation.set(0,0,.08);
+      }else if(pose==="dab"){
+        // face in the crook of the near (right) arm, left arm flung up and out
+        fiqri.rotation.y=face;
+        armL.pivot.rotation.set(frame%2?-.15:0,0,frame%2?-2.5:-2.3);
+        armR.pivot.rotation.set(frame%2?-1.95:-1.85,0,-.7);
+        head.pivot.rotation.set(.3,-.35,-.22);
+        torso.pivot.rotation.set(.06,0,-.06);
+      }else if(pose==="jump"){
+        // a little victory hop
+        fiqri.rotation.y=face;
+        const up=frame%2===0;
+        fiqri.position.y=up?.9:.15;
+        armL.pivot.rotation.set(0,0,up?-2.65:-2.3);armR.pivot.rotation.set(0,0,up?2.65:2.3);
+        legL.pivot.rotation.set(up?-.45:-.1,0,-.06);legR.pivot.rotation.set(up?.25:.05,0,.06);
+        head.pivot.rotation.set(up?-.12:0,0,0);
       }else if(pose==="sleep"){
         chair.position.set(10,0,8);chair.rotation.y=face-Math.PI;
         fiqri.rotation.y=face;fiqri.position.set(10,0,8);
@@ -684,8 +731,14 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
       placeCamera();renderer.setClearColor(0x000000,0);renderer.render(scene,camera);
     },
     // Fast-forward the choreography (used by the browser smoke test).
-    advance(sec){for(let t=0;t<sec;t+=.05){if(job){const r=job.next(.05);if(r.done)job=null}}placeCamera();renderer.render(scene,camera)},
+    advance(sec,draw=true){for(let t=0;t<sec;t+=.05){if(job){const r=job.next(.05);if(r.done)job=null}}if(draw){placeCamera();renderer.render(scene,camera)}},
     get mode(){return mood},
+    // Where Fiqri stands in the chair's own frame (+z is toward the backrest);
+    // the smoke test uses it to make sure he never passes through the chair.
+    get figure(){
+      const dx=fiqri.position.x-chair.position.x,dz=fiqri.position.z-chair.position.z,a=chair.rotation.y;
+      return {x:dx*Math.cos(a)-dz*Math.sin(a),z:dx*Math.sin(a)+dz*Math.cos(a),hips:hips.position.y};
+    },
     destroy(){setRunning(false);io.disconnect();ro.disconnect();renderer.dispose();canvas.remove()}
   };
   host.fqVoxel=api;

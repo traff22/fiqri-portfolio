@@ -119,7 +119,7 @@
   function loadVoxelRoom(){
     if(!webgl){loadSvgRoom();return}
     studio.dataset.engine="loading";
-    import(new URL("assets/voxel-studio.js?v=1.2.0",document.baseURI).href)
+    import(new URL("assets/voxel-studio.js?v=1.3.0",document.baseURI).href)
       .then(({mountVoxelStudio})=>{
         art.replaceChildren();
         art.classList.add("fq-studio__art--voxel");

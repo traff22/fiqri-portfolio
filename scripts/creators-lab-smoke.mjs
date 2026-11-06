@@ -50,6 +50,12 @@ try{
     await page.locator('[data-studio-mode="edit"]').click();
     assert(await studio.getAttribute("data-mode")==="edit",name+": edit mode cannot restore");
     await studio.screenshot({path:"screenshots/creator-studio-"+name+".png"});
+    // Getting up for coffee and sitting back down never goes through the chair
+    // back (owner bug report: he walked through the backrest).
+    const path=await page.evaluate(()=>{const v=document.querySelector("#fq-studio-art").fqVoxel;v.trigger("coffee");const out=[];
+      for(let t=0;t<16;t+=.05){v.advance(.05,false);const f=v.figure;out.push([+f.x.toFixed(2),+f.z.toFixed(2)])}return out});
+    const through=path.filter(([x,z])=>z>.35&&z<2.2&&Math.abs(x)<2.0);
+    assert(!through.length,name+": Fiqri passes through the chair back "+JSON.stringify(through.slice(0,4)));
 
     const frame=page.locator("#cinema-wrap");
     const blueprint=page.locator(".fq-blueprint");

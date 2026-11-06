@@ -63,6 +63,15 @@ try{
     });
     assert(cameo.loaded&&cameo.fin,name+": cameo missing or footer voxel back "+JSON.stringify(cameo));
     assert(!cameo.hit.length,name+": cameo covers contact content "+JSON.stringify(cameo.hit));
+    // He loops through his poses while Contact is on screen, and he is his own pause button.
+    const poses=new Set();
+    for(let i=0;i<45;i++){await page.waitForTimeout(220);poses.add(await page.evaluate(()=>document.querySelector(".fq-cameo--contact img").dataset.cameo))}
+    assert(["wave","point","cool","dab","jump"].every(p=>poses.has(p)),name+": cameo loop missing poses "+JSON.stringify([...poses]));
+    await page.locator(".fq-cameo--contact").click();
+    const held=await page.evaluate(()=>document.querySelector(".fq-cameo--contact img").src);
+    await page.waitForTimeout(1300);
+    assert(held===await page.evaluate(()=>document.querySelector(".fq-cameo--contact img").src)&&await page.locator(".fq-cameo--contact").getAttribute("aria-pressed")==="true",name+": tapping the cameo does not pause him");
+    await page.locator(".fq-cameo--contact").click();
 
     // Portrait back: one line only (owner, K6).
     const back=await page.evaluate(()=>[...document.querySelector(".portrait-card__face--back").querySelectorAll("p,span,div")].map(e=>e.textContent.trim()).filter(Boolean));
@@ -160,6 +169,10 @@ try{
     const calm=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:"reduce"});
     await calm.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
     assert(!await calm.evaluate(()=>document.documentElement.classList.contains("fq-splash-on")),"splash: shown despite reduced motion");
+    // reduced motion: mini Fiqri stands still on his wave, nothing to pause
+    await calm.locator("#contact").scrollIntoViewIfNeeded();await calm.waitForTimeout(1500);
+    const still=await calm.evaluate(()=>{const b=document.querySelector(".fq-cameo--contact");return {pose:b.querySelector("img").dataset.cameo,disabled:b.disabled}});
+    assert(still.pose==="wave"&&still.disabled,"reduced motion: cameo should be a still wave "+JSON.stringify(still));
     await calm.close();
     console.log("SPLASH_PASS");
   }
