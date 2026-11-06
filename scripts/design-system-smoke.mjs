@@ -66,7 +66,7 @@ try{
 
     // Showreel pause: the clock stops, Play resumes.
     await page.locator("#cinema-wrap .showreel-shell").scrollIntoViewIfNeeded();
-    await page.waitForFunction(()=>document.querySelector(".montage-stream.is-current"),null,{timeout:9000});
+    await page.waitForFunction(()=>document.querySelector(".montage-stream.is-current"),null,{timeout:20000});
     await page.locator(".montage-pause").click();
     assert(await page.locator(".montage-pause").getAttribute("aria-pressed")==="true",name+": pause did not engage");
     const clockA=await page.locator(".montage-timestamp").textContent();
@@ -95,7 +95,7 @@ try{
     await page.waitForTimeout(250);
     assert(await page.evaluate(()=>document.querySelector("dialog[open]")?.id)==="video-dialog",name+": craft evidence did not open its project");
     await page.keyboard.press("Escape");
-    await page.waitForFunction(()=>!document.querySelector("dialog[open]")&&!document.body.classList.contains("modal-open"),null,{timeout:4000});
+    await page.waitForFunction(()=>!document.querySelector("dialog[open]")&&!document.body.classList.contains("modal-open"),null,{timeout:8000});
     await page.waitForTimeout(350); // let the dialog close transition finish
 
     // Editing room pause.
@@ -119,7 +119,7 @@ try{
     console.log("DESIGN_SYSTEM_PASS="+JSON.stringify({name,arrows:copy.arrows.length}));
     await page.close();
   }
-  // Opening titles: first open of a session, gone by themselves in under 3 s,
+  // Opening titles: first open of a session, gone by themselves in under 4 s,
   // not again on reload, skippable, absent with reduced motion, replayable.
   {
     const page=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:"no-preference"});
@@ -127,7 +127,8 @@ try{
     const shown=await page.evaluate(()=>({on:document.documentElement.classList.contains("fq-splash-on"),display:getComputedStyle(document.querySelector("#intro")).display}));
     assert(shown.on&&shown.display==="block","splash: opening titles did not show on first open "+JSON.stringify(shown));
     assert(await page.locator("#skip-intro").isVisible(),"splash: skip button missing");
-    await page.waitForTimeout(3200);
+    assert(await page.evaluate(()=>!!document.querySelector(".fq-clip--boring")),"splash: edit window missing");
+    await page.waitForTimeout(4300);
     const after=await page.evaluate(()=>({on:document.documentElement.classList.contains("fq-splash-on"),display:getComputedStyle(document.querySelector("#intro")).display,overflow:document.body.style.overflow,tc:document.querySelector("#fq-splash-tc").textContent}));
     assert(!after.on&&after.display==="none"&&after.overflow==="","splash: titles did not clear themselves "+JSON.stringify(after));
     assert(after.tc!=="00:00:00:00","splash: timecode never ran");

@@ -1,95 +1,147 @@
-/* FQ / OPENING TITLES — shown once per session on first open.
-   An editor's timeline draws between IN and OUT marks, the name comes up as a
-   title card, the playhead runs and the timecode counts; then the frame opens
-   like a letterbox and the site is there. 2.6 s in total, skippable.
-   The whole sequence is CSS, so the titles always clear themselves even if
-   JavaScript fails. <head> adds html.fq-splash-on (not on repeat visits in the
-   session, never with prefers-reduced-motion). */
+/* FQ / OPENING TITLES — an editor's first three seconds.
+   A tiny edit window: clips land on V2 / V1 / A1, the razor cuts out "the
+   boring part" and the rest ripples together, the playhead runs over the
+   title clip (the name comes up as a title card), then the render sits at
+   99% for a beat ("it's always 99%") before it exports and the frame opens
+   like a letterbox. 3.8 s, skippable, once per session, never with reduced
+   motion. The whole sequence is CSS, so it clears itself without JavaScript;
+   main.js only writes the status lines, the percentage and the timecode. */
 
 #intro.fq-splash{display:none!important}
 html.fq-splash-on #intro.fq-splash{
   display:block!important;
   position:fixed;inset:0;z-index:300;
-  background:transparent;color:var(--c-text,#edf2fa);
-  animation:fq-splash-gone 0s linear 2.65s forwards;
-  cursor:pointer;
+  color:var(--c-text,#edf2fa);cursor:pointer;
+  animation:fq-sp-gone 0s linear 3.8s forwards;
 }
-/* the two halves of the frame (letterbox) */
 .fq-splash__half{
   position:absolute;left:0;right:0;height:50.5%;
   background:var(--c-ink,#04060a);
-  animation:fq-splash-open .56s cubic-bezier(.75,0,.2,1) 2.06s forwards;
+  animation:fq-sp-open .55s cubic-bezier(.75,0,.2,1) 3.2s forwards;
 }
-.fq-splash__half--top{top:0}
+.fq-splash__half--top{top:0;--to:-100%}
 .fq-splash__half--bottom{bottom:0;--to:100%}
-.fq-splash__half--top{--to:-100%}
-/* a soft pool of light behind the titles, in the time-of-day ambient colour;
-   it belongs to the titles, so it leaves with them (no seam at the split) */
-.fq-splash__stage::before{
-  content:"";position:absolute;z-index:-1;left:-30%;right:-30%;top:-60%;bottom:-60%;pointer-events:none;
-  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgb(var(--ambient,37 99 235)/.24),transparent 70%);
-}
+
 .fq-splash__stage{
   position:absolute;left:50%;top:50%;z-index:2;
-  width:min(82vw,760px);translate:-50% -50%;
-  animation:fq-splash-out .2s ease-in 1.85s forwards;
+  width:min(88vw,780px);translate:-50% -50%;
+  opacity:0;
+  animation:fq-sp-in .25s ease-out forwards,fq-sp-out .2s ease-in 3.02s forwards;
 }
-.fq-splash__name{
-  margin:0 0 18px;
-  font:700 clamp(54px,9.5vw,128px)/.9 var(--font-text,"Archivo"),sans-serif;
-  font-stretch:72%;letter-spacing:-.018em;
-  clip-path:inset(100% 0 0 0);translate:0 .25em;
-  animation:fq-splash-rise .65s cubic-bezier(.2,.75,.2,1) .35s forwards;
+.fq-splash__stage::before{ /* soft light behind the window, in the time-of-day colour */
+  content:"";position:absolute;z-index:-1;inset:-45% -25%;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgb(var(--ambient,37 99 235)/.22),transparent 70%);
 }
-.fq-splash__timeline{
-  display:flex;align-items:center;gap:10px;
-  font:600 18px/1 var(--font-text,"Archivo"),sans-serif;color:var(--c-ice,#cfe0ff);
+.fq-splash__topline{
+  display:flex;justify-content:space-between;gap:16px;margin-bottom:14px;
+  font:500 12px/1.3 var(--font-text,"Archivo"),sans-serif;color:var(--c-muted,#94a3b8);
 }
-.fq-splash__mark{opacity:0;animation:fq-splash-fade .2s ease-out forwards}
-.fq-splash__mark--in{animation-delay:.2s}
-.fq-splash__mark--out{animation-delay:.82s}
-.fq-splash__line{
-  position:relative;flex:1;height:1px;background:#9ec0ff8c;
-  transform-origin:left center;scale:0 1;
-  animation:fq-splash-draw .7s cubic-bezier(.3,.7,.2,1) .15s forwards;
-}
-.fq-splash__playhead{
-  position:absolute;left:0;top:-9px;width:2px;height:19px;background:var(--c-blue,#2563eb);
-  box-shadow:0 0 0 1px #04060a;opacity:0;
-  animation:fq-splash-play 1s linear .9s forwards;
-}
-.fq-splash__meta{
-  display:flex;justify-content:space-between;gap:16px;margin:14px 0 0;
-  font:500 13px/1.4 var(--font-text,"Archivo"),sans-serif;color:var(--c-muted,#94a3b8);
-  opacity:0;animation:fq-splash-fade .4s ease-out .7s forwards;
-}
+.fq-splash__file{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fq-splash__tc{font-variant-numeric:tabular-nums;letter-spacing:.04em;color:#cfdcf0}
+.fq-splash__name{
+  margin:0 0 16px;
+  font:700 clamp(50px,9vw,120px)/.9 var(--font-text,"Archivo"),sans-serif;
+  font-stretch:72%;letter-spacing:-.018em;
+  clip-path:inset(100% 0 0 0);translate:0 .22em;
+  animation:fq-sp-rise .55s cubic-bezier(.2,.75,.2,1) 1.25s forwards;
+}
+
+/* ---- the edit window ---- */
+.fq-splash__timeline{
+  position:relative;display:grid;gap:6px;padding:10px 0;
+  border-top:1px solid #9ec0ff2e;border-bottom:1px solid #9ec0ff2e;
+  background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),#9ec0ff14 calc(10% - 1px) 10%) 34px 0/calc(100% - 34px) 100% no-repeat;
+}
+.fq-splash__track{display:flex;align-items:center;gap:10px;height:clamp(16px,2.4vw,22px)}
+.fq-splash__label{width:24px;flex:none;font:600 10px/1 var(--font-text,"Archivo"),sans-serif;color:#7f8ea6;letter-spacing:.04em}
+.fq-splash__lane{position:relative;flex:1;height:100%}
+.fq-clip{
+  position:absolute;top:0;bottom:0;left:var(--x);width:var(--w);
+  border-radius:3px;overflow:hidden;white-space:nowrap;
+  font:600 clamp(8px,1vw,10px)/1 var(--font-text,"Archivo"),sans-serif;font-style:normal;
+  display:flex;align-items:center;padding:0 6px;
+  opacity:0;translate:28px 0;
+  animation:fq-sp-land .35s cubic-bezier(.2,.8,.2,1) var(--d,.1s) forwards;
+}
+.fq-clip--title{--x:38%;--w:31%;--d:.32s;background:#cfe0ff;color:#06101f}
+.fq-clip--a{--x:0%;--w:21%;--d:.1s;background:#2563eb}
+.fq-clip--b{--x:22%;--w:16%;--d:.16s;background:#1d4ed8}
+.fq-clip--boring{--x:39%;--w:15%;--d:.22s;background:#3b4a63;color:#c3cfdf}
+.fq-clip--c{--x:55%;--w:24%;--d:.28s;background:#2563eb}
+.fq-clip--d{--x:80%;--w:20%;--d:.34s;background:#1e40af}
+.fq-clip--audio{
+  --x:0%;--w:100%;--d:.2s;padding:0;
+  background:
+    repeating-linear-gradient(90deg,#7aa6ff 0 2px,transparent 2px 5px) center/100% 60% no-repeat,
+    #0e1f3d;
+  -webkit-mask:linear-gradient(90deg,#000 0 30%,#0008 30% 34%,#000 34% 72%,#0006 72% 76%,#000 76%);
+          mask:linear-gradient(90deg,#000 0 30%,#0008 30% 34%,#000 34% 72%,#0006 72% 76%,#000 76%);
+}
+/* the cut: the boring part is struck through, dropped, and the rest ripples left */
+.fq-clip--boring{animation:fq-sp-land .35s cubic-bezier(.2,.8,.2,1) .22s forwards,fq-sp-strike .2s ease-out 1.02s forwards,fq-sp-drop .4s cubic-bezier(.5,0,.75,0) 1.25s forwards}
+.fq-clip--c{animation:fq-sp-land .35s cubic-bezier(.2,.8,.2,1) .28s forwards,fq-sp-ripple-c .32s cubic-bezier(.2,.8,.2,1) 1.6s forwards}
+.fq-clip--d{animation:fq-sp-land .35s cubic-bezier(.2,.8,.2,1) .34s forwards,fq-sp-ripple-d .32s cubic-bezier(.2,.8,.2,1) 1.6s forwards}
+
+.fq-splash__heads{position:absolute;top:0;bottom:0;left:34px;right:0;pointer-events:none}
+.fq-splash__playhead{
+  position:absolute;top:-6px;bottom:-6px;left:0;width:2px;background:#fff;
+  box-shadow:0 0 0 1px #04060a;opacity:0;
+  animation:fq-sp-play 2.45s linear .4s forwards;
+}
+.fq-splash__razor{
+  position:absolute;left:calc(39% - 13px);top:-34px;z-index:3;font-style:normal;line-height:0;
+  opacity:0;filter:drop-shadow(0 3px 6px #000c);
+  animation:fq-sp-razor .6s cubic-bezier(.3,.7,.3,1) .62s forwards;
+}
+.fq-splash__razor svg{display:block}
+/* the cut itself: a bright frame line through the clip at the razor point */
+.fq-splash__heads::after{
+  content:"";position:absolute;left:39%;top:-4px;bottom:-4px;width:2px;background:#fff;opacity:0;
+  animation:fq-sp-cut .45s ease-out 1.0s forwards;
+}
+.fq-splash__status{
+  display:flex;justify-content:space-between;gap:16px;margin-top:14px;
+  font:500 13px/1.4 var(--font-text,"Archivo"),sans-serif;color:#cfdcf0;
+}
+#fq-splash-pct{font-variant-numeric:tabular-nums;color:var(--c-ice,#cfe0ff)}
+.fq-splash__render{margin-top:8px;height:3px;background:#9ec0ff24;overflow:hidden;border-radius:2px}
+.fq-splash__render i{display:block;height:100%;width:0;background:var(--c-blue,#2563eb);animation:fq-sp-render 1s linear 1.9s forwards}
+
 .fq-splash__skip{
   position:absolute;top:18px;right:18px;z-index:3;
   min-width:44px;min-height:44px;padding:0 16px;
   border:1px solid #9ec0ff55;border-radius:var(--r-2,12px);
   background:transparent;color:#cfdcf0;cursor:pointer;
   font:600 12px/1 var(--font-text,"Archivo"),sans-serif;letter-spacing:.02em;
-  opacity:0;animation:fq-splash-fade .3s ease-out .3s forwards,fq-splash-out .2s ease-in 1.85s forwards;
+  opacity:0;animation:fq-sp-in .3s ease-out .3s forwards,fq-sp-out .2s ease-in 3.02s forwards;
 }
 .fq-splash__skip:hover{border-color:var(--c-ice,#cfe0ff);color:#fff}
 
 /* Skip: open the frame now. */
 #intro.fq-splash.is-skipping .fq-splash__stage,
-#intro.fq-splash.is-skipping .fq-splash__skip{animation:fq-splash-out .15s ease-in forwards}
-#intro.fq-splash.is-skipping .fq-splash__half{animation:fq-splash-open .38s cubic-bezier(.75,0,.2,1) .05s forwards}
-html.fq-splash-on #intro.fq-splash.is-skipping{animation:fq-splash-gone 0s linear .45s forwards}
+#intro.fq-splash.is-skipping .fq-splash__skip{animation:fq-sp-out .15s ease-in forwards}
+#intro.fq-splash.is-skipping .fq-splash__half{animation:fq-sp-open .38s cubic-bezier(.75,0,.2,1) .05s forwards}
+html.fq-splash-on #intro.fq-splash.is-skipping{animation:fq-sp-gone 0s linear .45s forwards}
 
-@keyframes fq-splash-rise{to{clip-path:inset(0 0 0 0);translate:0 0}}
-@keyframes fq-splash-draw{to{scale:1 1}}
-@keyframes fq-splash-fade{to{opacity:1}}
-@keyframes fq-splash-out{to{opacity:0}}
-@keyframes fq-splash-play{0%{opacity:1;left:0}100%{opacity:1;left:calc(100% - 2px)}}
-@keyframes fq-splash-open{to{translate:0 var(--to)}}
-@keyframes fq-splash-gone{to{visibility:hidden;pointer-events:none}}
+@keyframes fq-sp-in{to{opacity:1}}
+@keyframes fq-sp-out{from{opacity:1}to{opacity:0}}
+@keyframes fq-sp-rise{to{clip-path:inset(0 0 0 0);translate:0 0}}
+@keyframes fq-sp-land{to{opacity:1;translate:0 0}}
+@keyframes fq-sp-strike{to{text-decoration:line-through;background:#5b2a35;color:#ffd5dc}}
+@keyframes fq-sp-drop{to{opacity:0;translate:0 26px;rotate:6deg}}
+@keyframes fq-sp-ripple-c{to{left:40%}}
+@keyframes fq-sp-ripple-d{to{left:65%}}
+@keyframes fq-sp-play{0%{opacity:1;left:0}100%{opacity:1;left:calc(100% - 2px)}}
+@keyframes fq-sp-razor{0%{opacity:0;translate:0 -6px}45%{opacity:1;translate:0 58px}72%{opacity:1;translate:0 54px}100%{opacity:0;translate:0 54px}}
+@keyframes fq-sp-cut{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+@keyframes fq-sp-render{0%{width:0}45%{width:99%}90%{width:99%}100%{width:100%}}
+@keyframes fq-sp-open{to{translate:0 var(--to)}}
+@keyframes fq-sp-gone{to{visibility:hidden;pointer-events:none}}
 
 @media(max-width:700px){
-  .fq-splash__meta{flex-direction:column;gap:6px}
+  .fq-splash__topline{font-size:11px}
+  .fq-splash__status{font-size:12px}
+  .fq-clip--title{font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){
   html.fq-splash-on #intro.fq-splash{display:none!important}

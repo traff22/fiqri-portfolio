@@ -288,3 +288,16 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 dialog.portfolio-dialog::backdrop,dialog.directors-cut::backdrop{background:#02040acc!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 #cinema-wrap .montage-credit,#work .work-media .arrow,#cinema-wrap .showreel-sound,.creators-lab .fq-studio__head,.fq-studio{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 
+/* WhatsApp: the real glyph (Simple Icons, CC0) at a square size, never squeezed. */
+#contact.contact .whatsapp-contact__icon,.whatsapp-contact__icon{
+  width:26px!important;height:26px!important;min-width:26px;aspect-ratio:1;flex:0 0 26px!important;
+  fill:currentColor;stroke:none!important;
+}
+
+/* Showreel paused: our still of the current project, not YouTube's paused UI. */
+#cinema-wrap .showreel-shell.is-user-paused .montage-stream{opacity:0!important;transition:opacity .2s ease!important}
+#cinema-wrap .showreel-shell.is-user-paused .montage-fallback{
+  background-size:cover,cover!important;background-position:center,center!important;background-repeat:no-repeat!important;
+  opacity:1!important;z-index:4!important;
+}
+

@@ -68,6 +68,37 @@ Round shapes are kept only for round icon buttons (the play cue). There are no p
 
 ## Opening titles (splash)
 
+The opening titles are an editor's first three seconds, a little tongue-in-cheek (owner: "khas video editor, menarik, agak nyeleneh lucu"). They use `assets/splash.css` and `assets/main.js` and take 3.8 s:
+- A mini edit window opens on `fiqri_portfolio_FINAL_final_v7.mp4`. Clips land on V2 / V1 / A1.
+- The razor drops onto V1 and cuts out **"boring part"**: it is struck through, falls off, and the rest ripples together.
+- The playhead runs over the title clip, and "Fiqri Apriandi" comes up as a condensed title card.
+- Status lines run: "Importing way too much b-roll…", "Cutting the boring part…", "Syncing audio by ear…", "Rendering… it's always 99%", "Exported. Enjoy the cut ✓". The render bar sits at 99% for a beat.
+- The frame opens like a letterbox onto the site.
+
+**Rules:**
+- Skippable by the Skip button, a click anywhere, or Esc; replayable from "Replay intro".
+- Never under reduced motion; once per session (`sessionStorage` key `fiqri-intro-seen`).
+- Decided in `<head>` before first paint (`html.fq-splash-on`).
+- Pure CSS, so it clears itself without JavaScript. JavaScript only writes the status, the percentage and the timecode, and locks scrolling while it plays.
+- Under 5 s, so it needs no pause control (R-39).
+
+## Light and glass
+
+- **Coloured glow on two focal points only:** the showreel frame (the film is the subject) and the portrait on hover. Everything else gets a plain elevation shadow.
+- **Backdrop blur on two elements only:** the top bar, so text stays readable over footage, and the Chapter One lens vignette.
+- No sparkle (✦) glyphs.
+
+## Shape
+
+The radius scale is **6 / 12 / 18**:
+- 6: small controls such as Next, Pause and tags;
+- 12: buttons, chips, cards and thumbnails;
+- 18: big frames such as the showreel, portrait and project cards.
+
+Round shapes are kept only for round icon buttons (the play cue). There are no pill buttons.
+
+## Opening titles (splash)
+
 The opening titles play on the first open of a session (`assets/splash.css`, logic in `assets/main.js`). They take 2.6 s:
 - an editor's timeline draws between `[` IN and `]` OUT;
 - "Fiqri Apriandi" rises as a condensed title card;

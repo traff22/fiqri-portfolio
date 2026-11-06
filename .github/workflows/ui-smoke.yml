@@ -18,7 +18,7 @@ on:
 jobs:
   visual-smoke:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 25 # apt + Chromium install alone has taken ~9 min on busy runners
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -201,7 +201,12 @@ function setUserPaused(on){
   pauseButton.setAttribute("aria-label",on?"Play the previews":"Pause the previews");
   if(pauseText)pauseText.textContent=on?"Play":"Pause";
  }
- if(on){holdCurrent();return}
+ if(on){
+  // A paused YouTube player shows its own play button and title. Show our
+  // own still of the same project instead and keep the player out of sight.
+  const fallback=stage.querySelector(".montage-fallback");
+  if(fallback&&current?.id)fallback.style.backgroundImage=`url("https://i.ytimg.com/vi/${current.id}/maxresdefault.jpg"),url("https://i.ytimg.com/vi/${current.id}/hqdefault.jpg")`;
+  holdCurrent();return}
  if(!enabled){visible=true;start();return}
  if(activeIndex<0){nextVideo();return}
  const player=slots[activeIndex]?.player;

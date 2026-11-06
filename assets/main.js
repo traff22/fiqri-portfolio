@@ -23,14 +23,20 @@ function runSplash(){
  if(!splash||!root.classList.contains("fq-splash-on"))return;
  try{sessionStorage.setItem(key,"yes")}catch{}
  document.body.style.overflow="hidden";
- // 24 fps timecode while the playhead runs (0.9 s to 1.9 s after start)
- const start=performance.now();
- const count=now=>{const t=Math.max(0,Math.min(1,(now-start-900)/1000)),f=Math.round(t*58);
+ // The edit plays out in CSS; this writes the timecode (24 fps while the
+ // playhead runs), the status lines and the render percentage in step.
+ const start=performance.now(),status=one("#fq-splash-status"),pct=one("#fq-splash-pct");
+ const lines=[[0,"Importing way too much b-roll…"],[650,"Cutting the boring part…"],[1350,"Syncing audio by ear…"],[1900,"Rendering…"],[2400,"Rendering… it's always 99%"],[2850,"Exported. Enjoy the cut ✓"]];
+ const count=now=>{
+  const t=now-start,f=Math.round(Math.max(0,Math.min(1,(t-400)/2450))*75);
   if(tc)tc.textContent="00:00:"+String(Math.floor(f/24)).padStart(2,"0")+":"+String(f%24).padStart(2,"0");
-  if(now-start<1950)tcRaf=requestAnimationFrame(count)};
+  let line=lines[0][1];for(const [at,text] of lines)if(t>=at)line=text;
+  if(status&&status.textContent!==line)status.textContent=line;
+  if(pct){const r=t<1900?"":t<2350?Math.round((t-1900)/450*99)+"%":t<2850?"99%":"100%";if(pct.textContent!==r)pct.textContent=r}
+  if(t<3000)tcRaf=requestAnimationFrame(count)};
  tcRaf=requestAnimationFrame(count);
  one("#skip-intro")?.focus({preventScroll:true});
- splashDone=setTimeout(finishSplash,2700);
+ splashDone=setTimeout(finishSplash,3850);
 }
 splash?.addEventListener("click",skipSplash);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")skipSplash()});

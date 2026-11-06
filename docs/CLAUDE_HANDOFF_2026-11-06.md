@@ -345,3 +345,12 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - Glass limited to the top bar and the lens vignette; dialog backdrops are now solid.
 - The old intro (centred text, rotating orbit ring, Enter button) was disabled on first load. It is replaced by new opening titles (`#intro.fq-splash`, `assets/splash.css`, logic in `assets/main.js`): timeline with IN and OUT, a condensed name title card, playhead and 24 fps timecode, letterbox opening. They play once per session and are decided in `<head>` with `html.fq-splash-on`.
 - Existing tests set `fiqri-intro-seen` before load; `design-system-smoke.mjs` tests the titles themselves.
+
+### 2026-11-06 (WIB): editor-style opening titles, showreel pause still, WhatsApp glyph, CI timeout
+**Owner:** "Buat splashscreennya kaya khas video editor gitu dan menarik agak nyeleneh lucu gpp"; "preview tengah di chapter one itu nggak bisa hilang button playnya? Atau title youtube?"; "logo whatsapp itu aneh gepeng".
+
+- **Opening titles rebuilt as a mini edit window:** V2/V1/A1 clips, a razor cuts out "boring part" and the rest ripples, the playhead runs over the title clip and reveals the name, and the render sticks at "it's always 99%" before export. Then the letterbox opens. 3.8 s; details in DESIGN.md.
+- **Showreel paused:** a paused YouTube player shows its own play button and title, so Pause now hides the player and shows our still (the project's YouTube thumbnail, maxres then hq).
+- **YouTube UI, honest limit:** the player already uses `controls:0`, `rel:0` and `iv_load_policy:3`, and pointer events are off, so hover does not show the title. YouTube still shows the title and channel briefly when a clip starts. YouTube's policies do not allow covering or cropping player elements, so we do not mask them. The clean fix is **native clips**: the owner exports short silent MP4/WebM teasers (about 5 s each, 720p) of his own films, and they replace the embeds in Chapter One. Not built yet; waiting for the owner's clips.
+- **WhatsApp:** the hand-drawn icon was replaced with the official glyph (Simple Icons, CC0), locked square at 26×26.
+- **CI:** the run for `1b486d7` was cancelled, not failed. Installing apt and Chromium took 8m48s and hit the 10-minute job limit about 1.4 minutes into the tests. `timeout-minutes` was raised to 25. Tight waits in `design-system-smoke.mjs` were also loosened for slower runners.
