@@ -1,12 +1,12 @@
 # Claude project instructions — Fiqri Apriandi Portfolio
 
-> Read this file **and** [docs/CLAUDE_HANDOFF_2026-11-06.md](docs/CLAUDE_HANDOFF_2026-11-06.md) before proposing or editing visual work. This is a handoff from the prior iterative design sessions, not a replacement for inspecting the source and rendered site.
+> Read this file, [DESIGN.md](DESIGN.md) (palette, type, motion and copy rules with reasons) **and** [docs/CLAUDE_HANDOFF_2026-11-06.md](docs/CLAUDE_HANDOFF_2026-11-06.md) before proposing or editing visual work. Project skills live in `.claude/skills/` (antislop, design-taste-frontend, humanizer); latest audit: `anti-slop/audit-001-2026-11-06.md`. This is a handoff from the prior iterative design sessions, not a replacement for inspecting the source and rendered site.
 
 ## Identity / intent
 - Owner: **Fiqri Apriandi**, Indonesian video editor / motion graphics designer. Speak naturally in Indonesian, direct, collaborative and specific; avoid generic compliments and repetitive preference questions.
 - Live site: **https://fiqriapriandi.art/**. GitHub: **https://github.com/traff22/fiqri-portfolio**, public repo, branch **main**. Root `CNAME` is `fiqriapriandi.art`.
 - Desired effect: **art-directed, handmade, premium, unmistakably a filmmaker/editor portfolio; lively and surprising, not flat, not a Wix template, not "AI slop."**
-- Do not confuse *premium* with removing everything. The owner rejected the too-flat, beige/copper "Premium Restraint" look. Current accepted direction is electric midnight blue/iris/cobalt, strong typography, restrained but visible depth, cinematic parallax, **real project imagery**, and thoughtful interactions.
+- Do not confuse *premium* with removing everything. The owner rejected the too-flat, beige/copper "Premium Restraint" look. Current accepted direction (2026-11-06) is a **blue-black** palette (near-black ink, navy, one cobalt accent; iris/violet retired) whose light follows the visitor's time of day, strong typography, restrained but visible depth, cinematic parallax, **real project imagery**, and thoughtful interactions. Tokens: `assets/design-system.css` (loads last).
 - Avoid random/floating particle generators, generic stock 3D, blobs for their own sake, gratuitous UI badges/ornaments, and fake project achievements. Keep footage and editing storytelling in focus.
 
 ## Current priority, in the owner's exact order

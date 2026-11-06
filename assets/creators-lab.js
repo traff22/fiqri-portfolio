@@ -45,9 +45,22 @@
     studio.classList.add("is-waving");
     setTimeout(()=>studio.classList.remove("is-waving"),1800);
   }
+  // Pause / play the room (R-39). Asking Fiqri to do something resumes it.
+  const pauseButton=studio.querySelector("[data-studio-pause]");
+  function setPaused(on){
+    studio.classList.toggle("is-paused",on);
+    if(pauseButton){
+      pauseButton.setAttribute("aria-pressed",String(on));
+      pauseButton.textContent=on?"Play":"Pause";
+      pauseButton.setAttribute("aria-label",on?"Resume the editing room animation":"Pause the editing room animation");
+    }
+    voxel?.setPaused(on);
+  }
+  pauseButton?.addEventListener("click",()=>setPaused(!studio.classList.contains("is-paused")));
   studio.querySelectorAll("[data-studio-mode]").forEach(button=>{
     button.addEventListener("click",()=>{
       const mode=button.dataset.studioMode;
+      if(studio.classList.contains("is-paused"))setPaused(false);
       if(voxel){voxel.trigger(mode);return}
       if(mode==="wave")svgWave();
       setMode(mode,{byUser:true});
@@ -106,7 +119,7 @@
   function loadVoxelRoom(){
     if(!webgl){loadSvgRoom();return}
     studio.dataset.engine="loading";
-    import(new URL("assets/voxel-studio.js?v=1.0.0",document.baseURI).href)
+    import(new URL("assets/voxel-studio.js?v=1.1.0",document.baseURI).href)
       .then(({mountVoxelStudio})=>{
         art.replaceChildren();
         art.classList.add("fq-studio__art--voxel");

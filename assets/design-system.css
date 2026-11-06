@@ -1,0 +1,230 @@
+/* FQ / DESIGN SYSTEM (loads last) — see DESIGN.md for the reasons.
+   Palette: blue-black. Three core colours (ink, night, steel) and ONE accent
+   (cobalt). The old iris / violet tints are retired (owner, 2026-11-06).
+   Mood follows the visitor's clock via html[data-daypart]. */
+
+:root{
+  --c-ink:#04060a;          /* page ground: near-black with a blue cast */
+  --c-night:#080d16;        /* section ground */
+  --c-steel:#0e1727;        /* raised surfaces */
+  --c-line:#1f2c41;         /* hairlines */
+  --c-text:#edf2fa;
+  --c-muted:#94a3b8;        /* 7.9:1 on ink */
+  --c-blue:#2563eb;         /* the one accent; white text on it 5.2:1 */
+  --c-blue-deep:#1d4ed8;    /* hover / pressed; white text 6.7:1 */
+  --c-blue-soft:#7aa6ff;    /* accent text on dark, 8.4:1 on ink */
+  --c-ice:#cfe0ff;          /* highlights, focus */
+  --ambient:37 99 235;      /* rgb of the light falling on the stage */
+  --ambient-a:.30;
+  --horizon:255 255 255;    /* warm edge light at dawn / dusk */
+  --horizon-a:0;
+  --r-1:6px;                /* small controls */
+  --r-2:12px;               /* buttons, cards, thumbnails */
+  --r-3:18px;               /* big frames: showreel, portrait, project cards */
+
+  /* legacy tokens other layers still read */
+  --bg:var(--c-ink);--ink:var(--c-text);--sub:var(--c-muted);--line:var(--c-line);
+  --surface:var(--c-steel);--surface-2:#132036;
+  --accent:var(--c-blue-soft);--accent-strong:var(--c-blue);--accent-muted:#7aa6ff66;
+  --fq-copper:var(--c-blue-soft);--fq-copper-light:var(--c-ice);--fq-ink:var(--c-ink);
+  --fq-slate:var(--c-steel);--fq-text:var(--c-text);--fq-secondary:#b6c2d4;
+  --ek-iris:var(--c-blue-soft);--ek-cyan:#9ec0ff;--ek-ink:var(--c-ink);--ek-blue:var(--c-blue);
+}
+/* Time of day. Same identity, different light: a lifted navy by day, warm
+   horizon light at dawn and dusk, the deepest black at night. */
+html[data-daypart="dawn"]{--c-ink:#05080f;--c-night:#0a1019;--ambient:72 120 230;--ambient-a:.30;--horizon:240 165 138;--horizon-a:.16}
+html[data-daypart="day"]{--c-ink:#08101c;--c-night:#0c1626;--c-steel:#122036;--ambient:76 141 255;--ambient-a:.40}
+html[data-daypart="dusk"]{--c-ink:#05070d;--c-night:#0a0f19;--ambient:42 91 215;--ambient-a:.32;--horizon:255 138 76;--horizon-a:.15}
+html[data-daypart="night"]{--ambient:29 78 216;--ambient-a:.26}
+
+body{background:var(--c-ink)!important;color:var(--c-text)}
+::selection{background:var(--c-ice);color:#06101f}
+button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;outline-offset:4px}
+.progress{background:linear-gradient(90deg,var(--c-blue),#9ec0ff)!important}
+
+/* ---------- grounds ---------- */
+.topbar{background:color-mix(in srgb,var(--c-ink) 84%,transparent)!important;border-bottom-color:#9ec0ff1f!important}
+.hero{
+  background:
+    radial-gradient(ellipse 46% 74% at 82% 45%,rgb(var(--ambient)/var(--ambient-a)) 0%,transparent 78%),
+    radial-gradient(ellipse 80% 40% at 50% 112%,rgb(var(--horizon)/var(--horizon-a)) 0%,transparent 70%),
+    linear-gradient(113deg,var(--c-ink) 0%,var(--c-night) 52%,var(--c-ink) 100%)!important;
+}
+.hero .hero-ambience::before{
+  background:radial-gradient(ellipse 50% 51% at 54% 44%,rgb(var(--ambient)/.55) 0%,rgb(var(--ambient)/.22) 34%,transparent 72%)!important;
+}
+.hero .hero-ambience::after{background:radial-gradient(ellipse at 60% 50%,rgb(var(--horizon)/calc(var(--horizon-a) * 2)),transparent 65%)!important}
+#cinema-wrap{background:var(--c-ink)!important}
+#cinema-wrap .cinema-stick{
+  background:
+    radial-gradient(ellipse 50% 60% at 52% 60%,rgb(var(--ambient)/calc(var(--ambient-a) * .9)),transparent 75%),
+    linear-gradient(160deg,var(--c-ink),var(--c-night) 57%,var(--c-ink))!important;
+}
+#cinema-wrap .cinema-stick::before{
+  background-image:radial-gradient(ellipse 35% 67% at 62% 57%,rgb(var(--ambient)/.28),transparent 81%)!important;
+}
+#work{
+  background:
+    radial-gradient(ellipse 38% 50% at 90% 3%,rgb(var(--ambient)/calc(var(--ambient-a) * .8)),transparent 73%),
+    linear-gradient(180deg,var(--c-night) 0%,var(--c-ink) 100%)!important;
+  border-color:#9ec0ff1f!important;
+}
+#work::before{background:radial-gradient(ellipse at center,rgb(var(--ambient)/.22),transparent 68%)!important}
+.expertise{background:linear-gradient(168deg,var(--c-ink) 0%,var(--c-night) 60%,var(--c-ink) 100%)!important;border-color:#9ec0ff1f!important}
+#about{background:radial-gradient(ellipse 33% 50% at 0 70%,rgb(var(--ambient)/.18),transparent 80%),var(--c-night)!important}
+#contact.contact{
+  border-top-color:#cfe0ff40!important;
+  background:
+    radial-gradient(ellipse 66% 92% at 98% 22%,rgb(var(--horizon)/var(--horizon-a)),transparent 65%),
+    linear-gradient(121deg,var(--c-blue-deep) 0%,#173fb0 47%,#0a1a4a 100%)!important;
+}
+.footer,.footer-final-note{background:var(--c-ink)}
+
+/* ---------- accent: one colour, used for the actions and the titles' echo ---------- */
+.hero h1 em,.hero h1 em *{color:#9ec0ff!important}
+#cinema-wrap .cinema-copy h2 .accent{color:#9ec0ff!important;text-shadow:none!important}
+.eyebrow.accent,#work .eyebrow.accent,.expertise .eyebrow.accent,#about .eyebrow.accent,#about .career-item span{color:var(--c-blue-soft)!important}
+#work .section-header .eyebrow.accent::before{background:var(--c-blue-soft)!important}
+.button,.hero .button,.actions .button{
+  background:var(--c-blue)!important;border-color:var(--c-blue)!important;color:#fff!important;
+  box-shadow:none!important;border-radius:var(--r-2)!important;
+}
+.button:hover,.hero .button:hover{background:var(--c-blue-deep)!important;border-color:var(--c-blue-deep)!important}
+.simple-link{border-bottom-color:#7aa6ff80!important}
+.nav-cta,.topbar .links>a.nav-cta{border-color:#7aa6ff80!important;background:transparent!important;border-radius:var(--r-2)!important}
+.nav-cta:hover{background:#2563eb26!important;border-color:var(--c-blue-soft)!important}
+.topbar .logo i,.footer .logo i{color:var(--c-blue-soft)!important}
+#work .filter[aria-pressed="true"]{border-bottom-color:var(--c-blue-soft)!important}
+#work .filter:hover{border-bottom-color:#9ec0ff!important}
+#work .work-card{border-color:#9ec0ff21!important}
+#work .work-card:hover,#work .work-card:focus-within{border-color:#9ec0ff73!important;box-shadow:0 26px 60px #010409b9!important}
+#work .work-media .work-play-cue{background:#0b1a3dcc!important;border-color:#cfe0ff99!important;backdrop-filter:none!important}
+#work .work-card:hover .work-play-cue{background:var(--c-blue)!important}
+#cinema-wrap .cinema-frame.showreel-shell{border-color:#9ec0ff8a!important;box-shadow:0 36px 95px #000000e6,0 0 90px rgb(var(--ambient)/.28)!important}
+#cinema-wrap .montage-progress span,#cinema-wrap .showreel-shell>.montage-overlay .montage-progress span{background:#9ec0ff!important}
+#cinema-wrap .cinema-view-work{background:#0b1730cc!important;border-color:#9ec0ff66!important;backdrop-filter:none!important}
+#contact.contact .whatsapp-contact__icon,#contact.contact .whatsapp-contact__arrow,#contact.contact .whatsapp-contact__copy strong{color:var(--c-blue-deep)!important}
+.mobile-menu{background:var(--c-steel)!important;border-color:#7aa6ff66!important;color:var(--c-text)!important;cursor:pointer;border-radius:var(--r-2)!important}
+.portfolio-dialog,.directors-cut{background-color:var(--c-night)}
+
+/* ---------- radius scale: 6 / 12 / 18 (no pills except round icon buttons) ---------- */
+#cinema-wrap .float-reel-card__inner,.whatsapp-contact,#contact.contact .whatsapp-contact,.craft__frame{border-radius:var(--r-2)!important}
+#cinema-wrap .cinema-frame.showreel-shell{border-radius:var(--r-3)!important}
+#cinema-wrap .showreel-shell>.montage-overlay{border-radius:0 0 var(--r-3) var(--r-3)!important}
+#work .work-card,#work .work-media{border-radius:var(--r-3)!important}
+.portrait-card,.portrait-card__face,.portrait-card__outline{border-radius:var(--r-3)!important}
+#cinema-wrap .montage-skip span,#cinema-wrap .montage-pause span{border-radius:var(--r-1)!important}
+
+/* ---------- labels: one chapter system, no shouting ---------- */
+.chapter-mark{
+  text-transform:none!important;letter-spacing:.01em!important;
+  font:600 14px/1.4 "Space Grotesk",sans-serif!important;
+}
+.hero-top{justify-content:flex-end}
+.hero-top .available{text-transform:none!important;letter-spacing:.01em!important;font-size:13px!important;color:#cfdcf0!important}
+.hero-top .available .dot,.dot{background:var(--c-blue-soft)!important;box-shadow:none!important;animation:none!important}
+#work .work-filter-status,#work .work-filter-status *{text-transform:none!important;letter-spacing:.01em!important;font-size:13px!important}
+#about .career-item span{text-transform:none!important;letter-spacing:.01em!important}
+.portrait-card__heading span,.portrait-card__foot span{text-transform:none!important;letter-spacing:.02em!important;font-size:12px!important}
+.footer .replay,.footer a{text-transform:none!important;letter-spacing:.01em!important}
+
+/* ---------- motion that never stops is gone (R-39) ---------- */
+.hero .hero-ambience::before,.poster::after,.hero .portrait-card,.portrait-card,
+.hero .poster.hero-photo-stage .portrait-card{animation:none!important}
+
+/* ---------- touch targets ≥ 44px (R-03) ---------- */
+.skip:focus{display:inline-flex;align-items:center;min-height:44px;padding:0 14px!important}
+.simple-link,#contact.contact .linkedin-contact,.linkedin-contact{display:inline-flex!important;align-items:center;min-height:44px;padding-block:0!important}
+.logo{display:inline-flex!important;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+.footer .replay,.footer .footer-top{display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+#cinema-wrap .montage-skip,#cinema-wrap .montage-pause,
+#cinema-wrap .showreel-shell>.montage-overlay .montage-skip,#cinema-wrap .showreel-shell>.montage-overlay .montage-pause{
+  min-width:44px!important;min-height:44px!important;width:auto!important;height:auto!important;
+  display:inline-flex!important;align-items:center;justify-content:center;
+  padding:0!important;background:transparent!important;border:0!important;
+  cursor:pointer;pointer-events:auto!important;color:#e9f1ff;
+}
+#cinema-wrap .montage-pause span{
+  display:inline-block;padding:5px 10px;border:1px solid #9ec0ff66;
+  font:600 11px/1 "Space Grotesk",sans-serif;letter-spacing:.02em;background:#0b1730;
+}
+#cinema-wrap .montage-pause[aria-pressed="true"] span{background:var(--c-blue);border-color:var(--c-blue)}
+#cinema-wrap .montage-actions{gap:4px!important;align-items:center}
+#about .fq-studio__button{min-height:44px!important;border-radius:var(--r-2)!important}
+#about .fq-studio__button[aria-pressed="true"]{background:var(--c-blue)!important;border-color:var(--c-blue)!important;color:#fff!important}
+#about .fq-studio__button.fq-studio__pause{background:transparent!important;border-style:dashed!important}
+#about .fq-studio__button.fq-studio__pause[aria-pressed="true"]{background:#2563eb33!important;color:#fff!important}
+@media(max-width:700px){
+  #cinema-wrap .montage-pause span,#cinema-wrap .montage-skip span{padding:5px 8px!important;font-size:10px!important}
+}
+
+/* ---------- portrait back: one small line in the corner (owner, K6) ---------- */
+.hero .portrait-card .portrait-card__face--back,.poster.hero-photo-stage .portrait-card__face--back{
+  display:block!important;
+  background:linear-gradient(160deg,var(--c-steel),var(--c-ink))!important;
+  border-color:#9ec0ff55!important;
+}
+.hero .portrait-card__face--back::before,.hero .portrait-card__face--back::after,
+.portrait-card__face--back::before,.portrait-card__face--back::after{content:none!important;display:none!important}
+.portrait-card__back-line{
+  position:absolute;left:24px;bottom:22px;right:40%;margin:0;
+  font:500 13px/1.5 "DM Sans",sans-serif;color:#c3cfdf;letter-spacing:0;
+}
+
+/* ---------- What I do: evidence, not three identical cards (R-14) ---------- */
+.expertise .crafts{
+  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+  grid-template-rows:auto auto;gap:22px 40px;margin-top:8px;
+}
+.craft{border-top:1px solid var(--c-line);padding-top:22px;display:grid;gap:16px;align-content:start}
+.craft--lead{grid-row:span 2;gap:22px}
+.craft h3{margin:0 0 8px;font:600 clamp(22px,2.2vw,30px)/1.15 "Space Grotesk",sans-serif;letter-spacing:-.03em;color:var(--c-text)}
+.craft--lead h3{font-size:clamp(28px,3.2vw,44px)}
+.craft p{margin:0;max-width:52ch;color:#b6c2d4;font-size:15px;line-height:1.65}
+.craft__work{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.craft:not(.craft--lead) .craft__work{grid-template-columns:minmax(0,1fr)}
+.craft:not(.craft--lead){grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:start}
+.craft__clip{
+  display:grid;gap:4px;padding:0;border:0;background:none;color:inherit;text-align:left;
+  cursor:pointer;font:inherit;
+}
+.craft__frame{
+  display:block;position:relative;overflow:hidden;aspect-ratio:16/9;
+  background:linear-gradient(135deg,var(--c-steel),#0a1424);border:1px solid #9ec0ff26;
+}
+.craft__frame img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+.craft__frame::after{
+  content:"▶";position:absolute;left:12px;bottom:10px;
+  font-size:11px;color:#fff;padding:5px 8px;border-radius:var(--r-1);background:#04060acc;
+}
+.craft__clip:hover .craft__frame img,.craft__clip:focus-visible .craft__frame img{transform:scale(1.03)}
+.craft__clip:hover .craft__frame{border-color:#9ec0ff80}
+.craft__name{font:600 14px/1.35 "Space Grotesk",sans-serif;color:var(--c-text);margin-top:6px}
+.craft__kind{font-size:13px;color:var(--c-muted)}
+.expertise .skills{display:none!important}
+@media(max-width:900px){
+  .expertise .crafts{grid-template-columns:minmax(0,1fr)}
+  .craft--lead{grid-row:auto}
+  .craft:not(.craft--lead){grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------- gallery when a poster cannot load: quiet, not broken (R-27) ---------- */
+#work .work-media:not(.has-poster) .art{display:none!important}
+/* hidden (failed) thumbnails really disappear; their frame stays */
+.craft__frame img[hidden],#cinema-wrap .float-reel-card__poster[hidden],#work .work-poster[hidden]{display:none!important}
+#work .work-media:not(.has-poster){
+  background:
+    repeating-linear-gradient(90deg,transparent 0 23px,#9ec0ff0d 23px 24px),
+    linear-gradient(150deg,var(--c-steel),var(--c-ink))!important;
+}
+
+/* ---------- Chapter One accents in the new palette ---------- */
+#cinema-wrap .float-reel-card.is-source .float-reel-card__inner{border-color:var(--c-ice)!important;box-shadow:0 24px 62px #000000d9,0 0 0 1px #cfe0ff40!important}
+#cinema-wrap .float-reel-card.is-source .float-reel-card__meta span:first-child{color:var(--c-ice)!important}
+#cinema-wrap .float-reel-card__go{color:var(--c-blue-soft)!important;font-size:9px!important}
+#cinema-wrap .float-reel-card__meta{background:#0b1426!important}
+#cinema-wrap .float-reel-card__inner{background:#0b1426!important;border-color:#9ec0ff8c!important}
+
+@media(prefers-reduced-motion:reduce){
+  .craft__frame img{transition:none}
+}

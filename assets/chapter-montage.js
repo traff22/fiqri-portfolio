@@ -13,7 +13,7 @@ for(const img of scene?.querySelectorAll(".float-reel-card__poster")||[]){
  const qualities=["maxresdefault","sddefault","hqdefault"];
  let index=0;
  const apply=()=>{img.src="https://i.ytimg.com/vi/"+id+"/"+qualities[index]+".jpg"};
- const fallback=()=>{if(index<qualities.length-1){index++;apply()}};
+ const fallback=()=>{if(index<qualities.length-1){index++;apply()}else img.hidden=true}; // no broken-image icon
  img.addEventListener("error",fallback);
  img.addEventListener("load",()=>{
   if(img.naturalWidth<600&&index<qualities.length-1)fallback();
@@ -27,15 +27,17 @@ const clock=shell?.querySelector(".montage-timestamp");
 const bar=shell?.querySelector(".montage-progress");
 const skip=shell?.querySelector(".montage-skip");
 const skipText=skip?.querySelector("span");
+const pauseButton=shell?.querySelector(".montage-pause");
+const pauseText=pauseButton?.querySelector("span");
 if(!scene||!stage||panels.length!==2||!title||!clock||!bar||!skip)return;
 
 const ID=/^[A-Za-z0-9_-]{11}$/;
 const OPENING_VIDEO_ID="hEhRkIbH-Pg";
 const FIVE_SECONDS=5000, FADE_MS=580, REVEAL_TIMEOUT=11000;
 const extraFilms=[
- {id:"ytYOsh3ZcWc",title:"Counter Trend — Speaker",category:"event",format:"event"},
- {id:"AH1l-VdQj1I",title:"Counter Trend — Talkshow",category:"event",format:"event"},
- {id:"Vk4Me3JrLng",title:"Heavenly Whisper — Tuhan Pengharapanku",category:"event",format:"landscape"}
+ {id:"ytYOsh3ZcWc",title:"Counter Trend: Speaker",category:"event",format:"event"},
+ {id:"AH1l-VdQj1I",title:"Counter Trend: Talkshow",category:"event",format:"event"},
+ {id:"Vk4Me3JrLng",title:"Heavenly Whisper: Tuhan Pengharapanku",category:"event",format:"landscape"}
 ];
 const fromCards=[...document.querySelectorAll("#work .work-card[data-status='published']")].map(card=>{
  const media=card.querySelector(".work-media[data-youtube-id]");
@@ -68,6 +70,7 @@ let visible=false,enabled=false,apiReady=false,apiLoading=false,blocked=false;
 let activeIndex=-1,current=null,bag=[],lastId="",lastCategory="",openingPending=true;
 let currentTimer=0,preloadTimer=0,watchdog=0,fadeTimer=0,clockRaf=0;
 let timeStart=0,playhead=0,requestId=0,pendingPreload=null;
+let userPaused=false; // the visitor pressed Pause (R-39: no endless motion without control)
 
 function safe(fn){try{return fn()}catch(_){return undefined}}
 // Tell the Chapter One blueprint which kind of film is on screen
@@ -163,7 +166,7 @@ function show(index,req){
  stage.dataset.playback="playing";
  stage.classList.add("is-playing");
  shell.classList.add("is-playing");
- if(skipText)skipText.textContent="Next ↗";
+ if(skipText)skipText.textContent="Next";
  title.textContent=req.item.title;
  announce(req.item.category);
  panels[index].dataset.format=req.item.format;
@@ -179,6 +182,31 @@ function show(index,req){
  clearTimeout(currentTimer);clearTimeout(preloadTimer);
  currentTimer=setTimeout(switchToNext,FIVE_SECONDS);
  preloadTimer=setTimeout(prebufferNext,1400);
+ if(userPaused)holdCurrent();
+}
+// Freeze on the current shot: timers stop, the player pauses, the frame stays.
+function holdCurrent(){
+ clearTime();
+ if(activeIndex>=0)safePause(activeIndex);
+ if(pendingPreload)safePause(pendingPreload.index);
+}
+function setUserPaused(on){
+ userPaused=on;
+ shell.classList.toggle("is-user-paused",on);
+ if(pauseButton){
+  pauseButton.setAttribute("aria-pressed",String(on));
+  pauseButton.setAttribute("aria-label",on?"Play the previews":"Pause the previews");
+  if(pauseText)pauseText.textContent=on?"Play":"Pause";
+ }
+ if(on){holdCurrent();return}
+ if(!enabled){visible=true;start();return}
+ if(activeIndex<0){nextVideo();return}
+ const player=slots[activeIndex]?.player;
+ safe(()=>player.playVideo());
+ timeStart=performance.now()-playhead;
+ cancelAnimationFrame(clockRaf);clockRaf=requestAnimationFrame(tick);
+ currentTimer=setTimeout(switchToNext,Math.max(400,FIVE_SECONDS-playhead));
+ preloadTimer=setTimeout(prebufferNext,900);
 }
 function handlePlaying(index){
  if(!enabled)return;
@@ -294,7 +322,7 @@ function initAPI(){
       blocked=true;
       stage.dataset.playback="blocked";
       skip.setAttribute("aria-label","Click to enable previews");
-      if(skipText)skipText.textContent="Play ↗";
+      if(skipText)skipText.textContent="Play";
      }
     }
    });
@@ -336,6 +364,10 @@ function stop(){
  stage.dataset.playback="paused";
  announce(null);
 }
+pauseButton?.addEventListener("click",e=>{
+ e.preventDefault();e.stopPropagation();
+ setUserPaused(!userPaused);
+});
 skip.addEventListener("click",e=>{
  e.preventDefault();e.stopPropagation();
  if(blocked){blocked=false;stage.dataset.playback="loading"}

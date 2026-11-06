@@ -39,7 +39,7 @@ try{
  await page.locator("#cinema-wrap .showreel-shell").scrollIntoViewIfNeeded();
  await page.waitForFunction(()=>document.querySelector(".montage-stream.is-current"),{timeout:9000});
  const first=await page.locator(".montage-title").textContent();
- if(first!=="Know More Bout Me — 2024")
+ if(first!=="Know More Bout Me (2024)")
   throw new Error("Chapter One must always start with Know More Bout Me: "+first);
  const classification=await page.locator('.work-card[data-project="know-more-about-me-2024"]').evaluate(el=>el.dataset.categories);
  if(classification.split(" ").includes("motion")||!classification.split(" ").includes("longform"))

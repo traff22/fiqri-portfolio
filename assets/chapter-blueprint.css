@@ -53,37 +53,38 @@
   pointer-events:none;
 }
 #cinema-wrap .fq-blueprint::after{content:none!important;display:none!important}
-/* Drafting paper behind the whole composition, so the stage never reads as an
-   empty void: a fine 24px grid with 120px major lines, centred on the film and
-   faded out towards the edges. Lives on ::before so the mask never fades the
-   connectors or labels; the layer's own background stays transparent. */
-#cinema-wrap .fq-blueprint::before{
-  content:""!important;display:block!important;
-  position:absolute;inset:0;z-index:0;pointer-events:none;
-  border:0!important;border-radius:0!important;box-shadow:none!important;
-  opacity:1!important;transform:none!important;animation:none!important;
-  background:
-    linear-gradient(#8ea8ff1c 1px,transparent 1px),
-    linear-gradient(90deg,#8ea8ff1c 1px,transparent 1px),
-    linear-gradient(#8ea8ff0d 1px,transparent 1px),
-    linear-gradient(90deg,#8ea8ff0d 1px,transparent 1px)!important;
-  background-size:120px 120px,120px 120px,24px 24px,24px 24px!important;
-  background-position:calc(50% - 60px) calc(var(--fq-yc) - 60px)!important;
-  -webkit-mask-image:radial-gradient(ellipse 75% 72% at 50% 58%,#000 40%,transparent 92%);
-          mask-image:radial-gradient(ellipse 75% 72% at 50% 58%,#000 40%,transparent 92%);
+/* Drafting paper seen through a lens (owner, K2): the grid is drawn on a
+   canvas with barrel ("bulge") distortion centred on the film, by
+   chapter-blueprint.js. A blurred, darkened vignette softens the edges like a
+   cinema lens. The layer's own background stays transparent. */
+#cinema-wrap .fq-blueprint::before{content:none!important;display:none!important}
+.fq-blueprint__lens{
+  position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;
+  -webkit-mask-image:radial-gradient(ellipse 80% 78% at 50% 58%,#000 45%,transparent 96%);
+          mask-image:radial-gradient(ellipse 80% 78% at 50% 58%,#000 45%,transparent 96%);
 }
+.fq-blueprint__vignette{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  -webkit-backdrop-filter:blur(var(--fq-vignette-blur,5px));backdrop-filter:blur(var(--fq-vignette-blur,5px));
+  -webkit-mask-image:radial-gradient(ellipse 62% 64% at 50% 56%,transparent 58%,#000 100%);
+          mask-image:radial-gradient(ellipse 62% 64% at 50% 56%,transparent 58%,#000 100%);
+  background:radial-gradient(ellipse 62% 64% at 50% 56%,transparent 50%,#000000a8 100%);
+}
+html[data-daypart="day"] .fq-blueprint__vignette{background:radial-gradient(ellipse 62% 64% at 50% 56%,transparent 50%,#00000070 100%)}
+#cinema-wrap .fq-blueprint__links,#cinema-wrap .fq-blueprint__sequence{z-index:2}
+@media(prefers-reduced-motion:reduce){.fq-blueprint__vignette{--fq-vignette-blur:4px}}
 #cinema-wrap .fq-blueprint__links{
   position:absolute;inset:0;width:100%;height:100%;
   overflow:visible;opacity:1;
 }
 .fq-blueprint__link{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.55}
-.fq-blueprint__mark{fill:none;stroke:#91e9d9;stroke-width:1.5;stroke-linecap:square}
+.fq-blueprint__mark{fill:none;stroke:#cfe0ff;stroke-width:1.5;stroke-linecap:square}
 .fq-blueprint__joint{fill:#0b1430;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.8}
 .fq-blueprint__tag{
   fill:#9fb4e6;
   font:600 9px/1 "Space Grotesk",sans-serif;letter-spacing:.14em;
 }
-.fq-blueprint__tag--in{fill:#91e9d9}
+.fq-blueprint__tag--in{fill:#cfe0ff}
 .fq-blueprint__crop{fill:none;stroke:#a9c0ff;stroke-width:1;stroke-opacity:.45}
 /* Construction drawing: extension lines from the film edges, centre lines,
    a dimension line and registration targets — the drafting around the shot. */
@@ -100,7 +101,7 @@
 .fq-blueprint__clip.is-active .fq-blueprint__link{stroke:#dbe6ff;stroke-opacity:.95;stroke-width:1.25}
 .fq-blueprint__clip.is-active .fq-blueprint__joint{stroke:#dbe6ff;stroke-opacity:1}
 .fq-blueprint__clip.is-active .fq-blueprint__tag{fill:#dbe6ff}
-.fq-blueprint__clip.is-active .fq-blueprint__tag--in{fill:#91e9d9}
+.fq-blueprint__clip.is-active .fq-blueprint__tag--in{fill:#cfe0ff}
 .fq-blueprint__clip.is-drawing .fq-blueprint__link{
   stroke-dasharray:1;
   animation:fq-cut-draw .62s cubic-bezier(.3,.7,.2,1) both;
@@ -162,7 +163,7 @@
   white-space:nowrap;
 }
 @media(max-width:1299px){#cinema-wrap .float-reel-card__meta{letter-spacing:.09em!important;padding:8px 9px!important}}
-#cinema-wrap .float-reel-card__go{color:#91e9d9;font-size:11px;transition:transform .25s ease}
+#cinema-wrap .float-reel-card__go{color:#cfe0ff;font-size:11px;transition:transform .25s ease}
 #cinema-wrap .float-reel-card__open{
   position:absolute;inset:0;z-index:4;
   margin:0;padding:0;border:0;border-radius:inherit;
@@ -178,10 +179,10 @@
 #cinema-wrap .float-reel-card__inner{transition:opacity .45s ease,filter .45s ease,border-color .35s ease,box-shadow .35s ease}
 #cinema-wrap .float-reel-card.is-idle .float-reel-card__inner{opacity:.58;filter:saturate(.7)}
 #cinema-wrap .float-reel-card.is-source .float-reel-card__inner{
-  border-color:#91e9d9!important;
-  box-shadow:0 24px 62px #010717d9,0 0 0 1px #91e9d93d,0 0 36px #5fd8c22e!important;
+  border-color:#cfe0ff!important;
+  box-shadow:0 24px 62px #010717d9,0 0 0 1px #cfe0ff3d,0 0 36px #9ec0ff2e!important;
 }
-#cinema-wrap .float-reel-card.is-source .float-reel-card__meta span:first-child{color:#bdf5ea}
+#cinema-wrap .float-reel-card.is-source .float-reel-card__meta span:first-child{color:#e6efff}
 #cinema-wrap .float-reel-card.is-idle:hover .float-reel-card__inner,
 #cinema-wrap .float-reel-card.is-idle:focus-within .float-reel-card__inner{opacity:1;filter:none}
 #cinema-wrap .float-reel-card:hover .float-reel-card__go,

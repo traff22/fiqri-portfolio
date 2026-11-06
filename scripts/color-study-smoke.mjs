@@ -49,13 +49,15 @@ try{
         bodyOverflow:document.body.scrollWidth-doc.clientWidth
       };
     });
-    assert(result.accent==="#a8baff",name+": electric accent token not applied");
-    assert(color(result.heroAccent)==="rgb(193,200,255)",name+": hero signature color missing");
-    assert(color(result.buttonBackground)==="rgb(181,196,255)",name+": cobalt CTA not emphasized");
-    assert(result.buttonRadius==="10px",name+": CTA still generic pill");
-    assert(result.contactBackgroundImage.includes("linear-gradient")&&color(result.contactText)==="rgb(249,250,255)",name+": contemporary blue contact section missing");
+    // Blue-black palette (owner, 2026-11-06): one cobalt accent, no iris/violet.
+    assert(result.accent==="#7aa6ff",name+": blue accent token not applied ("+result.accent+")");
+    assert(color(result.heroAccent)==="rgb(158,192,255)",name+": hero signature colour missing ("+result.heroAccent+")");
+    assert(color(result.buttonBackground)==="rgb(37,99,235)",name+": cobalt CTA not emphasized ("+result.buttonBackground+")");
+    assert(result.buttonRadius==="12px",name+": CTA radius off the 6/12/18 scale ("+result.buttonRadius+")");
+    assert(result.contactBackgroundImage.includes("linear-gradient")&&color(result.contactText)==="rgb(249,250,255)",name+": blue contact section missing");
     assert(result.filterBottomWidth==="2px",name+": selected filter lacks underline");
-    assert(color(result.filterBottom)==="rgb(168,186,255)",name+": selected filter lacks electric signal color");
+    assert(color(result.filterBottom)==="rgb(122,166,255)",name+": selected filter lacks the accent ("+result.filterBottom+")");
+    assert(!/(168, ?186, ?255|193, ?200, ?255|181, ?196, ?255)/.test(JSON.stringify(result)),name+": retired iris colours still in use");
     assert(result.overflow<=1,name+": document horizontal overflow "+result.overflow);
     assert(result.bodyOverflow<=1,name+": body horizontal overflow "+result.bodyOverflow);
     if(mobile){

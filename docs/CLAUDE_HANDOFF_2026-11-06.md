@@ -296,3 +296,35 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - Is mini Fiqri's likeness close enough?
 - Is the room palette too blue overall?
 - Should the drafting grid sit behind the headline, or be masked away from it?
+
+### 2026-11-06 (WIB): skills installed, anti-slop audit 001 and fixes (Claude Code)
+**Owner request:** "gunakan taste skill, anti-slop, humanizer agar web kita semakin oke". The owner installed `Leonxlnx/taste-skill`, `miqdadbadjuber/anti-slop` and `blader/humanizer` (in `.claude/skills/`, committed without the taste skill's 40MB of demo assets) and chose antislop mode **AFTER**: audit first, then fix only the numbers the owner picks.
+
+**Audit:** `anti-slop/audit-001-2026-11-06.md` (numbered findings and the R-37 conflicts between the skills and the owner's direction).
+
+**Owner decisions:**
+- Fix items 1–8, 12, 14, 15, 16 and 17.
+- K1: new blue-black palette (iris/violet retired).
+- K2: the drafting grid gets a lens bulge and a blurred vignette.
+- K3: parallax stays. K4: portrait tilt stays.
+- K5: the theme follows the time of day, including the animations.
+- K6: portrait back = only "Just a person who loves the art of life.", small, bottom-left corner.
+- Not selected (left as is): 9 (typeface), 10 (✦), 11 (glow), 13 (glass).
+
+**Implementation:**
+- `assets/design-system.css` (new, loads last): tokens, daypart moods, radius scale 6/12/18, chapter labels, 44px targets, the infinite-loop kill, portrait back, What I do layout, poster-failure state.
+- `DESIGN.md` (new): the single source of direction with reasons.
+- Copy rewritten across `index.html`, with no em dashes.
+- Showreel Pause/Play in `chapter-montage.js`; room Pause/Play in `creators-lab.js` with `voxel.setPaused`.
+- Lens grid canvas and blur vignette in `chapter-blueprint.js/.css`.
+- Voxel palette and daypart lighting in `voxel-studio.js`.
+- Shared `[data-open-project]` opener in `work-gallery.js`; What I do rebuilt with real project evidence.
+- Image dimensions everywhere.
+
+**QA:**
+- New `scripts/design-system-smoke.mjs` (in CI) covers copy dashes, arrows, touch targets, both pause controls, the lens canvas, What I do evidence, the portrait back line and daypart grounds.
+- `color-study-smoke.mjs` updated to the new tokens.
+- All suites pass locally (`ui-smoke` with the YouTube API stubbed).
+- Re-measured: dashes 10→0, images without dimensions 20→0, uppercase labels 16→0, running infinite animations 3→0, mobile targets under 44px 12→1 (the off-screen skip link).
+
+**Still open:** item 9 (typeface, see DESIGN.md), contrast of text over real photos (not measurable in the sandbox), and real-device feel.

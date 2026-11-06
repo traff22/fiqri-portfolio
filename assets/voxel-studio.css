@@ -59,3 +59,5 @@
   #about .fq-studio__button{padding:0 13px;font-size:10.5px!important;min-height:40px}
 }
 #about .fq-studio__button{flex:0 0 auto!important}
+/* Paused SVG fallback: every CSS animation in the room holds still. */
+.fq-studio.is-paused .fq-studio__art *{animation-play-state:paused!important}

@@ -34,6 +34,17 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const scene=new THREE.Scene();
   const camera=new THREE.OrthographicCamera(-10,10,10,-10,-100,200);
 
+  /* ------------------------------------------------------------ time of day */
+  // The room follows the visitor's clock (html[data-daypart], set in <head>):
+  // the window, the sun, the desk lamp and the screen glow all change.
+  const DAY=({
+    dawn:{sky:["#3a4f8f","#e9a58c"],orb:"#ffe1c4",orbY:62,lit:.25,city:["#1d2a4f","#25335c"],sun:["#ffd2b8",2.0],hemi:2.0,lamp:40,win:["#ffc6a8",10],screen:22},
+    day:{sky:["#3d7be0","#b4d6ff"],orb:"#fff6e0",orbY:14,lit:0,city:["#2f4a7a","#3a5a8f"],sun:["#ffffff",2.9],hemi:2.6,lamp:0,win:["#d5e6ff",16],screen:16},
+    dusk:{sky:["#1f2f6b","#ff9a5a"],orb:"#ffcf94",orbY:56,lit:.35,city:["#141d3d","#1b2650"],sun:["#ffb27a",1.9],hemi:1.9,lamp:55,win:["#ff9a62",11],screen:24},
+    night:{sky:["#0b1638","#2c4a92"],orb:"#eef2ff",orbY:12,lit:.5,city:["#0c1430","#111c40"],sun:["#b9ccff",1.3],hemi:1.7,lamp:62,win:["#6f8fff",6],screen:28}
+  })[document.documentElement.dataset.daypart]||null;
+  const light=DAY||{sky:["#0b1638","#2c4a92"],orb:"#eef2ff",orbY:12,lit:.5,city:["#0c1430","#111c40"],sun:["#b9ccff",1.3],hemi:1.7,lamp:62,win:["#6f8fff",6],screen:28};
+
   /* ------------------------------------------------------------ helpers */
   let seed=7;
   const rand=()=>((seed=(seed*16807)%2147483647)-1)/2147483646;
@@ -76,12 +87,12 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
 
   /* ------------------------------------------------------------ palette */
   const P={
-    wall:"#25367a",wallTop:"#3d55a8",base:"#121a3a",floorA:"#33427c",floorB:"#2c3a72",plinth:"#0d1430",
-    rug:"#3b4cb0",rugEdge:"#7d8fff",wood:"#6d4f45",woodDark:"#4f3933",metal:"#8f9cc4",
-    dark:"#11182f",bezel:"#0b1024",chair:"#3448a8",chairDark:"#24337a",
+    wall:"#17243f",wallTop:"#29426e",base:"#0c1426",floorA:"#1e2d4a",floorB:"#1a2843",plinth:"#080e1c",
+    rug:"#1d4ed8",rugEdge:"#7aa6ff",wood:"#6d4f45",woodDark:"#4f3933",metal:"#8f9db8",
+    dark:"#0d1424",bezel:"#080c18",chair:"#1e3a8a",chairDark:"#172c66",
     skin:"#c8916f",skinShade:"#b07a5c",hair:"#141821",hairHi:"#232a38",sweater:"#2b3042",
     sweaterHi:"#363d55",collar:"#eef1f8",pants:"#1a1e2c",shoe:"#d9dde8",
-    teal:"#5fe0c8",iris:"#9aa8ff",cream:"#eef0fa",coral:"#d98a73",leaf:"#3f9f7f",leafHi:"#62c79e",
+    teal:"#7aa6ff",iris:"#7aa6ff",cream:"#eef0fa",coral:"#d98a73",leaf:"#3f9f7f",leafHi:"#62c79e",
     lamp:"#e8d6b0",rec:"#ff5b6b"
   };
 
@@ -132,7 +143,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   box(S,16.75,3.25,.25,.5,.75,.5,P.teal,.25,.03);
   // shelf on the left wall: books, clapperboard, film reel
   box(S,0,7,3,1.25,.25,6,P.woodDark,.25,.03);
-  const books=[P.iris,P.teal,P.coral,"#c4cbe8","#5562b8",P.iris,"#2f3c7d"];
+  const books=["#2563eb","#cfe0ff",P.coral,"#c4cbe8","#1e3a8a","#7aa6ff","#26334f"];
   books.forEach((c,i)=>box(S,.25,7.25,3.25+i*.5,.75,1.25+((i*7)%3)*.25,.25,c,.25,.04));
   for(let i=0;i<6;i++)box(S,.25,7.25,7.25+i*.25,.75,.25,.25,i%2?P.cream:P.dark,.25,.02);
   box(S,.25,7.5,7.25,.75,.75,1.5,P.dark,.25,.03);
@@ -160,13 +171,14 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const win=canvasTexture(64,80);
   {
     const g=win.ctx,grd=g.createLinearGradient(0,0,0,80);
-    grd.addColorStop(0,"#2b2f86");grd.addColorStop(.55,"#5b4fb8");grd.addColorStop(1,"#d48aa0");
+    grd.addColorStop(0,light.sky[0]);grd.addColorStop(1,light.sky[1]);
     g.fillStyle=grd;g.fillRect(0,0,64,80);
-    g.fillStyle="#f6e9d0";g.fillRect(46,10,6,6);
+    g.fillStyle=light.orb;g.fillRect(44,light.orbY,7,7); // sun or moon
+    if(light.lit===0){g.fillStyle="#ffffffcc";g.fillRect(8,14,14,3);g.fillRect(11,11,8,3);g.fillRect(26,24,12,3)} // daytime clouds
     let s2=3;const r2=()=>((s2=(s2*48271)%2147483647)/2147483647);
     for(let x=0;x<64;){const w=6+Math.floor(r2()*9),h=22+Math.floor(r2()*40);
-      g.fillStyle=r2()>.5?"#161c45":"#1d2557";g.fillRect(x,80-h,w,h);
-      for(let yy=80-h+3;yy<78;yy+=4)for(let xx=x+1;xx<x+w-1;xx+=3)if(r2()>.62){g.fillStyle=r2()>.3?"#ffd38a":"#7ff0dc";g.fillRect(xx,yy,1,2)}
+      g.fillStyle=r2()>.5?light.city[0]:light.city[1];g.fillRect(x,80-h,w,h);
+      for(let yy=80-h+3;yy<78;yy+=4)for(let xx=x+1;xx<x+w-1;xx+=3)if(r2()<light.lit*.75){g.fillStyle=r2()>.3?"#ffd38a":"#cfe0ff";g.fillRect(xx,yy,1,2)}
       x+=w+1}
     win.t.needsUpdate=true;
   }
@@ -176,13 +188,13 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const poster=canvasTexture(48,48);
   {
     const g=poster.ctx,grd=g.createLinearGradient(0,0,48,48);
-    grd.addColorStop(0,"#151b4a");grd.addColorStop(1,"#4b52c9");g.fillStyle=grd;g.fillRect(0,0,48,48);
-    g.fillStyle="#9aa8ff";g.beginPath();g.arc(32,18,9,0,7);g.fill();
+    grd.addColorStop(0,"#0a1430");grd.addColorStop(1,"#1d4ed8");g.fillStyle=grd;g.fillRect(0,0,48,48);
+    g.fillStyle="#9ec0ff";g.beginPath();g.arc(32,18,9,0,7);g.fill();
     g.fillStyle="#0e1336";g.fillRect(0,30,48,18);
     g.fillStyle="#eef0fa";
     // pixel "FQ."
     [[6,35],[6,36],[6,37],[6,38],[6,39],[7,35],[8,35],[7,37],[11,35],[12,35],[13,35],[11,36],[13,36],[11,37],[13,37],[11,38],[12,38],[13,38],[13,39],[15,39]].forEach(([x,y])=>g.fillRect(x,y,1,1));
-    g.fillStyle="#5fe0c8";g.fillRect(6,42,20,1);
+    g.fillStyle="#cfe0ff";g.fillRect(6,42,20,1);
     poster.t.needsUpdate=true;
   }
   const posterPlane=glow(3.75,3.75,poster.t);posterPlane.position.set(16,8,.13);scene.add(posterPlane);
@@ -201,18 +213,19 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const rec=new THREE.Mesh(new THREE.BoxGeometry(.18,.18,.18),recMat);rec.position.set(18.1,4.2,10.2);scene.add(rec);
   const shade=new THREE.Mesh(new THREE.BoxGeometry(.7,.06,.7),new THREE.MeshBasicMaterial({color:"#ffe2a8",toneMapped:false}));
   shade.position.set(6.125,5.72,2.25);scene.add(shade);
+  if(!light.lamp)shade.material.color.set("#5d5648"); // lamp switched off in daylight
 
   /* ------------------------------------------------------------ lights */
-  scene.add(new THREE.HemisphereLight("#a9b6ff","#1d2350",2.1));
-  const sun=new THREE.DirectionalLight("#dfe5ff",2.3);
+  scene.add(new THREE.HemisphereLight("#9ec0ff","#141d36",light.hemi));
+  const sun=new THREE.DirectionalLight(light.sun[0],light.sun[1]);
   sun.position.set(22,30,24);sun.target.position.set(10,0,6);
   sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
   Object.assign(sun.shadow.camera,{left:-18,right:18,top:18,bottom:-18,near:1,far:90});
   sun.shadow.bias=-.0008;sun.shadow.normalBias=.02;
   scene.add(sun,sun.target);
-  const lampLight=new THREE.PointLight("#ffb46b",60,12,2);lampLight.position.set(6.2,5.4,2.4);scene.add(lampLight);
-  const screenLight=new THREE.PointLight("#7fa2ff",26,9,2);screenLight.position.set(10.3,6,3);scene.add(screenLight);
-  const windowLight=new THREE.PointLight("#c58cff",8,8,2);windowLight.position.set(3,8,1);scene.add(windowLight);
+  const lampLight=new THREE.PointLight("#ffb46b",light.lamp,12,2); // off by daylampLight.position.set(6.2,5.4,2.4);scene.add(lampLight);
+  const screenLight=new THREE.PointLight("#7fa2ff",light.screen,9,2);screenLight.position.set(10.3,6,3);scene.add(screenLight);
+  const windowLight=new THREE.PointLight(light.win[0],light.win[1],8,2);windowLight.position.set(3,8,1);scene.add(windowLight);
 
   /* ------------------------------------------------------------ chair */
   const chair=new THREE.Group();chair.position.set(10.375,0,6);scene.add(chair);
@@ -567,7 +580,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     // blinking REC light + LED pulse
     recMat.color.set(Math.floor(t*1.2)%2?"#3a1520":P.rec);
     ledMat.color.setRGB(.37,.88+.1*Math.sin(t*3),.78);
-    screenLight.intensity=mood==="render"?24:mood==="coffee"?10:18;
+    screenLight.intensity=mood==="render"?light.screen*1.25:mood==="coffee"?light.screen*.45:light.screen;
     screenClock+=dt;if(screenClock>1/12){paintScreens(screenClock);screenClock=0}
     renderer.render(scene,camera);
     frames++;host.dataset.frames=String(frames);
@@ -586,13 +599,17 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     if(on){last=clock();if(!raf)raf=requestAnimationFrame(tick)}
     else if(raf){cancelAnimationFrame(raf);raf=0}
   }
-  const io=new IntersectionObserver(es=>setRunning(es.some(e=>e.isIntersecting)&&!document.hidden),{threshold:.05});
+  let userPaused=false,inView=false;
+  const io=new IntersectionObserver(es=>{inView=es.some(e=>e.isIntersecting);setRunning(inView&&!document.hidden&&!userPaused)},{threshold:.05});
   io.observe(host);
-  document.addEventListener("visibilitychange",()=>{if(document.hidden)setRunning(false);else{const r=host.getBoundingClientRect();setRunning(r.bottom>0&&r.top<innerHeight)}});
+  document.addEventListener("visibilitychange",()=>{if(document.hidden)setRunning(false);else{const r=host.getBoundingClientRect();setRunning(r.bottom>0&&r.top<innerHeight&&!userPaused)}});
   reducedMotion?.addEventListener?.("change",()=>{if(reduced()){azGoal=HOME_AZ;elGoal=HOME_EL}});
 
   const api={
     trigger,
+    // Visitor pause (R-39): freezes the routine, the camera drift and the REC light.
+    setPaused(on){userPaused=Boolean(on);setRunning(!userPaused&&inView&&!document.hidden);if(userPaused)renderer.render(scene,camera)},
+    get paused(){return userPaused},
     // Fast-forward the choreography (used by the browser smoke test).
     advance(sec){for(let t=0;t<sec;t+=.05){if(job){const r=job.next(.05);if(r.done)job=null}}placeCamera();renderer.render(scene,camera)},
     get mode(){return mood},

@@ -106,7 +106,7 @@ cards.forEach(card=>{
  const id=(media.dataset.youtubeId||"").trim();
  let img=$(".work-poster",media);
  if(!img&&(id||media.dataset.posterSrc)){
-  img=document.createElement("img");img.className="work-poster";img.alt="";
+  img=document.createElement("img");img.className="work-poster";img.alt="";img.width=1280;img.height=720;
   img.loading="lazy";img.decoding="async";media.prepend(img);
  }
  if(!img)return;
@@ -209,11 +209,11 @@ let priorFocus=null;
 const events={
  "age-of-chaos":{
   title:"Age of Chaos",year:"2025",
-  summary:"Event visual storytelling — stage graphics, a banner video, and the people behind production.",
+  summary:"Stage graphics, a banner video and photos of the people behind the production.",
   contribution:"Event visuals, motion and cinematic documentation. Photos supplied from the event archive.",
   videos:[{id:"c9wCgrjlUhk",label:"Event banner",type:"Main banner film"}],
   photos:[
-   {src:"assets/events/age-of-chaos/stage.webp",caption:"Stage visuals — Age of Chaos",alt:"Age of Chaos event stage and digital backdrop"},
+   {src:"assets/events/age-of-chaos/stage.webp",caption:"Stage visuals, Age of Chaos",alt:"Age of Chaos event stage and digital backdrop"},
    {src:"assets/events/age-of-chaos/crew.webp",caption:"Production crew",alt:"Crew members with a cinema camera at Age of Chaos"}
   ]
  },
@@ -310,7 +310,7 @@ function renderEventVideos(videos){
   button.dataset.videoId=video.id;
   button.setAttribute("aria-pressed","false");
   const image=document.createElement("img");
-  image.alt="";image.loading="lazy";image.decoding="async";setThumbnailWithFallback(image,video.id);
+  image.alt="";image.width=480;image.height=270;image.loading="lazy";image.decoding="async";setThumbnailWithFallback(image,video.id);
   const body=document.createElement("span");body.className="event-video-choice__text";
   const label=document.createElement("strong");label.textContent=video.label;
   const desc=document.createElement("small");desc.textContent=video.type;
@@ -330,7 +330,7 @@ function renderEventPhotos(photos){
  for(const photo of photos){
   const fig=document.createElement("figure");fig.className="event-photo";
   const img=document.createElement("img");
-  img.src=photo.src;img.alt=photo.alt;img.loading="lazy";img.decoding="async";
+  img.src=photo.src;img.alt=photo.alt;img.width=640;img.height=427;img.loading="lazy";img.decoding="async";
   const cap=document.createElement("figcaption");cap.textContent=photo.caption;
   fig.append(img,cap);eventPhotoList.appendChild(fig);
  }
@@ -439,4 +439,24 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden){
  if(eventDialog?.open)closeModal(eventDialog);
 }});
 window.addEventListener("pagehide",()=>{stopAllHoverPreviews();stopVideoPlayback();stopEventPlayback();});
+})();
+
+/* Any [data-open-project="<work-card id>"] control (Chapter One clips, the
+   What I do evidence) opens that project through the Selected Work dialogs,
+   then hands focus back to the control that opened it. */
+(()=>{"use strict";
+  // A thumbnail that cannot load leaves its quiet frame, not a broken icon.
+  document.querySelectorAll(".craft__frame img").forEach(img=>{
+    const hide=()=>{img.hidden=true};
+    if(img.complete&&img.naturalWidth===0&&img.currentSrc)hide();else img.addEventListener("error",hide,{once:true});
+  });
+  document.addEventListener("click",e=>{
+    const opener=e.target.closest?.("[data-open-project]");
+    if(!opener)return;
+    const id=opener.dataset.openProject;
+    const trigger=document.querySelector(`#work .work-card[data-project="${CSS.escape(id)}"] .work-trigger`);
+    if(!trigger)return;
+    trigger.click();
+    document.querySelector("dialog[open]")?.addEventListener("close",()=>opener.focus({preventScroll:true}),{once:true});
+  });
 })();

@@ -7,8 +7,6 @@
  *    clip lights up and its cut line is drawn into the frame. Without real
  *    playback (blocked, unavailable, off-screen) every clip stays neutral.
  * 3. Crop marks sit just OUTSIDE the picture, never over the footage.
- * 4. Makes each thumbnail open its project through the existing Selected
- *    Work dialog (same player, same event dialog, same cleanup).
  * No dependencies; batched with requestAnimationFrame. */
 (()=>{"use strict";
   const scene=document.getElementById("cinema-wrap");
@@ -19,6 +17,42 @@
   const cards=scene?[...scene.querySelectorAll(".float-reel-card")]:[];
   if(!scene||!layer||!svg||!film)return;
   const NS="http://www.w3.org/2000/svg";
+
+  /* ---------- lens: drafting grid with barrel distortion + blur vignette ---------- */
+  // The grid is the editor's drafting paper seen through the camera lens. It
+  // bulges from the film's centre, a little more as the film zooms in.
+  const lens=document.createElement("canvas");lens.className="fq-blueprint__lens";lens.setAttribute("aria-hidden","true");
+  const vignette=document.createElement("div");vignette.className="fq-blueprint__vignette";vignette.setAttribute("aria-hidden","true");
+  layer.prepend(lens,vignette);
+  const lctx=lens.getContext("2d");
+  let lensKey="";
+  function drawLens(w,h,cx,cy,progress){
+    if(!lctx)return;
+    const k=(reducedLens()?.16:.12+.12*progress);
+    const key=[Math.round(w),Math.round(h),Math.round(cx),Math.round(cy),k.toFixed(3)].join("|");
+    if(key===lensKey)return;lensKey=key;
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    if(lens.width!==Math.round(w*dpr)||lens.height!==Math.round(h*dpr)){lens.width=Math.round(w*dpr);lens.height=Math.round(h*dpr)}
+    lctx.setTransform(dpr,0,0,dpr,0,0);lctx.clearRect(0,0,w,h);
+    const R2=Math.pow(Math.max(w,h)*.62,2);
+    const warp=(x,y)=>{const dx=x-cx,dy=y-cy,s=1/(1+k*(dx*dx+dy*dy)/R2);return [cx+dx*s,cy+dy*s]};
+    const line=(x0,y0,x1,y1)=>{
+      lctx.beginPath();
+      for(let i=0;i<=36;i++){const t=i/36,[x,y]=warp(x0+(x1-x0)*t,y0+(y1-y0)*t);i?lctx.lineTo(x,y):lctx.moveTo(x,y)}
+      lctx.stroke();
+    };
+    const span=Math.max(w,h)*1.1;
+    for(const [step,alpha] of [[24,.075],[120,.17]]){
+      lctx.strokeStyle=`rgba(143,180,255,${alpha})`;lctx.lineWidth=1;
+      const n=Math.ceil(span/step);
+      for(let i=-n;i<=n;i++){
+        if(step===24&&i%5===0)continue; // major lines are drawn on the second pass
+        const x=cx+i*step,y=cy+i*step;
+        line(x,cy-span,x,cy+span);line(cx-span,y,cx+span,y);
+      }
+    }
+  }
+  const reducedLens=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
   const reduced=matchMedia("(prefers-reduced-motion: reduce)");
   // Which montage category each source clip stands for.
   const CATEGORY={one:"motion",two:"longform",three:"event"};
@@ -187,6 +221,9 @@
     }
     placeCrop(f,compact,host.width);
     placeConstruct(f,frame,host.width,host.height,compact,shift);
+    const sr=scene.getBoundingClientRect();
+    const progress=Math.min(1,Math.max(0,-sr.top/Math.max(1,scene.offsetHeight-vh)));
+    drawLens(host.width,host.height,f.left+f.width/2,f.top+f.height/2,progress);
     // Cards ease their scale/opacity over ~160ms; keep following briefly.
     if(performance.now()<settleUntil)schedule();
   }
@@ -228,19 +265,6 @@
   addEventListener("resize",()=>{const c=scene.dataset.activeCategory||"";activeCategory="#";setActive(c)},{passive:true});
   setActive(scene.dataset.activeCategory);
 
-  /* ---------- thumbnails open their real project ---------- */
-  for(const card of cards){
-    const button=card.querySelector(".float-reel-card__open");
-    const project=card.dataset.projectLink;
-    if(!button||!project)continue;
-    button.addEventListener("click",()=>{
-      const trigger=document.querySelector(`#work .work-card[data-project="${CSS.escape(project)}"] .work-trigger`);
-      if(!trigger)return;
-      trigger.click();
-      // The gallery returns focus to its own trigger; bring it back here so
-      // keyboard users stay where they were in Chapter One.
-      const dialog=document.querySelector("dialog[open]");
-      dialog?.addEventListener("close",()=>button.focus({preventScroll:true}),{once:true});
-    });
-  }
+  // Opening a project from a thumbnail is handled by work-gallery.js
+  // ([data-open-project]), shared with the What I do section.
 })();
