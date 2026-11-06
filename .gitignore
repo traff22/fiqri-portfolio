@@ -1,0 +1,6 @@
+
+# taste skill: keep its rules (SKILL.md, references, library) in git, not its
+# ~40MB of demo photos/renders and checker scripts. Reinstall with:
+#   npx skills add Leonxlnx/taste-skill -s "*" -a claude-code -y --copy
+.claude/skills/design-taste-frontend/assets/
+.claude/skills/design-taste-frontend/scripts/
