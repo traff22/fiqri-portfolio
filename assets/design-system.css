@@ -320,3 +320,39 @@ dialog.portfolio-dialog::backdrop,dialog.directors-cut::backdrop{background:#020
   content:"";position:absolute;left:18%;right:22%;bottom:2px;height:14px;z-index:-1;
   background:radial-gradient(ellipse at center,#0006 0%,transparent 70%);
 }
+
+/* Native reel clips (assets/reel-native.js): the owner's own footage fills the frame. */
+#cinema-wrap .showreel-shell .montage-stream .montage-native{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  pointer-events:none;background:#04060a;
+}
+
+/* Colour grade before-after (assets/grade-compare.js) */
+.grade-compare{margin:22px 0 0}
+.grade-compare[hidden]{display:none!important}
+.grade-compare__title{margin:0 0 10px;font:600 15px/1.3 var(--font-text);color:var(--c-text)}
+.grade-compare__frame{
+  --pos:50%;position:relative;aspect-ratio:16/9;overflow:hidden;
+  border-radius:var(--r-2);border:1px solid #9ec0ff40;background:var(--c-steel);
+}
+.grade-compare__frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.grade-compare__before{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.grade-compare__handle{
+  position:absolute;top:0;bottom:0;left:var(--pos);width:2px;translate:-1px 0;background:#fff;
+  box-shadow:0 0 0 1px #0008;pointer-events:none;
+}
+.grade-compare__handle::after{
+  content:"";position:absolute;top:50%;left:50%;width:30px;height:30px;translate:-50% -50%;
+  border-radius:50%;background:#fff;box-shadow:0 4px 14px #0009;
+}
+.grade-compare__label{
+  position:absolute;top:10px;padding:4px 8px;border-radius:var(--r-1);
+  background:#04060acc;color:#fff;font:600 11px/1 var(--font-text);letter-spacing:.02em;pointer-events:none;
+}
+.grade-compare__label--before{left:10px}
+.grade-compare__label--after{right:10px}
+.grade-compare__range{
+  position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;
+  -webkit-appearance:none;appearance:none;background:transparent;
+}
+.grade-compare__range:focus-visible + *,.grade-compare__frame:focus-within{outline:2px solid var(--c-ice);outline-offset:3px}

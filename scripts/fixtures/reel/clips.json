@@ -1,0 +1,5 @@
+[
+  {"title":"Test clip one","category":"longform","youtube":"c7GCJP2GcEE","src":"scripts/fixtures/reel/clip-1.mp4","webm":"scripts/fixtures/reel/clip-1.webm","opening":true},
+  {"title":"Test clip two","category":"event","youtube":"c9wCgrjlUhk","src":"scripts/fixtures/reel/clip-2.mp4","webm":"scripts/fixtures/reel/clip-2.webm"},
+  {"title":"Test clip three","category":"motion","youtube":"kEtoqcHMs1c","src":"scripts/fixtures/reel/clip-3.mp4","webm":"scripts/fixtures/reel/clip-3.webm"}
+]

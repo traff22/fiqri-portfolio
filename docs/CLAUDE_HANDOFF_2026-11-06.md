@@ -390,3 +390,20 @@ After each future owner-approved iteration, append a dated entry here summarizin
 **Not done (on purpose):**
 - Reducing `!important` and merging stylesheets. That means untangling the cascade file by file, and should be its own project with the same parity harness.
 - Hidden legacy DOM (cinema atmosphere spans, portrait skills) is also left in place, because existing tests still assert on it.
+
+### 2026-11-06 (WIB): ideas #5 and #6, built as ready slots
+**Owner:** "Gas semua".
+
+Both items need the owner's own footage, which is not in the repo; YouTube is blocked in the sandbox, and clipping client films without his files is not appropriate. So the systems are built and tested, and they switch on as soon as he adds files:
+- **#5 native reel:**
+  - `assets/reel-native.js` reads `assets/reel/clips.json`, currently `[]`.
+  - With clips, Chapter One plays them as plain video (WebM preferred, MP4 fallback): no YouTube title, logo or play button.
+  - It keeps the clock, progress, Next and Pause, emits `fq:shot` with category and YouTube id for the blueprint and the voxel monitor, and honours an `opening` clip.
+  - `chapter-montage.js` waits for that decision; if every clip fails, `fq:reel-fallback` hands back to YouTube.
+- **#6 colour grade slider:**
+  - `assets/grade-compare.js` with `assets/grades/grades.json`, currently `{}`, inside the video dialog. `work-gallery.js` now sets `videoDialog.dataset.project`.
+  - Native range input; labels are configurable.
+- **Owner guides with export specs and ffmpeg commands:** `assets/reel/README.md` and `assets/grades/README.md`.
+- **QA:**
+  - New `scripts/media-slots-smoke.mjs` (in CI) uses synthetic fixtures (`scripts/fixtures/reel` ffmpeg colour clips, `scripts/fixtures/grades` derived from an event photo). It checks native mode (no iframe, no YouTube request, opening clip, Next, Pause/Play), the fallback to YouTube when clips fail, and the slider (listed project only, keyboard moves it).
+  - The parity harness shows the live page unchanged while both lists are empty. All suites pass locally.

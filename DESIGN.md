@@ -143,6 +143,12 @@ The opening titles play on the first open of a session (`assets/splash.css`, log
 - All are rendered from `tools/og.html` with the site's fonts (`tools/render-brand.mjs`). Re-render after a name, tagline or palette change.
 - `noindex` stays until the owner approves publishing.
 
+## Owner media slots (ready, waiting for footage)
+
+- **Native reel** (`assets/reel-native.js`, `assets/reel/clips.json`, spec in `assets/reel/README.md`). When the list has clips, Chapter One plays the owner's own 5 s excerpts as `<video>`, with no YouTube UI at all, the same Next / Pause / clock / blueprint sync and the voxel monitor link. It prefers WebM (VP9) with an MP4 fallback for Safari. An empty list, or every clip failing, leaves the YouTube montage in place.
+- **Colour grade before / after** (`assets/grade-compare.js`, `assets/grades/grades.json`, spec in `assets/grades/README.md`). A raw-vs-graded slider in a project's video dialog. It is a native range input, so mouse, touch and keyboard all work, and it appears only for listed projects.
+- Never fill these slots with stand-in or generated footage. Tests use synthetic fixtures in `scripts/fixtures/` only.
+
 ## Retired, do not bring back
 
 Particle backgrounds; the flat beige/copper "premium restraint" look; the boxed blueprint card; the boxed 2.5D room card (the SVG stays only as the no-WebGL fallback); iris/violet accents; "tap to flip" hints; uppercase, letter-spaced eyebrow labels on every section.

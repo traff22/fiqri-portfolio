@@ -1,0 +1,3 @@
+{
+  "cinematic-mancing": {"before":"scripts/fixtures/grades/raw.jpg","after":"scripts/fixtures/grades/graded.jpg","labels":["Log","Graded"]}
+}

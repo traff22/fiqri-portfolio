@@ -11,6 +11,8 @@ on:
       - "scripts/creators-lab-smoke.mjs"
       - "scripts/chapter-blueprint-smoke.mjs"
       - "scripts/design-system-smoke.mjs"
+      - "scripts/media-slots-smoke.mjs"
+      - "scripts/fixtures/**"
       - "scripts/easter-eggs-smoke.mjs"
       - "scripts/color-study-smoke.mjs"
       - "tools/prune-css.cjs"
@@ -43,6 +45,7 @@ jobs:
           node scripts/creators-lab-smoke.mjs
           node scripts/chapter-blueprint-smoke.mjs
           node scripts/design-system-smoke.mjs
+          node scripts/media-slots-smoke.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

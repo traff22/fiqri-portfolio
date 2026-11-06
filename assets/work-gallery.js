@@ -395,6 +395,7 @@ function openVideo(card,trigger){
  if(!videoDialog||!player)return;
  stopAllHoverPreviews();
  $("#video-dialog-title").textContent=card.dataset.title||"Video project";
+ videoDialog.dataset.project=card.dataset.project||""; // lets grade-compare.js find this project's frames
  const note=card.querySelector(":scope > p");
  $("#video-dialog-description").textContent=note?.textContent||"";
  const wrapper=$(".video-player-frame",videoDialog);

@@ -40,12 +40,13 @@ paint so there is no flash. ?daypart=day overrides it for review. */(function(){
 <script defer src="assets/chapter-one.js?v=1.6.1"></script>
 <script defer src="assets/living-motion.js"></script>
 <script defer src="assets/portrait-flip.js?v=1.0.0"></script>
-<script defer src="assets/work-gallery.js?v=1.8.0"></script><script defer src="assets/chapter-montage.js?v=1.10.0"></script>
+<script defer src="assets/work-gallery.js?v=1.9.0"></script><script defer src="assets/reel-native.js?v=1.0.0"></script><script defer src="assets/chapter-montage.js?v=1.11.0"></script>
 <script defer src="assets/easter-eggs.js?v=1.0.0"></script>
 <script defer src="assets/electric-cinema.js?v=3.0.0"></script>
 <script defer src="assets/creators-lab.js?v=3.2.0"></script>
 <script defer src="assets/chapter-blueprint.js?v=1.3.0"></script>
-<script defer src="assets/cameos.js?v=1.0.0"></script></head>
+<script defer src="assets/cameos.js?v=1.0.0"></script>
+<script defer src="assets/grade-compare.js?v=1.0.0"></script></head>
 <body id="top">
 <a class="skip" href="#main">Skip to main content</a><div id="progress" class="progress" aria-hidden="true"></div>
 <div id="intro" class="fq-splash" aria-label="Opening titles" hidden>
@@ -441,6 +442,17 @@ paint so there is no flash. ?daypart=day overrides it for review. */(function(){
     <div class="video-player-frame"><video id="video-player" controls playsinline preload="metadata" hidden></video>
     <iframe id="youtube-player" title="YouTube portfolio video" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen hidden></iframe>
     <div class="video-awaiting" id="video-awaiting"><span>Film preview</span><strong>Video coming soon.</strong><p>The player is ready for the final edit.</p></div></div>
+    <figure class="grade-compare" id="grade-compare" hidden>
+      <h3 class="grade-compare__title">Colour grade</h3>
+      <div class="grade-compare__frame">
+        <img class="grade-compare__after" alt="" width="1280" height="720" loading="lazy" decoding="async">
+        <img class="grade-compare__before" alt="" width="1280" height="720" loading="lazy" decoding="async">
+        <span class="grade-compare__label grade-compare__label--before" aria-hidden="true">Raw</span>
+        <span class="grade-compare__label grade-compare__label--after" aria-hidden="true">Graded</span>
+        <span class="grade-compare__handle" aria-hidden="true"></span>
+        <input class="grade-compare__range" type="range" min="0" max="100" value="50" aria-label="Slide to compare the raw frame with the graded frame">
+      </div>
+    </figure>
     <p class="video-dialog-description" id="video-dialog-description"></p>
     <a id="video-external-link" class="video-external-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Watch on YouTube ↗</a>
   </div>

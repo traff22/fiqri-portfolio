@@ -338,7 +338,19 @@ function initAPI(){
   }catch(_){stage.dataset.playback="unavailable";announce(null)}
  }
 }
+// Native clips (assets/reel-native.js) win when the owner has supplied them;
+// until that is known, the YouTube montage waits.
+let reelDecided=!window.fqReel,nativeMode=false,wantAPI=false,wantStart=false;
+window.fqReel?.ready.then(ok=>{
+ reelDecided=true;nativeMode=ok;
+ if(ok)return;
+ if(wantAPI)loadAPI();
+ if(wantStart)start();
+});
+window.addEventListener("fq:reel-fallback",()=>{nativeMode=false;reelDecided=true;stage.dataset.previewMode="original-video-embed";loadAPI();if(visible)start()});
 function loadAPI(){
+ if(!reelDecided){wantAPI=true;return}
+ if(nativeMode)return;
  if(apiLoading)return;
  apiLoading=true;
  if(window.YT?.Player){initAPI();return}
@@ -354,6 +366,8 @@ function loadAPI(){
  document.head.appendChild(script);
 }
 function start(){
+ if(!reelDecided){wantStart=true;return}
+ if(nativeMode)return;
  if(enabled||!visible||document.hidden)return;
  enabled=true;stage.dataset.playback="loading";
  if(apiReady){
@@ -374,10 +388,12 @@ function stop(){
  announce(null);
 }
 pauseButton?.addEventListener("click",e=>{
+ if(nativeMode)return;
  e.preventDefault();e.stopPropagation();
  setUserPaused(!userPaused);
 });
 skip.addEventListener("click",e=>{
+ if(nativeMode)return;
  e.preventDefault();e.stopPropagation();
  if(blocked){blocked=false;stage.dataset.playback="loading"}
  if(!enabled){visible=true;start()}
