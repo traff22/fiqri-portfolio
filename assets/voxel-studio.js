@@ -204,7 +204,31 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const leftScreen=glow(3.4,2.4,left.t),rightScreen=glow(3.4,2.4,right.t);
   leftScreen.position.set(8.25,6.125,1.505);rightScreen.position.set(12.25,6.125,1.505);
   scene.add(leftScreen,rightScreen);
-  tag(leftScreen,"edit");tag(rightScreen,"render");
+  tag(leftScreen,"edit");tag(rightScreen,"project");
+  // The PC tower is the render button now that the program monitor plays real work.
+  {const pc=new THREE.Mesh(new THREE.BoxGeometry(1.5,3,2.7),new THREE.MeshBasicMaterial({visible:false}));pc.position.set(13.875,1.4,1.75);scene.add(pc);tag(pc,"render")}
+
+  /* ---- the program monitor plays the same film as the showreel ---- */
+  // Listens to Chapter One (fq:shot carries the YouTube id). Until a shot has
+  // played, it cycles through the highlighted projects in Selected Work.
+  // Thumbnails load with CORS; if that is refused the painted feed stays.
+  const reel={id:null,img:null,next:0,clock:0};
+  const reelIds=[...document.querySelectorAll("#work .work-card.is-featured .work-media[data-youtube-id]")].map(m=>m.dataset.youtubeId).filter(Boolean);
+  let reelFromShowreel=false;
+  function loadShot(id){
+    if(!id||id===reel.id)return;
+    const img=new Image();img.crossOrigin="anonymous";img.decoding="async";
+    img.onload=()=>{reel.img=img;reel.id=id};
+    img.onerror=()=>{};
+    img.src="https://i.ytimg.com/vi/"+id+"/hqdefault.jpg";
+  }
+  document.getElementById("cinema-wrap")?.addEventListener("fq:shot",e=>{if(e.detail?.id){reelFromShowreel=true;loadShot(e.detail.id)}});
+  function openReelProject(){
+    const media=reel.id&&document.querySelector(`#work .work-media[data-youtube-id="${CSS.escape(reel.id)}"]`);
+    const trigger=media?.closest(".work-card")?.querySelector(".work-trigger");
+    if(trigger){trigger.click();return true}
+    return false;
+  }
 
   // Small emissive details.
   const ledMat=new THREE.MeshBasicMaterial({color:P.teal,toneMapped:false});
@@ -445,6 +469,8 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   let feedTime=0,playX=0;
   function paintScreens(dt){
     feedTime+=dt;
+    // no showreel shot yet: rotate through the highlighted projects every 5 s
+    if(!reelFromShowreel&&reelIds.length){reel.clock-=dt;if(reel.clock<=0){reel.clock=5;loadShot(reelIds[reel.next++%reelIds.length])}}
     // LEFT: editing timeline
     let g=left.ctx;
     g.fillStyle="#0c1230";g.fillRect(0,0,120,84);
@@ -477,6 +503,13 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
       g.fillStyle="#1a2252";g.fillRect(0,0,120,84);
       g.fillStyle="#9aa8ff";g.font="bold 10px monospace";g.fillText("BRB",48,44);
       g.fillStyle="#5fe0c8";g.fillRect(44,50,32,1);
+    }else if(reel.img){
+      // real project frame, centre-cropped from the 4:3 YouTube still, pixelated
+      g.imageSmoothingEnabled=false;
+      g.fillStyle="#04060a";g.fillRect(0,0,120,84);
+      g.drawImage(reel.img,0,45,480,270,6,6,108,62);
+      g.fillStyle="#04060acc";g.fillRect(6,58,14,10);g.fillStyle="#fff";g.beginPath();g.moveTo(10,60);g.lineTo(16,63);g.lineTo(10,66);g.fill();
+      g.fillStyle="#141b40";g.fillRect(6,72,108,6);g.fillStyle="#9fc6fa";g.fillRect(6,72,Math.round(108*((feedTime%5)/5)),6);
     }else{
       const hue=(Math.floor(feedTime/3)%4);
       const sky=[["#2b3a8a","#8a7fe0"],["#16304a","#4fb3a5"],["#3a2b6a","#d98a9a"],["#1e2b66","#7aa2ff"]][hue];
@@ -530,7 +563,11 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const end=e=>{
     if(!dragging)return;dragging=false;
     const moved=Math.hypot(e.clientX-downX,e.clientY-downY);
-    if(moved<6&&performance.now()-downAt<500){const action=pick(e);if(action)trigger(action)}
+    if(moved<6&&performance.now()-downAt<500){
+      const action=pick(e);
+      if(action==="project"){if(!openReelProject())trigger("edit")}
+      else if(action)trigger(action);
+    }
   };
   canvas.addEventListener("pointerup",end);
   canvas.addEventListener("pointercancel",()=>{dragging=false});
@@ -610,6 +647,42 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     // Visitor pause (R-39): freezes the routine, the camera drift and the REC light.
     setPaused(on){userPaused=Boolean(on);setRunning(!userPaused&&inView&&!document.hidden);if(userPaused)renderer.render(scene,camera)},
     get paused(){return userPaused},
+    // Cameo stills for other sections (rendered once by tools/render-cameos.mjs,
+    // never at runtime on the page): Fiqri alone on a transparent ground.
+    cameo(pose,frame=0){
+      setRunning(false);job=null;typing=walking=sipping=false;
+      scene.children.forEach(o=>{if(!o.isLight&&o!==sun.target)o.visible=o===fiqri||(pose==="sleep"&&o===chair)||(pose==="coffee"&&o===mugGroup)});
+      [armL,armR,legL,legR,head,torso].forEach(p=>{p.overlay.rotation.set(0,0,0);p.overlay.position.set(0,0,0)});
+      fiqri.position.set(10,0,8);fiqri.rotation.set(0,0,0);
+      head.pivot.rotation.set(0,0,0);torso.pivot.rotation.set(0,0,0);
+      armL.pivot.rotation.set(0,0,.06);armR.pivot.rotation.set(0,0,-.06);
+      legL.pivot.rotation.set(0,0,0);legR.pivot.rotation.set(0,0,0);hips.position.y=2;
+      el=.2;az=HOME_AZ; // a lower, friendlier camera than the room's: face first, not the crown
+      const face=az; // turn to the camera
+      if(pose==="wave"){
+        fiqri.rotation.y=face;
+        armR.pivot.rotation.set(0,0,frame%2?2.65:2.2); // raised out to the side
+        head.pivot.rotation.set(0,0,frame%2?-.1:-.04);
+      }else if(pose==="coffee"){
+        fiqri.rotation.y=face;
+        armR.overlay.add(mugGroup);mugGroup.position.set(0,-2.95,0);mugGroup.visible=true;
+        armR.pivot.rotation.set(frame%2?-2.15:-1.2,0,frame%2?.3:.12);
+        mugGroup.rotation.set(-(armR.pivot.rotation.x),0,-armR.pivot.rotation.z);
+        head.pivot.rotation.set(frame%2?-.18:0,0,0);
+      }else if(pose==="sleep"){
+        chair.position.set(10,0,8);chair.rotation.y=face-Math.PI;
+        fiqri.rotation.y=face;fiqri.position.set(10,0,8);
+        hips.position.y=2.25;legL.pivot.rotation.x=legR.pivot.rotation.x=-Math.PI/2;
+        torso.pivot.rotation.x=.06;head.pivot.rotation.set(.22,0,frame%2?.46:.38); // dozing, head on one side
+        armL.pivot.rotation.set(-1.2,0,.85);armR.pivot.rotation.set(-1.2,0,-.85);
+      }
+      // frame the figure: target its middle, tight orthographic view
+      target.set(10,pose==="sleep"?3.4:4.1,8);
+      const w=host.clientWidth||1,h=host.clientHeight||1,aspect=w/h,size=pose==="sleep"?4.4:5.2;
+      camera.left=-size*aspect;camera.right=size*aspect;camera.top=size;camera.bottom=-size;camera.updateProjectionMatrix();
+      sun.shadow.camera.updateProjectionMatrix();
+      placeCamera();renderer.setClearColor(0x000000,0);renderer.render(scene,camera);
+    },
     // Fast-forward the choreography (used by the browser smoke test).
     advance(sec){for(let t=0;t<sec;t+=.05){if(job){const r=job.next(.05);if(r.done)job=null}}placeCamera();renderer.render(scene,camera)},
     get mode(){return mood},

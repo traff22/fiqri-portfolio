@@ -50,6 +50,20 @@ try{
     assert(dose.glass.length<=2,name+": glassmorphism on "+dose.glass.length+" elements "+JSON.stringify(dose.glass));
     assert(dose.glow.filter(c=>!/cinema-frame/.test(c)).length===0,name+": coloured glow outside the showreel frame "+JSON.stringify(dose.glow));
 
+    // Mini Fiqri cameo in Contact: loaded, and never on top of the text or links.
+    await page.locator("#contact").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    const cameo=await page.evaluate(()=>{
+      // measure the painted text/controls, not full-width block boxes
+      const img=document.querySelector(".fq-cameo--contact img");
+      const box=e=>{if(e===img||/whatsapp|linkedin/.test(e.className))return e.getBoundingClientRect();const r=document.createRange();r.selectNodeContents(e);return r.getBoundingClientRect()};
+      const c=box(img),hit=[...document.querySelectorAll("#contact h2,#contact .section-lead,#contact .mail,#contact .whatsapp-contact,#contact .linkedin-contact")]
+        .filter(e=>{const b=box(e);return Math.max(0,Math.min(c.right,b.right)-Math.max(c.left,b.left))*Math.max(0,Math.min(c.bottom,b.bottom)-Math.max(c.top,b.top))>40}).map(e=>e.className||e.tagName);
+      return {loaded:img.complete&&img.naturalWidth>0,hit,fin:!!document.querySelector(".fq-cameo--fin")};
+    });
+    assert(cameo.loaded&&cameo.fin,name+": cameo images missing "+JSON.stringify(cameo));
+    assert(!cameo.hit.length,name+": cameo covers contact content "+JSON.stringify(cameo.hit));
+
     // Portrait back: one line only (owner, K6).
     const back=await page.evaluate(()=>[...document.querySelector(".portrait-card__face--back").querySelectorAll("p,span,div")].map(e=>e.textContent.trim()).filter(Boolean));
     assert(back.length===1&&back[0]==="Just a person who loves the art of life.",name+": portrait back is not the single owner line "+JSON.stringify(back));
@@ -148,6 +162,23 @@ try{
     assert(!await calm.evaluate(()=>document.documentElement.classList.contains("fq-splash-on")),"splash: shown despite reduced motion");
     await calm.close();
     console.log("SPLASH_PASS");
+  }
+  // Share card + icons are referenced and served; noindex stays until the owner says so.
+  {
+    const page=await browser.newPage();
+    await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
+    const meta=await page.evaluate(()=>({og:document.querySelector('meta[property="og:image"]')?.content,card:document.querySelector('meta[name="twitter:card"]')?.content,icons:[...document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]')].map(l=>l.getAttribute("href")),robots:document.querySelector('meta[name="robots"]')?.content}));
+    assert(meta.og==="https://fiqriapriandi.art/assets/og-card.jpg"&&meta.card==="summary_large_image","share card meta missing "+JSON.stringify(meta));
+    assert(meta.robots==="noindex, nofollow","robots meta changed without owner approval");
+    for(const path of ["assets/og-card.jpg",...meta.icons]){
+      const res=await page.request.get("http://127.0.0.1:4173/"+path);
+      assert(res.ok(),"asset not served: "+path);
+    }
+    // Night swaps the footer cameo to Fiqri asleep in his chair.
+    await page.goto("http://127.0.0.1:4173/?daypart=night",{waitUntil:"load"});
+    assert(await page.evaluate(()=>document.querySelector(".fq-cameo--fin").dataset.cameo)==="sleep","night footer cameo is not asleep");
+    await page.close();
+    console.log("BRAND_PASS");
   }
   // The mood follows the clock: night and day differ in ground colour.
   const grounds={};

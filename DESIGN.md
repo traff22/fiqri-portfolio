@@ -125,6 +125,24 @@ The opening titles play on the first open of a session (`assets/splash.css`, log
 - CTAs name the action: "See selected work", "Watch the showreel", "Start a project".
 - The owner's own lines are voice samples and stay as written: "Just a person who loves the art of life." (portrait back, alone, small, bottom-left corner) and "I make stories worth feeling."
 
+## Mini Fiqri beyond the room
+
+- **The program monitor plays the real work.**
+  - The right-hand monitor in the voxel room shows the film Chapter One last played (the `fq:shot` event now carries the YouTube id). Until then it cycles through the Selected Work highlights.
+  - Frames are the project thumbnails, pixelated to match the voxels and loaded with CORS. If the CDN refuses, the painted feed stays.
+  - Clicking that monitor opens the project. The PC tower is now the in-scene Render button.
+- **Cameos.** Stills rendered once from the same voxel model (`tools/render-cameos.mjs` + `tools/cameo.html`, output `assets/cameos/*.webp`, about 40 KB total). No second WebGL scene runs.
+  - **Contact:** Fiqri stands in the empty right side (top-right on phones). He waves when you arrive and again when you reach for email, WhatsApp or LinkedIn.
+  - **Last frame (footer):** at night he dozes in his chair; otherwise he takes one sip of coffee.
+  - Every flip is finite (no loops). Reduced motion keeps the first frame.
+
+## Share card and icons
+
+- `assets/og-card.jpg` (1200×630): the title card (condensed name, Newsreader "stories worth feeling.", timeline with IN and OUT, the real portrait).
+- Icons: `favicon-32.png`, `icon-192.png`, `apple-touch-icon.png` ("FQ." with the cobalt dot).
+- All are rendered from `tools/og.html` with the site's fonts (`tools/render-brand.mjs`). Re-render after a name, tagline or palette change.
+- `noindex` stays until the owner approves publishing.
+
 ## Retired, do not bring back
 
 Particle backgrounds; the flat beige/copper "premium restraint" look; the boxed blueprint card; the boxed 2.5D room card (the SVG stays only as the no-WebGL fallback); iris/violet accents; "tap to flip" hints; uppercase, letter-spaced eyebrow labels on every section.

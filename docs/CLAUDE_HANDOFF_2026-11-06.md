@@ -354,3 +354,18 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - **YouTube UI, honest limit:** the player already uses `controls:0`, `rel:0` and `iv_load_policy:3`, and pointer events are off, so hover does not show the title. YouTube still shows the title and channel briefly when a clip starts. YouTube's policies do not allow covering or cropping player elements, so we do not mask them. The clean fix is **native clips**: the owner exports short silent MP4/WebM teasers (about 5 s each, 720p) of his own films, and they replace the embeds in Chapter One. Not built yet; waiting for the owner's clips.
 - **WhatsApp:** the hand-drawn icon was replaced with the official glyph (Simple Icons, CC0), locked square at 26×26.
 - **CI:** the run for `1b486d7` was cancelled, not failed. Installing apt and Chromium took 8m48s and hit the 10-minute job limit about 1.4 minutes into the tests. `timeout-minutes` was raised to 25. Tight waits in `design-system-smoke.mjs` were also loosened for slower runners.
+
+### 2026-11-06 (WIB): ideas round, items 1, 2 and 10
+**Owner:** asked for ideas to make the site better (illustration included), then "Gass i'll tryna believe u", which accepted the recommended order 1 + 2, then 10. Item 11 (CSS consolidation) is deliberately kept for its own session with screenshot parity.
+
+- **#1 Monitor plays real work:**
+  - `chapter-montage.js` `fq:shot` now carries `{id,title}`.
+  - The voxel program monitor shows that film's thumbnail (pixelated, CORS) or cycles through the highlights. Clicking it opens the project; the PC tower is the in-scene Render.
+  - Verified with the thumbnail CDN stubbed by a local image carrying CORS headers: no canvas security errors.
+- **#2 Cameos:**
+  - Mini Fiqri stills come from the voxel model (`api.cameo(pose,frame)`, `tools/render-cameos.mjs`). The cameo camera is lower than the room's so the face reads.
+  - Contact: a wave, played when you arrive and when you reach for a contact link. Footer: asleep at night, otherwise a coffee sip. Finite flips; reduced motion keeps the first frame.
+- **#10 Share card + icons:**
+  - `og-card.jpg`, favicons and the apple-touch icon, rendered from `tools/og.html`.
+  - OG/Twitter meta (`summary_large_image`); theme-color `#04060a`. `noindex` untouched.
+- **QA:** `design-system-smoke.mjs` adds cameo (loaded, no overlap with painted contact text/controls), share card and icon serving, the robots guard and the night footer pose. All suites pass locally.

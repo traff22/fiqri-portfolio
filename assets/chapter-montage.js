@@ -75,10 +75,11 @@ let userPaused=false; // the visitor pressed Pause (R-39: no endless motion with
 function safe(fn){try{return fn()}catch(_){return undefined}}
 // Tell the Chapter One blueprint which kind of film is on screen
 // (motion | longform | event), or that no real footage is playing.
-function announce(category){
+function announce(category,item){
  if(category)scene.dataset.activeCategory=category;
  else delete scene.dataset.activeCategory;
- scene.dispatchEvent(new CustomEvent("fq:shot",{detail:{category:category||null}}));
+ // id/title let other scenes (the voxel room's monitor) show the same film.
+ scene.dispatchEvent(new CustomEvent("fq:shot",{detail:{category:category||null,id:item?.id||null,title:item?.title||null}}));
 }
 function clearTime(){
  clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);clearTimeout(fadeTimer);
@@ -171,7 +172,7 @@ function show(index,req){
  shell.classList.add("is-playing");
  if(skipText)skipText.textContent="Next";
  title.textContent=req.item.title;
- announce(req.item.category);
+ announce(req.item.category,req.item);
  panels[index].dataset.format=req.item.format;
  panels[index].classList.add("is-current");
  if(previous>=0&&previous!==index){

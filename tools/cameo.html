@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en" data-daypart="day"><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<title>Cameo renderer</title>
+<!-- Renders the mini Fiqri stills used in Contact and the footer.
+     Run: python3 -m http.server 4173 & node tools/render-cameos.mjs -->
+<style>html,body{margin:0;background:transparent}#host{width:640px;height:640px}</style></head>
+<body><div id="host"></div>
+<script type="module">
+import {mountVoxelStudio} from "../assets/voxel-studio.js";
+window.__cameo=mountVoxelStudio(document.getElementById("host"),{reducedMotion:{matches:true}});
+window.__ready=true;
+</script></body></html>
