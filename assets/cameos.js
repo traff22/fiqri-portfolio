@@ -4,8 +4,7 @@
  * frames; nothing loops, and reduced motion keeps the first frame. */
 (()=>{"use strict";
   const reduced=matchMedia("(prefers-reduced-motion: reduce)");
-  const night=document.documentElement.dataset.daypart==="night";
-  const frames={wave:["assets/cameos/wave-0.webp","assets/cameos/wave-1.webp"],coffee:["assets/cameos/coffee-0.webp","assets/cameos/coffee-1.webp"],sleep:["assets/cameos/sleep-0.webp","assets/cameos/sleep-1.webp"]};
+  const frames={wave:["assets/cameos/wave-0.webp","assets/cameos/wave-1.webp"]};
   // flip between two frames `times` times, then rest on the first
   function play(img,set,times,step){
     if(reduced.matches||img.dataset.playing)return;
@@ -25,13 +24,5 @@
     document.querySelectorAll("#contact .mail,#contact .whatsapp-contact,#contact .linkedin-contact").forEach(link=>{
       ["pointerenter","focus"].forEach(type=>link.addEventListener(type,()=>play(wave,"wave",2,200)));
     });
-  }
-  // Last frame: dozing in his chair at night, otherwise one sip of coffee.
-  const fin=document.querySelector('.fq-cameo--fin');
-  if(fin){
-    const set=night?"sleep":"coffee";
-    fin.src=frames[set][0];fin.dataset.cameo=set;
-    if(night){fin.width=305;fin.height=561}
-    once(fin,()=>play(fin,set,1,night?1400:900));
   }
 })();

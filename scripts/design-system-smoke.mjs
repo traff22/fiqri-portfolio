@@ -59,9 +59,9 @@ try{
       const box=e=>{if(e===img||/whatsapp|linkedin/.test(e.className))return e.getBoundingClientRect();const r=document.createRange();r.selectNodeContents(e);return r.getBoundingClientRect()};
       const c=box(img),hit=[...document.querySelectorAll("#contact h2,#contact .section-lead,#contact .mail,#contact .whatsapp-contact,#contact .linkedin-contact")]
         .filter(e=>{const b=box(e);return Math.max(0,Math.min(c.right,b.right)-Math.max(c.left,b.left))*Math.max(0,Math.min(c.bottom,b.bottom)-Math.max(c.top,b.top))>40}).map(e=>e.className||e.tagName);
-      return {loaded:img.complete&&img.naturalWidth>0,hit,fin:!!document.querySelector(".fq-cameo--fin")};
+      return {loaded:img.complete&&img.naturalWidth>0,hit,fin:!document.querySelector(".footer-final-note img")};
     });
-    assert(cameo.loaded&&cameo.fin,name+": cameo images missing "+JSON.stringify(cameo));
+    assert(cameo.loaded&&cameo.fin,name+": cameo missing or footer voxel back "+JSON.stringify(cameo));
     assert(!cameo.hit.length,name+": cameo covers contact content "+JSON.stringify(cameo.hit));
 
     // Portrait back: one line only (owner, K6).
@@ -174,9 +174,6 @@ try{
       const res=await page.request.get("http://127.0.0.1:4173/"+path);
       assert(res.ok(),"asset not served: "+path);
     }
-    // Night swaps the footer cameo to Fiqri asleep in his chair.
-    await page.goto("http://127.0.0.1:4173/?daypart=night",{waitUntil:"load"});
-    assert(await page.evaluate(()=>document.querySelector(".fq-cameo--fin").dataset.cameo)==="sleep","night footer cameo is not asleep");
     await page.close();
     console.log("BRAND_PASS");
   }

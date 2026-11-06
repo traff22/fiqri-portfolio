@@ -12,6 +12,7 @@ on:
       - "scripts/chapter-blueprint-smoke.mjs"
       - "scripts/design-system-smoke.mjs"
       - "scripts/media-slots-smoke.mjs"
+      - "scripts/section-cuts-smoke.mjs"
       - "scripts/fixtures/**"
       - "scripts/easter-eggs-smoke.mjs"
       - "scripts/color-study-smoke.mjs"
@@ -46,6 +47,7 @@ jobs:
           node scripts/chapter-blueprint-smoke.mjs
           node scripts/design-system-smoke.mjs
           node scripts/media-slots-smoke.mjs
+          node scripts/section-cuts-smoke.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

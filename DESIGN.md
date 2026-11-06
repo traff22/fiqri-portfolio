@@ -131,10 +131,19 @@ The opening titles play on the first open of a session (`assets/splash.css`, log
   - The right-hand monitor in the voxel room shows the film Chapter One last played (the `fq:shot` event now carries the YouTube id). Until then it cycles through the Selected Work highlights.
   - Frames are the project thumbnails, pixelated to match the voxels and loaded with CORS. If the CDN refuses, the painted feed stays.
   - Clicking that monitor opens the project. The PC tower is now the in-scene Render button.
-- **Cameos.** Stills rendered once from the same voxel model (`tools/render-cameos.mjs` + `tools/cameo.html`, output `assets/cameos/*.webp`, about 40 KB total). No second WebGL scene runs.
+- **Cameo.** Stills rendered once from the same voxel model (`tools/render-cameos.mjs` + `tools/cameo.html`, output `assets/cameos/wave-*.webp`). No second WebGL scene runs.
   - **Contact:** Fiqri stands in the empty right side (top-right on phones). He waves when you arrive and again when you reach for email, WhatsApp or LinkedIn.
-  - **Last frame (footer):** at night he dozes in his chair; otherwise he takes one sip of coffee.
+  - The footer "last frame" note has **no cameo**: the owner found the small voxel there ugly (2026-11-06). Keep it text only.
   - Every flip is finite (no loops). Reduced motion keeps the first frame.
+
+## Section cuts (between every chapter)
+
+Chapters are separated the way a screenplay separates scenes, not by flat rules (`assets/section-cuts.css/.js`, test `scripts/section-cuts-smoke.mjs`).
+- **The slug.** A right-aligned transition in a typewriter face, as in a script: `CUT TO: THE REEL`, `MATCH CUT TO: SELECTED WORK`, `DISSOLVE TO: THE CRAFT`, `SMASH CUT TO: THE EDIT BAY`, `FADE TO: YOUR STORY`. The footer's `FIN.` closes the script.
+- **The strip.** A strip of film (sprocket holes, dark base) lies across the seam at about 2 degrees, alternating direction. Its frames are real Selected Work thumbnails (`mqdefault`, loaded only when the cut is within 800px). A cobalt playhead stays put while the frames run under it; frames fade toward the edges.
+- **Parallax.** Three speeds: the frames run sideways with scroll (SMASH faster, DISSOLVE slower), the slug and the timecode drift in opposite directions, and the timecode counts (chapter number as the hour).
+- **No seam shows.** A cut takes no height; it sits on the seam so the two grounds meet under the strip (this is what hides the edge of the blue Contact). Neighbouring sections get the room as padding. Chapter One is a pinned scene, so it gets no extra padding; cut 1 sits a little higher and cut 2 starts where the scene ends.
+- Reduced motion: everything still. Decorative only (`aria-hidden`, no pointer events).
 
 ## Share card and icons
 

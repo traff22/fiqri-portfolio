@@ -407,3 +407,13 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 - **QA:**
   - New `scripts/media-slots-smoke.mjs` (in CI) uses synthetic fixtures (`scripts/fixtures/reel` ffmpeg colour clips, `scripts/fixtures/grades` derived from an event photo). It checks native mode (no iframe, no YouTube request, opening clip, Next, Pause/Play), the fallback to YouTube when clips fail, and the slider (listed project only, keyboard moves it).
   - The parity harness shows the live page unchanged while both lists are empty. All suites pass locally.
+
+### 2026-11-06 (WIB): footer cameo removed, screenplay section cuts
+**Owner:** "Yang terakhir you made it to the last frame nggak usah ada voxel jelek, dan yang gw pengen tuh kek setiap section dibagi sama sesuatu yang nggak garis flat doang ada kesan apa yang sesuai dan paralax gitu setiap di scroll yang baguss research".
+- **Footer cameo removed.** The "You made it to the last frame" note is text only again. The fin logic and the coffee/sleep frames are gone from `assets/cameos.js` and `assets/cameos/`; `tools/render-cameos.mjs` renders only the wave. `design-system-smoke.mjs` now asserts the footer has no voxel image (the night-pose check is dropped). Do not put a cameo back there.
+- **Section cuts.** Research (scroll-driven filmstrip / parallax showreel patterns; scroll parallax kept small, reduced motion honoured) led to a divider that is about editing, not decoration: screenplay transitions plus a strip of the real work. See DESIGN.md "Section cuts" for the rules.
+  - Files: `assets/section-cuts.css` (loaded before `splash.css`), `assets/section-cuts.js` (rAF on scroll, only for cuts in view), five `.fq-cut` blocks in `index.html` (cut 3 sits before the closed project dialogs, hence the `.fq-cut ~ dialog + section` rule).
+  - Removed the 1px border-top on sections after a cut: those were the flat lines the owner disliked.
+  - Chapter One is pinned and its tests measure scroll span, so `#cinema-wrap` keeps zero padding; cut 1 is lifted 32px, cut 2 starts at the scene's end.
+- **QA:** new `scripts/section-cuts-smoke.mjs` (in CI): five cuts in chapter order, a slug each, strips filled, strip moves with scroll (still under reduced motion), no heading/text/control under the strip, no horizontal scroll, at 1440, 390, 320 and reduced motion. All other suites pass locally (ui-smoke with the YouTube mock), and `prune-css --check` is clean. Local screenshots use a stand-in image because the sandbox blocks `i.ytimg.com`; live, the strips show the real thumbnails.
+
