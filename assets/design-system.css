@@ -1,7 +1,46 @@
 /* FQ / DESIGN SYSTEM (loads last) — see DESIGN.md for the reasons.
+
    Palette: blue-black. Three core colours (ink, night, steel) and ONE accent
    (cobalt). The old iris / violet tints are retired (owner, 2026-11-06).
    Mood follows the visitor's clock via html[data-daypart]. */
+
+/* ---------- type (audit #9) ----------
+   Archivo (Omnibus-Type, OFL), one variable family for everything. Its
+   condensed widths come from the grotesque of film posters and end credits,
+   so the big chapter headlines read like title cards; at normal width it is
+   an even, readable text face. Newsreader Italic (Production Type, OFL) is
+   the one human, editorial note: "worth feeling." Both are self-hosted. */
+@font-face{
+  font-family:"Archivo";font-style:normal;font-display:swap;
+  font-weight:100 900;font-stretch:62% 125%;
+  src:url("fonts/archivo-latin-wdth-normal.woff2") format("woff2-variations"),url("fonts/archivo-latin-wdth-normal.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Archivo";font-style:normal;font-display:swap;
+  font-weight:100 900;font-stretch:62% 125%;
+  src:url("fonts/archivo-latin-ext-wdth-normal.woff2") format("woff2-variations"),url("fonts/archivo-latin-ext-wdth-normal.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:"Newsreader";font-style:italic;font-weight:400;font-display:swap;
+  src:url("fonts/newsreader-latin-400-italic.woff2") format("woff2");
+}
+:root{--font-text:"Archivo",system-ui,sans-serif;--font-accent:"Newsreader","Times New Roman",serif}
+body{font-family:var(--font-text)}
+/* Title-card headlines: condensed, heavy, tracked just slightly tight. */
+.hero h1,.section h2,#cinema-wrap .cinema-copy h2,#contact.contact h2,.intro h2,.directors-cut__title{
+  font-family:var(--font-text)!important;font-stretch:72%!important;font-weight:700!important;
+  letter-spacing:-.018em!important;
+}
+.hero h1{line-height:.92!important}
+.section h2,#contact.contact h2{line-height:.98!important}
+/* The italic accent stays a serif at normal width. */
+.hero h1 em,.hero h1 em *{font-family:var(--font-accent)!important;font-style:italic!important;font-weight:400!important;font-stretch:100%!important;letter-spacing:-.01em!important}
+.craft h3,.work-titleline h3{font-stretch:88%;letter-spacing:-.01em!important}
+/* Condensed letters are narrower, so phones get a larger hero size. */
+@media(max-width:620px){.hero h1{font-size:clamp(58px,17.5vw,84px)!important}}
+
 
 :root{
   --c-ink:#04060a;          /* page ground: near-black with a blue cast */
@@ -118,7 +157,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 /* ---------- labels: one chapter system, no shouting ---------- */
 .chapter-mark{
   text-transform:none!important;letter-spacing:.01em!important;
-  font:600 14px/1.4 "Space Grotesk",sans-serif!important;
+  font:600 14px/1.4 "Archivo",sans-serif!important;
 }
 .hero-top{justify-content:flex-end}
 .hero-top .available{text-transform:none!important;letter-spacing:.01em!important;font-size:13px!important;color:#cfdcf0!important}
@@ -146,7 +185,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 }
 #cinema-wrap .montage-pause span{
   display:inline-block;padding:5px 10px;border:1px solid #9ec0ff66;
-  font:600 11px/1 "Space Grotesk",sans-serif;letter-spacing:.02em;background:#0b1730;
+  font:600 11px/1 "Archivo",sans-serif;letter-spacing:.02em;background:#0b1730;
 }
 #cinema-wrap .montage-pause[aria-pressed="true"] span{background:var(--c-blue);border-color:var(--c-blue)}
 #cinema-wrap .montage-actions{gap:4px!important;align-items:center}
@@ -168,7 +207,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 .portrait-card__face--back::before,.portrait-card__face--back::after{content:none!important;display:none!important}
 .portrait-card__back-line{
   position:absolute;left:24px;bottom:22px;right:40%;margin:0;
-  font:500 13px/1.5 "DM Sans",sans-serif;color:#c3cfdf;letter-spacing:0;
+  font:500 13px/1.5 "Archivo",sans-serif;color:#c3cfdf;letter-spacing:0;
 }
 
 /* ---------- What I do: evidence, not three identical cards (R-14) ---------- */
@@ -178,7 +217,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 }
 .craft{border-top:1px solid var(--c-line);padding-top:22px;display:grid;gap:16px;align-content:start}
 .craft--lead{grid-row:span 2;gap:22px}
-.craft h3{margin:0 0 8px;font:600 clamp(22px,2.2vw,30px)/1.15 "Space Grotesk",sans-serif;letter-spacing:-.03em;color:var(--c-text)}
+.craft h3{margin:0 0 8px;font:600 clamp(22px,2.2vw,30px)/1.15 "Archivo",sans-serif;letter-spacing:-.03em;color:var(--c-text)}
 .craft--lead h3{font-size:clamp(28px,3.2vw,44px)}
 .craft p{margin:0;max-width:52ch;color:#b6c2d4;font-size:15px;line-height:1.65}
 .craft__work{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
@@ -199,7 +238,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--c-ice)!important;ou
 }
 .craft__clip:hover .craft__frame img,.craft__clip:focus-visible .craft__frame img{transform:scale(1.03)}
 .craft__clip:hover .craft__frame{border-color:#9ec0ff80}
-.craft__name{font:600 14px/1.35 "Space Grotesk",sans-serif;color:var(--c-text);margin-top:6px}
+.craft__name{font:600 14px/1.35 "Archivo",sans-serif;color:var(--c-text);margin-top:6px}
 .craft__kind{font-size:13px;color:var(--c-muted)}
 .expertise .skills{display:none!important}
 @media(max-width:900px){

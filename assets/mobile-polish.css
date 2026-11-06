@@ -32,7 +32,7 @@
     display: inline-flex; max-width: 100%; min-height: 32px;
     padding: 7px 10px; border: 1px solid #7aafe45c;
     border-radius: 999px; background: #12253b9c;
-    font: 600 10px/1.35 "Space Grotesk",sans-serif;
+    font: 600 10px/1.35 "Archivo",sans-serif;
     letter-spacing: .055em; white-space: normal;
   }
   .hero-top .dot { flex: 0 0 7px; height: 7px; width: 7px; }

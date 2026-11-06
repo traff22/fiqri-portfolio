@@ -59,7 +59,7 @@
 #cinema-wrap .showreel-shell .montage-title{
   display:block!important;
   max-width:75%;
-  font:650 clamp(18px,2.4vw,33px)/1.12 "Space Grotesk",sans-serif!important;
+  font:650 clamp(18px,2.4vw,33px)/1.12 "Archivo",sans-serif!important;
   letter-spacing:-.05em!important;
   text-shadow:0 2px 15px #000c;
   margin:0;padding:0;min-height:1.15em;
@@ -67,7 +67,7 @@
 #cinema-wrap .showreel-shell .montage-timestamp{
   flex:none;
   color:#d3e6ff;
-  font:600 clamp(9px,.77vw,12px)/1.2 "Space Grotesk",sans-serif!important;
+  font:600 clamp(9px,.77vw,12px)/1.2 "Archivo",sans-serif!important;
   letter-spacing:.06em;
   text-shadow:0 2px 12px #000;
   font-variant-numeric:tabular-nums;
@@ -102,7 +102,7 @@
   color:#eaf5ff;
   background:#091a32b6;
   border:1px solid #aacffb5c;border-radius:999px;
-  font:600 11px/1.2 "Space Grotesk",sans-serif;
+  font:600 11px/1.2 "Archivo",sans-serif;
   letter-spacing:0!important;text-shadow:none;
   opacity:0;transform:translateY(5px);
   transition:opacity .18s,transform .18s;
@@ -371,7 +371,7 @@
  overflow:hidden!important;
  text-overflow:ellipsis!important;
  padding:0!important;margin:0!important;
- font:650 clamp(14px,1.25vw,19px)/1.15 "Space Grotesk",sans-serif!important;
+ font:650 clamp(14px,1.25vw,19px)/1.15 "Archivo",sans-serif!important;
  letter-spacing:-.027em!important;
  color:#f7fbff!important;
  text-shadow:none!important;
@@ -383,7 +383,7 @@
  gap:12px!important;
 }
 #cinema-wrap .showreel-shell > .montage-overlay .montage-timestamp{
- font:600 10px/1.2 "Space Grotesk",sans-serif!important;
+ font:600 10px/1.2 "Archivo",sans-serif!important;
  color:#bdd6f2!important;
  letter-spacing:.045em!important;
  text-shadow:none!important;
@@ -410,7 +410,7 @@
  transform:none!important;
  margin:0!important;
  padding:7px 10px!important;
- font:600 10px/1.1 "Space Grotesk",sans-serif!important;
+ font:600 10px/1.1 "Archivo",sans-serif!important;
  letter-spacing:0!important;
  border-radius:999px!important;
  background:#5d99da16!important;

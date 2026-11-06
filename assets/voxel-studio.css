@@ -39,7 +39,7 @@
   border-radius:999px!important;
   border:1px solid #93a8ff4d!important;
   background:#0f1838a6!important;color:#d9e3ff!important;
-  font:600 11px/1 "Space Grotesk",sans-serif!important;letter-spacing:.06em;
+  font:600 11px/1 "Archivo",sans-serif!important;letter-spacing:.06em;
   transition:background .25s,border-color .25s,color .25s;
 }
 #about .fq-studio__button:hover{border-color:#c4d1ff!important;background:#1c2a5ccc!important}

@@ -41,13 +41,15 @@ The iris/violet palette is retired, as are copper and beige from earlier phases.
 
 It stays one identity. Daypart changes the light, not the brand.
 
-## Typography
+## Typography (owner decision 2026-11-06, audit #9)
 
-- **Display:** Space Grotesk. Tight negative tracking for the big chapter headlines.
-- **Body:** DM Sans.
-- **Accent:** the italic "worth feeling." in the hero.
-
-Open decision (audit item #9, not yet chosen by the owner): Space Grotesk is a common AI default, and the hero italic currently falls back to Georgia instead of a loaded serif. Decide whether to keep both with a written reason, or pick a display face and an italic serif with editorial character.
+- **Archivo** (Omnibus-Type, OFL), one variable family with weight 100–900 and width 62–125%, used for everything.
+  - Headlines are set **condensed (72%), bold, slightly tight**. Condensed grotesques are the voice of film posters and end credits, so the chapter headlines read like title cards.
+  - Body and UI use normal width, where Archivo is an even, readable text face.
+  - One family keeps the system consistent and the payload small.
+- **Newsreader Italic** (Production Type, OFL) is used only for the hero accent "worth feeling.". It is an editorial serif drawn for screens: the single human, handwritten-feeling note against the hard title cards.
+- Both are **self-hosted** in `assets/fonts/` and declared in `assets/design-system.css`, with the main Archivo file preloaded. The Google Fonts `@import` (a render-blocking third-party request) is gone.
+- Retired: Space Grotesk (a common AI-default display face), DM Sans, and the accidental Georgia fallback.
 
 ## Shape
 

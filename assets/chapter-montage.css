@@ -102,18 +102,18 @@
   text-shadow:0 4px 18px #000b;
 }
 #cinema-wrap .montage-credit__number{
- font:700 clamp(8px,.7vw,11px)/1.2 "Space Grotesk",sans-serif;
+ font:700 clamp(8px,.7vw,11px)/1.2 "Archivo",sans-serif;
  letter-spacing:.17em;color:#b3d7ff;
 }
 #cinema-wrap .montage-credit__name{
   max-width:100%;
-  font:600 clamp(19px,2.6vw,38px)/1.08 "Space Grotesk",sans-serif;
+  font:600 clamp(19px,2.6vw,38px)/1.08 "Archivo",sans-serif;
   letter-spacing:-.055em;
   text-wrap:balance;
 }
 #cinema-wrap .montage-credit__category{
   margin-top:3px;
-  font:600 clamp(8px,.7vw,10px)/1.3 "Space Grotesk",sans-serif;
+  font:600 clamp(8px,.7vw,10px)/1.3 "Archivo",sans-serif;
   color:#b5cde7;letter-spacing:.11em;text-transform:uppercase;
 }
 #cinema-wrap .montage-progress{
@@ -286,7 +286,7 @@
  display:flex;justify-content:flex-end;align-items:flex-end;gap:6px;
  padding:0 6% 6%;
  color:#e6f3ff;
- font:600 11px "Space Grotesk",sans-serif;
+ font:600 11px "Archivo",sans-serif;
  text-shadow:0 2px 9px #000d;
  background:transparent;border:0;
  cursor:pointer;pointer-events:auto;

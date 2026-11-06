@@ -76,7 +76,7 @@
   bottom:clamp(15px,3vw,32px);
   left:clamp(15px,3vw,32px);
   color:#e7e9e5;
-  font:600 clamp(9px,.9vw,11px)/1.4 "Space Grotesk",sans-serif;
+  font:600 clamp(9px,.9vw,11px)/1.4 "Archivo",sans-serif;
   letter-spacing:.15em;
   text-shadow:0 2px 10px #000b;
 }

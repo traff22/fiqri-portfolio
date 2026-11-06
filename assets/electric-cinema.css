@@ -132,7 +132,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #d2deff;outline-offset:4p
 .hero h1 em,
 .hero h1 .hero-line:last-child em{
   color:#c1c8ff;
-  font-family:Georgia,"Times New Roman",serif;
+  font-family:"Newsreader","Times New Roman",serif;
   font-weight:400;
   letter-spacing:-.077em;
   text-shadow:0 12px 56px #6676ff48;
@@ -248,7 +248,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #d2deff;outline-offset:4p
   position:absolute;z-index:4;right:-5%;bottom:12%;
   display:flex;align-items:center;gap:10px;
   color:#d5dfff;
-  font:600 10px/1.3 "Space Grotesk",sans-serif;
+  font:600 10px/1.3 "Archivo",sans-serif;
   letter-spacing:.15em;
   writing-mode:vertical-rl;
   text-shadow:0 2px 16px #0c1748;

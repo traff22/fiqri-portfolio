@@ -123,7 +123,7 @@ button:focus-visible,a:focus-visible {
 .hero h1 .hero-line:last-child em{
   color:var(--fq-copper-light);
   text-shadow:none;
-  font-family:Georgia,"Times New Roman",serif;
+  font-family:"Newsreader","Times New Roman",serif;
   font-weight:400;
   font-style:italic;
   font-size:.81em;
@@ -243,7 +243,7 @@ button:focus-visible,a:focus-visible {
   color:#b7c0c5;
   padding:12px 8px 10px;
   margin-right:6px;
-  font:600 12px/1.2 "Space Grotesk",sans-serif;
+  font:600 12px/1.2 "Archivo",sans-serif;
   letter-spacing:.015em;
   transform:none;
   transition:border-color .22s ease,color .22s ease,background .22s ease;

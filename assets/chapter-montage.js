@@ -110,6 +110,9 @@ function pick(){
  if(openingPending){
   openingPending=false;
   if(openingFilm&&!failed.has(OPENING_VIDEO_ID)){
+   // Shuffle first, then take the opening film out, so it cannot come back
+   // as the second or third shot of the same cycle.
+   if(!bag.length)reshuffle();
    bag=bag.filter(item=>item.id!==OPENING_VIDEO_ID);
    lastId=OPENING_VIDEO_ID;
    lastCategory=openingFilm.category;

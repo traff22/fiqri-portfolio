@@ -44,7 +44,7 @@
 .portrait-card__heading{
   position:absolute;top:28px;left:29px;right:29px;z-index:2;
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  font:600 10px/1.35 "Space Grotesk",sans-serif;
+  font:600 10px/1.35 "Archivo",sans-serif;
   letter-spacing:.2em;color:#f1f7ff;text-shadow:0 2px 15px #000;
 }
 .portrait-card__heading svg{color:#d1e5ff;flex:none}
@@ -57,7 +57,7 @@
   font-size:10px;letter-spacing:.16em;color:#c2d7ec;
 }
 .portrait-card__foot strong{
-  font:600 clamp(23px,2.9vw,40px)/1.04 "Space Grotesk",sans-serif;
+  font:600 clamp(23px,2.9vw,40px)/1.04 "Archivo",sans-serif;
   letter-spacing:-.065em;color:#f1f7ff;max-width:330px;
 }
 .portrait-skills{
@@ -72,7 +72,7 @@
   border-radius:999px;
   box-shadow:0 12px 33px #0206109c;
   backdrop-filter:blur(18px);
-  font:600 11px/1 "Space Grotesk",sans-serif;
+  font:600 11px/1 "Archivo",sans-serif;
   letter-spacing:.02em;
   animation:living-card-float 7s ease-in-out infinite;
 }

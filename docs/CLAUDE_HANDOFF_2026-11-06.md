@@ -328,3 +328,11 @@ After each future owner-approved iteration, append a dated entry here summarizin
 - Re-measured: dashes 10→0, images without dimensions 20→0, uppercase labels 16→0, running infinite animations 3→0, mobile targets under 44px 12→1 (the off-screen skip link).
 
 **Still open:** item 9 (typeface, see DESIGN.md), contrast of text over real photos (not measurable in the sandbox), and real-device feel.
+
+### 2026-11-06 (WIB): typeface (audit #9)
+**Owner:** "Gas #9 ganti font juga."
+
+- Archivo variable (condensed, bold title-card headlines; normal width for text) and a Newsreader Italic accent, both self-hosted in `assets/fonts/` (OFL licences included). The main Archivo file is preloaded; the Google Fonts `@import` in `styles.css` is removed. The font names were renamed in source across the linked stylesheets.
+- Reasons are in DESIGN.md, Typography.
+- **Pitfall hit and fixed:** inserting CSS inside the header comment of `design-system.css` silently broke the whole file. Keep new blocks *after* the closing `*/`.
+- Also fixed a pre-existing montage shuffle bug (the opening film could repeat as the third shot).
