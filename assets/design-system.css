@@ -378,4 +378,6 @@ dialog.portfolio-dialog::backdrop,dialog.directors-cut::backdrop{background:#020
    same two panels: each panel shows whichever source its current shot uses. */
 #cinema-wrap .showreel-shell .montage-stream:not(.is-native) .montage-native{visibility:hidden}
 #cinema-wrap .showreel-shell .montage-stream.is-native iframe{visibility:hidden}
+/* Next while the following shot loads */
+#cinema-wrap .montage-skip.is-busy{opacity:.6;cursor:progress}
 

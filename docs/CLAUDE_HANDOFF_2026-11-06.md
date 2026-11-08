@@ -462,3 +462,12 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 **Owner** (screenshot of About): "ini tidak rapi tulisanya masa banyak blank space kalau mau working with ainya memanjang gitu dibawah 2 grid atasnya".
 - `.ai-note` now sits after `.about-grid` inside the shell (not in the right column): grid of label + three paragraphs (`.6fr 1.35fr 1fr 1fr`), three columns under 1000px with the label on top, one column under 700px; a hairline on top matching the career rows. The two columns above (room, bio) now end at similar heights.
 
+### 2026-11-08 (WIB): Chapter One "Next" fixed
+**Owner:** "Tombol next tidak berfungsi di chapter 1".
+Reproduced in Playwright with a slow YouTube mock (1.4 s load, like the real player) and with YouTube blocked (adblock/Brave-style). Four causes, all in `assets/chapter-montage.js`:
+1. **Crossfade pause froze the next shot.** `show()` paused the previous panel 655 ms after the cut; a Next pressed in that window was loading in that same panel and got paused, so nothing appeared until the 11 s watchdog. The timeout now pauses only if the panel still holds the shot that left.
+2. **Repeat presses restarted the load.** A second press while the next shot was loading reloaded it from zero, so Next looked dead on real YouTube. Presses while the next shot is on its way are now ignored; the button shows `.is-busy` / `aria-busy` until the cut.
+3. **Next threw away the buffered shot.** `nextVideo()` now reuses the preload in the other panel (`switchToNext()`): instant if buffered. `switchToNext()` always arms the watchdog so a shot that never plays is skipped.
+4. **YouTube blocked: Next could pick the clip already on screen.** `launch()` now excludes the shot on screen and picks a random spare native clip; the YouTube script error no longer replaces the title with "Preview unavailable" while the owner's clips are playing.
+- **QA:** `montage-smoke` adds MONTAGE_NEXT_PASS: slow player with an impatient double press and a press right after each cut (4 rounds must each move on within 5 s), and YouTube blocked (6 presses must each change the shot, title never "Preview unavailable"). The old code fails the blocked case. Chapter One suites pass locally; `prune-css --check` clean.
+

@@ -92,4 +92,51 @@ try{
   clickSkip:true,autoNext:true,syntheticPhotoClips:false,jsErrors:errors
  }));
  await page.close();
+
+ // Next must always move on (owner bug report, 2026-11-08):
+ // 1. with a slow player (real YouTube takes a second or two), even when pressed
+ //    right after a shot appears and pressed again while the next one loads;
+ // 2. with YouTube blocked, cycling the owner's own clips without repeating.
+ {
+  const slow=await browser.newPage({viewport:{width:1440,height:900}});
+  const errs=[];slow.on("pageerror",e=>errs.push(e.message));
+  await slow.route("**/i.ytimg.com/**",r=>r.abort());
+  await slow.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}
+   class P{constructor(r,c){this.c=c;this.s=-1;setTimeout(()=>c.events.onReady({target:this}),300)}
+    mute(){}setVolume(){}getDuration(){return 95}getPlayerState(){return this.s}
+    later(ms){this.s=3;clearTimeout(this.t);this.t=setTimeout(()=>{this.s=1;this.c.events.onStateChange({data:1,target:this})},ms)}
+    loadVideoById(){this.later(1400)}seekTo(){this.later(450)}playVideo(){this.later(250)}pauseVideo(){clearTimeout(this.t);this.s=2}}
+   window.YT={Player:P,PlayerState:{PLAYING:1,ENDED:0,PAUSED:2,BUFFERING:3}}});
+  await slow.goto("http://127.0.0.1:4173",{waitUntil:"domcontentloaded"});
+  await slow.locator("#cinema-wrap .showreel-shell").scrollIntoViewIfNeeded();
+  const id=()=>slow.evaluate(()=>document.querySelector(".showreel-montage").dataset.currentId);
+  await slow.waitForFunction(()=>document.querySelector(".showreel-montage").dataset.currentId,null,{timeout:15000});
+  await slow.waitForTimeout(2600);
+  for(let i=0;i<4;i++){
+   const before=await id();
+   await slow.locator(".montage-skip").click();
+   await slow.waitForTimeout(120);await slow.locator(".montage-skip").click(); // impatient second press
+   await slow.waitForFunction(prev=>document.querySelector(".showreel-montage").dataset.currentId!==prev,before,{timeout:5000})
+    .catch(()=>{throw new Error("Next did not move on with a slow player (stuck on "+before+")")});
+   await slow.waitForTimeout(150); // press again right after the new shot appears
+  }
+  if(errs.length)throw new Error("JS errors: "+errs.join("|"));
+  await slow.close();
+  const offline=await browser.newPage({viewport:{width:1440,height:900}});
+  await offline.route("**/youtube.com/**",r=>r.abort());await offline.route("**/i.ytimg.com/**",r=>r.abort());
+  await offline.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}});
+  await offline.goto("http://127.0.0.1:4173",{waitUntil:"domcontentloaded"});
+  await offline.locator("#cinema-wrap .showreel-shell").scrollIntoViewIfNeeded();
+  await offline.waitForFunction(()=>document.querySelector(".showreel-montage").dataset.currentId,null,{timeout:15000});
+  for(let i=0;i<6;i++){
+   const before=await offline.evaluate(()=>document.querySelector(".showreel-montage").dataset.currentId);
+   await offline.locator(".montage-skip").click();
+   await offline.waitForFunction(prev=>document.querySelector(".showreel-montage").dataset.currentId!==prev,before,{timeout:5000})
+    .catch(()=>{throw new Error("Next did nothing with YouTube blocked (stuck on "+before+")")});
+  }
+  const t=await offline.locator(".montage-title").textContent();
+  if(t==="Preview unavailable")throw new Error("YouTube blocked hid the owner's clips");
+  await offline.close();
+  console.log("MONTAGE_NEXT_PASS");
+ }
 }finally{await browser.close()}

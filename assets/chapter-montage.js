@@ -189,15 +189,18 @@ function onFailure(index,error){
    title.textContent="Preview unavailable";
    clock.textContent="View selected work below";
    stage.dataset.playback="unavailable";
-   announce(null);
+   announce(null);setBusy(false);
    skip.setAttribute("aria-label","Retry video previews");
    return;
   }
   if(enabled)nextVideo();
  }
 }
+// Next shows it is working while the following shot loads.
+function setBusy(on){skip.classList.toggle("is-busy",on);skip.setAttribute("aria-busy",String(on))}
 function show(index,req){
  if(!enabled||slots[index].request!==req||req.shown)return;
+ setBusy(false);
  req.shown=true;req.mode="current";
  clearTimeout(watchdog);
  const previous=activeIndex;
@@ -215,7 +218,10 @@ function show(index,req){
  panels[index].classList.add("is-current");
  if(previous>=0&&previous!==index){
   panels[previous].classList.remove("is-current");
-  fadeTimer=setTimeout(()=>safePause(previous),FADE_MS+75);
+  // pause the old shot after the crossfade, but only if that panel has not
+  // already started loading the next one (a quick Next would freeze it)
+  const leaving=slots[previous].request;
+  fadeTimer=setTimeout(()=>{if(slots[previous].request===leaving)safePause(previous)},FADE_MS+75);
  }
  setProgress(0);
  timeStart=performance.now();
@@ -320,11 +326,14 @@ function prepareNative(index,item,mode){
 // Pick the next shot for a panel. A YouTube film picked before the player is
 // ready waits in the bag; one of the owner's clips plays meanwhile.
 function launch(index,mode){
+ const onScreen=current?.id;
  let item=pick();
  if(!item)return null;
  if(!item.native&&!(slots[index].ready&&slots[index].player)){
   bag.push(item);
-  const alt=bag.find(x=>x.native&&x.id!==lastId)||NATIVE.find(x=>!failed.has(x.id)&&x.id!==item.id);
+  // never the clip already on screen, or Next would look like it did nothing
+  const spare=NATIVE.filter(x=>!failed.has(x.id)&&x.id!==onScreen);
+  const alt=bag.find(x=>x.native&&x.id!==onScreen)||spare[Math.floor(Math.random()*spare.length)];
   if(!alt)return null;
   if(bag.includes(alt))bag.splice(bag.indexOf(alt),1);
   item=alt;lastId=alt.id;lastCategory=alt.category;lastNative=true;
@@ -368,10 +377,12 @@ function switchToNext(){
   if(req.settled){
    req.settled=false;
    resumePanel(next,req);
-   watchdog=setTimeout(()=>{
-    if(enabled&&slots[next].request===req&&!req.shown)onFailure(next,"resume blocked");
-   },REVEAL_TIMEOUT);
   }
+  // still buffering or resuming: it shows when it plays, or is skipped if it never does
+  clearTimeout(watchdog);
+  watchdog=setTimeout(()=>{
+   if(enabled&&slots[next].request===req&&!req.shown)onFailure(next,"resume blocked");
+  },REVEAL_TIMEOUT);
  }else{
   launch(next,"activate");
  }
@@ -380,10 +391,10 @@ function nextVideo(){
  if(!enabled)return;
  clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);
  const next=activeIndex<0?0:1-activeIndex;
- // a skipped preload goes back to the front of the bag, and the variety
- // rules compare against the shot actually on screen, not the dropped one
- if(pendingPreload){bag.unshift(pendingPreload.item);pendingPreload=null}
- if(current){lastId=current.id;lastCategory=current.category;lastNative=Boolean(current.native)}
+ // Next uses the shot already being prepared in the other panel: it shows at
+ // once if it is buffered, or as soon as it is. Reloading it would stall.
+ if(pendingPreload&&pendingPreload.index===next&&slots[next].request?.item===pendingPreload.item){switchToNext();return}
+ pendingPreload=null;
  launch(next,"activate");
 }
 function initAPI(){
@@ -447,7 +458,8 @@ function loadAPI(){
  const script=document.createElement("script");
  script.src="https://www.youtube.com/iframe_api";
  script.async=true;
- script.onerror=()=>{stage.dataset.playback="unavailable";title.textContent="Preview unavailable";announce(null)};
+ // YouTube blocked: the owner's own clips keep playing, so only say so if nothing is on screen
+ script.onerror=()=>{if(current?.native&&enabled)return;stage.dataset.playback="unavailable";title.textContent="Preview unavailable";announce(null)};
  document.head.appendChild(script);
 }
 function start(){
@@ -470,6 +482,7 @@ function stop(){
  shell.classList.remove("is-playing");
  panels.forEach(p=>p.classList.remove("is-current"));
  stage.dataset.playback="paused";
+ setBusy(false);
  announce(null);
 }
 pauseButton?.addEventListener("click",e=>{
@@ -481,8 +494,13 @@ skip.addEventListener("click",e=>{
  if(nativeMode)return;
  e.preventDefault();e.stopPropagation();
  if(blocked){blocked=false;stage.dataset.playback="loading"}
- if(!enabled){visible=true;start()}
- else nextVideo();
+ if(!enabled){visible=true;start();return}
+ // The next shot is already on its way (YouTube takes a second or two):
+ // another press must not restart it, or Next seems to do nothing.
+ const next=activeIndex<0?0:1-activeIndex,req=slots[next]?.request;
+ setBusy(true);
+ if(activeIndex>=0&&req&&req.mode==="activate"&&!req.shown)return;
+ nextVideo();
 });
 if("IntersectionObserver"in window){
  const io=new IntersectionObserver(entries=>{
