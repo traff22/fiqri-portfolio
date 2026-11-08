@@ -133,6 +133,7 @@
   const takeOver=()=>{if(speed!==0)stop()};
   addEventListener("wheel",takeOver,{passive:true});
   addEventListener("touchstart",takeOver,{passive:true});
+  addEventListener("keydown",e=>{if(/^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End| )$/.test(e.key))takeOver()});
   addEventListener("scroll",()=>{if(ownScroll){ownScroll=false;return}if(hud?.classList.contains("is-open"))paint()},{passive:true});
   addEventListener("resize",()=>{if(hud)layoutClips()});
 

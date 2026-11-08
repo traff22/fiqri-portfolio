@@ -436,3 +436,11 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 - **Built:** `assets/editor-shuttle.css/.js`. J/K/L play the page; a transport bar shows timecode, chapter-as-clip, speed, J K L buttons and a chapter timeline; the end shows FIN and the "render" time. The Director's Cut now hints at it and has a "Play this page" button (the touch entry). Own scroll takes over, Escape closes, reduced motion = jump cuts. Existing eggs (logo triple-click, project notes, last frame, portrait flip, room actions) are unchanged.
 - **QA:** `easter-eggs-smoke.mjs` adds EDITOR_SHUTTLE_PASS (K alone inert, L plays, L L = 2x, K stops, J rewinds, wheel takes over, Escape closes; reduced-motion touch path via the Director's Cut button cuts straight to Chapter One). All suites pass locally; `prune-css --check` clean.
 
+### 2026-11-08 (WIB): AI robot in the voxel room + "Working with AI" copy
+**Owner:** "skrng gw mau tambahin ai di voxel gw jadi kek ada 3d robot gitu dipojok terus jabarin gw jga gunain ai untuk beberapa case video dan memrealisasikan video yang imposibble jadi lebih cepat, dan intinya nunjukin gw awear sama ai juga".
+- **Robot:** voxel hover-bot in `assets/voxel-studio.js` ("AI assistant" block), front-left corner (`BOT_HOME` 3.3, 9.3). Idle: bob, blink, antenna pulse, glance. New action `ai` (`aiAssist()`): Fiqri swivels to it, the bot rises and projects a canvas hologram of a mask being traced, Fiqri nods, swivels back. Tagged for clicks; also in the autonomous loop after coffee. Hidden in cameo renders.
+- **UI:** new "AI assist" button in the room controls; `creators-lab.js` message "AI assist. The bot traces the mask in seconds. The cut is still mine." (`ai` is a passing state like `wave`).
+- **Copy:** "Working with AI" block in About (`.ai-note`). The use-case list (masks/roto, cleanup, upscaling, transcripts/subtitles, previs) is a reasonable general list, **not confirmed by the owner**: ask which tools and real cases he wants named, and never invent client case studies.
+- **Shuttle hardening:** arrow keys, Space, PageUp/Down, Home and End now also stop the J/K/L shuttle; the takeover test waits instead of racing (one flaky local run).
+- **QA:** `creators-lab-smoke` adds the AI assist path (message, pressed state, hands back to edit). All suites pass locally; `prune-css --check` clean.
+

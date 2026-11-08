@@ -28,7 +28,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const canvas=renderer.domElement;
   canvas.className="fq-voxel__canvas";
   canvas.setAttribute("role","img");
-  canvas.setAttribute("aria-label","3D voxel editing room: mini Fiqri editing at his desk, rendering, and taking coffee breaks. Drag to turn the room.");
+  canvas.setAttribute("aria-label","3D voxel editing room: mini Fiqri editing at his desk, rendering, taking coffee breaks, and handing the slow technical work to a small AI robot. Drag to turn the room.");
   host.appendChild(canvas);
 
   const scene=new THREE.Scene();
@@ -338,6 +338,68 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   {const hit=new THREE.Mesh(new THREE.BoxGeometry(3.4,8,3),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=4;fiqri.add(hit)}
   tag(fiqri,"wave");
 
+  /* ------------------------------------------------------------ AI assistant */
+  // A small hover-bot in the front-left corner: Fiqri's AI sidekick. It idles
+  // (bobbing, blinking, glancing at the visitor) and, on "AI assist", projects
+  // a hologram of a mask being traced while Fiqri watches, then hands back.
+  const BOT_HOME=new THREE.Vector3(3.3,0,9.3);
+  const bot=new THREE.Group();bot.position.copy(BOT_HOME);bot.scale.setScalar(1.12);scene.add(bot);
+  const botBody=new THREE.Group();botBody.position.y=1.15;bot.add(botBody);
+  {
+    const B=[];
+    box(B,-.75,0,-.625,1.5,1.25,1.25,"#dfe6fb",.25,.03);          // shell
+    box(B,-.5,.25,.625,1,.5,.125,"#1d4ed8",.25,.02);              // chest panel
+    box(B,-.25,-.25,-.25,.5,.25,.5,"#6f7da3",.25,.02);           // thruster
+    box(B,-1,.375,-.25,.25,.5,.5,"#b9c4e6",.25,.02);box(B,.75,.375,-.25,.25,.5,.5,"#b9c4e6",.25,.02); // arms
+    botBody.add(instanced(B,{receive:false}));
+  }
+  const botHead=new THREE.Group();botHead.position.y=1.3;botBody.add(botHead);
+  {
+    const B=[];
+    box(B,-.875,0,-.75,1.75,1.25,1.5,"#dfe6fb",.25,.03);
+    box(B,-.75,.125,.75,1.5,1,.125,"#0a1020",.125,.01);          // screen face
+    box(B,-.0625,1.25,-.0625,.125,.5,.125,P.metal,.125,.02);    // antenna
+    botHead.add(instanced(B,{receive:false}));
+  }
+  const eyeMat=new THREE.MeshBasicMaterial({color:"#7aa6ff",toneMapped:false});
+  const eyes=[-.35,.35].map(x=>{const e=new THREE.Mesh(new THREE.BoxGeometry(.28,.34,.04),eyeMat);e.position.set(x,.68,.9);botHead.add(e);return e});
+  const tipMat=new THREE.MeshBasicMaterial({color:"#2563eb",toneMapped:false});
+  const tip=new THREE.Mesh(new THREE.BoxGeometry(.25,.25,.25),tipMat);tip.position.set(0,1.85,0);botHead.add(tip);
+  // soft contact shadow under the hover
+  const botShadow=new THREE.Mesh(new THREE.CircleGeometry(.8,20),new THREE.MeshBasicMaterial({color:"#000",transparent:true,opacity:.35,depthWrite:false}));
+  botShadow.rotation.x=-Math.PI/2;botShadow.position.set(BOT_HOME.x,.01,BOT_HOME.z);scene.add(botShadow);
+  // the hologram: a mask being traced around a subject, with a progress bar
+  const holo=canvasTexture(96,64);
+  const holoPlane=glow(5.4,3.6,holo.t,.92);holoPlane.material.transparent=true;holoPlane.material.opacity=0;
+  holoPlane.position.set(BOT_HOME.x+1.6,7.1,BOT_HOME.z-1.2);scene.add(holoPlane);
+  let holoProgress=0,botWorking=false,botHappy=0;
+  function paintHolo(){
+    const g=holo.ctx,w=96,h=64;
+    g.clearRect(0,0,w,h);
+    g.fillStyle="rgba(10,22,52,.82)";g.fillRect(0,0,w,h);
+    g.strokeStyle="#7aa6ff";g.lineWidth=1;g.strokeRect(.5,.5,w-1,h-1);
+    // the frame: a subject silhouette
+    g.fillStyle="#24365f";g.fillRect(6,6,84,42);
+    g.fillStyle="#3c5591";g.beginPath();g.arc(48,20,6,0,Math.PI*2);g.fill();g.fillRect(39,27,18,21);
+    // the mask outline, traced as progress grows
+    const pts=[[48,12],[56,17],[56,26],[60,30],[60,48],[36,48],[36,30],[40,26],[40,17]];
+    const n=Math.floor(holoProgress*pts.length);
+    g.strokeStyle="#cfe0ff";g.lineWidth=1.5;g.setLineDash([3,2]);g.beginPath();
+    pts.slice(0,n+1).forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
+    if(holoProgress>=1)g.closePath();
+    g.stroke();g.setLineDash([]);
+    // progress bar + label
+    g.fillStyle="#0b1220";g.fillRect(6,52,84,6);
+    g.fillStyle=holoProgress>=1?"#cfe0ff":"#2563eb";g.fillRect(6,52,84*holoProgress,6);
+    g.fillStyle="#cfe0ff";g.font="7px monospace";g.fillText(holoProgress>=1?"MASK READY":"TRACING "+Math.round(holoProgress*100)+"%",8,62.5);
+    holo.t.needsUpdate=true;
+  }
+  paintHolo();
+  {const hit=new THREE.Mesh(new THREE.BoxGeometry(2.2,3.6,2),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=2.2;bot.add(hit)}
+  tag(bot,"ai");
+  const botFace=()=>Math.atan2(10.375-bot.position.x,6.1-bot.position.z); // toward Fiqri's chair
+  bot.rotation.y=botFace();
+
   /* ------------------------------------------------------------ poses */
   const SEAT=new THREE.Vector3(10.375,0,6.1);
   const sitPose=()=>{
@@ -450,6 +512,22 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     yield* to(.35,[[armR.pivot.rotation,"x",wasSeated?-1.25:0],[armR.pivot.rotation,"z",wasSeated?-.08:0],[head.pivot.rotation,"z",0]]);
     if(wasSeated)yield* to(.7,[[chair.rotation,"y",0],[fiqri.rotation,"y",Math.PI],[armL.pivot.rotation,"x",-1.25]]);
   }
+  function* aiAssist(){
+    // Fiqri hands the slow technical pass to the bot, watches it, nods, and
+    // takes the cut back.
+    if(!seated())yield* sitDown();
+    announce("ai",false);typing=false;
+    const toBot=Math.atan2(bot.position.x-SEAT.x,bot.position.z-SEAT.z),turn=angle(toBot-Math.PI);
+    yield* to(.6,[[chair.rotation,"y",turn],[fiqri.rotation,"y",Math.PI+turn],[armL.pivot.rotation,"x",-.4],[armR.pivot.rotation,"x",-.4]]);
+    botWorking=true;holoProgress=0;paintHolo();holoPlane.quaternion.copy(camera.quaternion);
+    yield* to(.4,[[botBody.position,"y",1.7],[holoPlane.material,"opacity",.92]]);
+    let t=0;while(t<3.2){const dt=yield;t+=dt;holoProgress=Math.min(1,t/3);paintHolo()}
+    botWorking=false;botHappy=1.6;
+    yield* to(.3,[[armR.pivot.rotation,"x",-2.3],[head.pivot.rotation,"x",-.1]]); // a little "nice"
+    yield* wait(.6);
+    yield* to(.4,[[armR.pivot.rotation,"x",-.4],[head.pivot.rotation,"x",0],[holoPlane.material,"opacity",0],[botBody.position,"y",1.15]]);
+    yield* to(.6,[[chair.rotation,"y",0],[fiqri.rotation,"y",Math.PI],[armL.pivot.rotation,"x",-1.25],[armR.pivot.rotation,"x",-1.25]]);
+  }
   function* life(){
     // The autonomous day: a long edit, a render, more cutting, a coffee break.
     for(;;){
@@ -457,6 +535,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
       yield* render();
       yield* edit(7);
       yield* coffee();
+      yield* aiAssist();
     }
   }
   function* userAction(kind){
@@ -464,6 +543,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     else if(kind==="render")yield* render();
     else if(kind==="coffee")yield* coffee();
     else if(kind==="wave")yield* wave();
+    else if(kind==="ai")yield* aiAssist();
     announce("edit",false);
   }
   // With reduced motion the room stays still: Fiqri edits, and only reacts
@@ -477,6 +557,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     // Finish any half-held mug cleanly before switching.
     if(mugGroup.parent!==scene){scene.add(mugGroup);mugGroup.position.copy(mugHome);mugGroup.rotation.set(0,0,0)}
     typing=false;walking=false;sipping=false;
+    botWorking=false;holoPlane.material.opacity=0;botBody.position.y=1.15;
     const resume=function*(){yield* userAction(kind);yield* routine()};
     start(resume());
     onState?.(kind,true);
@@ -632,6 +713,19 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
       m.material.opacity=on?(1-k)*.75:0;
       m.position.set(mugPos.x+Math.sin(t*2+i)*.12,mugPos.y+.6+k*1.6,mugPos.z+Math.cos(t*2+i)*.12);
     });
+    // the AI bot: hover bob, antenna pulse, blinks, a glance at the visitor
+    bot.position.y=moving?Math.sin(t*2.2)*.12:0;
+    botShadow.scale.setScalar(1-bot.position.y*.6);
+    tipMat.color.set(botWorking?(Math.floor(t*8)%2?"#cfe0ff":"#2563eb"):(moving&&Math.sin(t*2.5)>.6?"#7aa6ff":"#2563eb"));
+    botHappy=Math.max(0,botHappy-dt);
+    const blink=moving&&!botWorking&&(t%4.3)<.12;
+    eyes.forEach((e,i)=>{
+      e.scale.y=blink?.15:botHappy>0?.35:botWorking?.5:1;
+      e.position.x=(i?.35:-.35)+(botWorking&&moving?Math.sin(t*6)*.12:0);
+    });
+    eyeMat.color.set(botWorking?"#cfe0ff":"#7aa6ff");
+    if(!botWorking&&moving){const look=Math.sin(t*.35);botHead.rotation.y=look>.75?(look-.75)*3.2:0}else botHead.rotation.y=0;
+    if(holoPlane.material.opacity>0)holoPlane.quaternion.copy(camera.quaternion); // square to the viewer
     // blinking REC light + LED pulse
     recMat.color.set(Math.floor(t*1.2)%2?"#3a1520":P.rec);
     ledMat.color.setRGB(.37,.88+.1*Math.sin(t*3),.78);

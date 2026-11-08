@@ -56,6 +56,13 @@ try{
       for(let t=0;t<16;t+=.05){v.advance(.05,false);const f=v.figure;out.push([+f.x.toFixed(2),+f.z.toFixed(2)])}return out});
     const through=path.filter(([x,z])=>z>.35&&z<2.2&&Math.abs(x)<2.0);
     assert(!through.length,name+": Fiqri passes through the chair back "+JSON.stringify(through.slice(0,4)));
+    // The AI sidekick: the button (or a click on the bot) runs an assist and hands back to editing.
+    await page.locator('[data-studio-mode="ai"]').click();
+    assert((await page.locator("#fq-studio-note").innerText()).startsWith("AI assist."),name+": AI assist message missing");
+    assert(await page.locator('[data-studio-mode="ai"]').getAttribute("aria-pressed")==="true",name+": AI assist not pressed");
+    await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(8,false));
+    await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(.05));
+    assert(await studio.getAttribute("data-mode")==="edit",name+": AI assist did not hand back to editing");
 
     const frame=page.locator("#cinema-wrap");
     const blueprint=page.locator(".fq-blueprint");

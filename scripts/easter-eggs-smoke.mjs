@@ -84,7 +84,9 @@ try{
     assert(ya===await page.evaluate(()=>scrollY),"shuttle: K did not stop");
     await page.keyboard.press("j");await page.waitForTimeout(600);
     assert(await page.evaluate(()=>scrollY)<ya,"shuttle: J did not rewind");
-    await page.mouse.wheel(0,200);await page.waitForTimeout(200);
+    await page.keyboard.press("l");await page.waitForTimeout(300);
+    await page.mouse.move(700,400);await page.mouse.wheel(0,200);
+    await page.waitForFunction(()=>document.querySelector(".fq-shuttle__speed").textContent==="Stopped",null,{timeout:2000}).catch(()=>{});
     assert(await page.locator(".fq-shuttle__speed").innerText()==="Stopped","shuttle: your own scroll should take over");
     await page.keyboard.press("Escape");
     assert(!await page.locator(".fq-shuttle.is-open").count(),"shuttle: Escape did not close");
