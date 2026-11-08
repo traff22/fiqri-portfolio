@@ -14,6 +14,9 @@
   aspect-ratio:4/3;width:100%;
   perspective:none;touch-action:pan-y;
 }
+/* Hold the room's space before the 3D engine has loaded, so the buttons below
+   do not jump (and catch a tap meant for something else) when it appears. */
+#about .fq-studio:not([data-engine]) .fq-studio__art{aspect-ratio:4/3;width:100%;padding:0}
 /* light pool + contact shadow under the floating diorama */
 #about .fq-studio__art--voxel::before{
   content:"";position:absolute;z-index:0;pointer-events:none;
@@ -55,7 +58,7 @@
   #about .fq-studio{max-width:none!important}
 }
 @media(max-width:700px){
-  #about .fq-studio__art.fq-studio__art--voxel{aspect-ratio:1/1;margin:0 -2vw}
+  #about .fq-studio__art.fq-studio__art--voxel,#about .fq-studio:not([data-engine]) .fq-studio__art{aspect-ratio:1/1;margin:0 -2vw}
   #about .fq-studio__button{padding:0 13px;font-size:10.5px!important;min-height:40px}
 }
 #about .fq-studio__button{flex:0 0 auto!important}

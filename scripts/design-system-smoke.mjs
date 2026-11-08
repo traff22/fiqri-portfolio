@@ -124,6 +124,15 @@ try{
     // Editing room pause.
     await page.locator("#fq-studio").scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>["voxel","svg"].includes(document.querySelector("#fq-studio")?.dataset.engine),null,{timeout:20000});
+    // On a slow CI machine the room is still settling when the engine flag
+    // flips; wait until it has drawn and the Pause button stops moving.
+    await page.waitForFunction(()=>{
+      const art=document.querySelector("#fq-studio-art"),b=document.querySelector("[data-studio-pause]").getBoundingClientRect();
+      const key=Math.round(b.x)+","+Math.round(b.y),w=window;
+      const drawn=document.querySelector("#fq-studio").dataset.engine==="svg"||Number(art.dataset.frames||0)>2;
+      if(w.__pauseKey===key&&drawn)return (w.__pauseSame=(w.__pauseSame||0)+1)>=6;
+      w.__pauseKey=key;w.__pauseSame=0;return false;
+    },null,{timeout:20000,polling:100});
     await page.locator("[data-studio-pause]").click();
     const pauseState=await page.evaluate(()=>({pressed:document.querySelector("[data-studio-pause]").getAttribute("aria-pressed"),note:document.querySelector("#fq-studio-note").textContent,active:document.activeElement?.textContent?.trim().slice(0,20),cls:document.querySelector("#fq-studio").className}));
     assert(pauseState.pressed==="true",name+": room pause did not engage "+JSON.stringify(pauseState));
