@@ -458,3 +458,7 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 - **Not changed:** `assets/reel-native.js` + `clips.json` (full replacement of YouTube) stay as they were, `clips.json` still `[]`.
 - **QA:** `montage-smoke` now expects the intro clip first (playing, native), ids instead of titles for no-repeat, no two native clips back to back. `chapter-blueprint-smoke` also blocks `assets/reel/about-*` so real shots cannot race its dispatched ones. A 24-shot simulation: 5 to 6 native shots, Know More YouTube 0 to 1, never native twice in a row. All suites pass locally; `prune-css --check` clean.
 
+### 2026-11-08 (WIB): "Working with AI" moved to a full-width row
+**Owner** (screenshot of About): "ini tidak rapi tulisanya masa banyak blank space kalau mau working with ainya memanjang gitu dibawah 2 grid atasnya".
+- `.ai-note` now sits after `.about-grid` inside the shell (not in the right column): grid of label + three paragraphs (`.6fr 1.35fr 1fr 1fr`), three columns under 1000px with the label on top, one column under 700px; a hairline on top matching the career rows. The two columns above (room, bio) now end at similar heights.
+
