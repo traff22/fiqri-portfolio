@@ -63,6 +63,48 @@ try{
     console.log("Easter eggs passed:",device,overflow);
     await context.close();
   }
+  // Editor shuttle: J K L play the page like a timeline.
+  {
+    const context=await browser.newContext({viewport:{width:1440,height:900},reducedMotion:"no-preference"});
+    const page=await context.newPage();
+    page.on("pageerror",err=>{throw err});
+    await page.route("**/youtube.com/**",r=>r.abort());
+    await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}});
+    await page.goto(origin,{waitUntil:"load"});
+    await page.keyboard.press("k");
+    assert(!await page.locator(".fq-shuttle.is-open").count(),"shuttle: K alone should not open editor mode");
+    await page.keyboard.press("l");
+    await page.waitForTimeout(900);
+    const y1=await page.evaluate(()=>scrollY);
+    assert(await page.locator(".fq-shuttle.is-open").count()&&y1>40,"shuttle: L did not play the page ("+y1+")");
+    await page.keyboard.press("l");
+    assert(await page.locator(".fq-shuttle__speed").innerText()==="▶ 2x","shuttle: second L should double the speed");
+    await page.keyboard.press("k");
+    const ya=await page.evaluate(()=>scrollY);await page.waitForTimeout(500);
+    assert(ya===await page.evaluate(()=>scrollY),"shuttle: K did not stop");
+    await page.keyboard.press("j");await page.waitForTimeout(600);
+    assert(await page.evaluate(()=>scrollY)<ya,"shuttle: J did not rewind");
+    await page.mouse.wheel(0,200);await page.waitForTimeout(200);
+    assert(await page.locator(".fq-shuttle__speed").innerText()==="Stopped","shuttle: your own scroll should take over");
+    await page.keyboard.press("Escape");
+    assert(!await page.locator(".fq-shuttle.is-open").count(),"shuttle: Escape did not close");
+    await context.close();
+    // Reduced motion: L and J are straight cuts between chapters. Touch: the Director's Cut button starts it.
+    const calm=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,reducedMotion:"reduce"});
+    const m=await calm.newPage();
+    m.on("pageerror",err=>{throw err});
+    await m.route("**/youtube.com/**",r=>r.abort());
+    await m.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}});
+    await m.goto(origin,{waitUntil:"load"});
+    for(let i=0;i<3;i++)await m.locator(".topbar .logo").tap();
+    await m.locator("[data-shuttle-start]").tap();
+    await m.waitForTimeout(600);
+    const cut=await m.evaluate(()=>Math.abs(scrollY-(document.getElementById("cinema-wrap").getBoundingClientRect().top+scrollY)));
+    assert(await m.locator(".fq-shuttle.is-open").count()&&cut<2,"shuttle: reduced motion should cut straight to Chapter One ("+cut+")");
+    await m.locator('.fq-shuttle [data-shuttle="x"]').tap();
+    await calm.close();
+    console.log("EDITOR_SHUTTLE_PASS");
+  }
 }finally{
   await browser.close();
 }

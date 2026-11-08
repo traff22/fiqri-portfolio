@@ -430,3 +430,9 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 - **Contact cameo:** new poses in `api.cameo()`: `point`, `cool` (cameo-only `shades` prop on the head), `dab`, `jump`, plus the existing `wave`. `assets/cameos.js` loops them while in view; the cameo is now a `<button>` that pauses/plays (motion longer than 5 s needs a pause control). Contact link hover/focus jumps to `point`. Reduced motion: still wave, button disabled. Frames are cropped to one shared box by the new `tools/crop-cameos.py` (482x526).
 - **QA:** `design-system-smoke` checks all five poses appear, tapping pauses, and the reduced-motion still; `creators-lab-smoke` checks the chair path. All suites pass locally; `prune-css --check` clean.
 
+### 2026-11-08 (WIB): new easter egg, the editor shuttle (J K L)
+**Owner:** "Claude research and give me the best easter egg like i do before but better and best".
+- **Research:** the best easter eggs reward curiosity with something specific to the maker (Awwwards "easter egg" entries, playful portfolios like Bruno Simon's). For an editor the most specific gesture is the J/K/L shuttle every NLE shares (J back, K stop, L forward, repeat for speed).
+- **Built:** `assets/editor-shuttle.css/.js`. J/K/L play the page; a transport bar shows timecode, chapter-as-clip, speed, J K L buttons and a chapter timeline; the end shows FIN and the "render" time. The Director's Cut now hints at it and has a "Play this page" button (the touch entry). Own scroll takes over, Escape closes, reduced motion = jump cuts. Existing eggs (logo triple-click, project notes, last frame, portrait flip, room actions) are unchanged.
+- **QA:** `easter-eggs-smoke.mjs` adds EDITOR_SHUTTLE_PASS (K alone inert, L plays, L L = 2x, K stops, J rewinds, wheel takes over, Escape closes; reduced-motion touch path via the Director's Cut button cuts straight to Chapter One). All suites pass locally; `prune-css --check` clean.
+

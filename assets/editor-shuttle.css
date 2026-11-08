@@ -1,0 +1,49 @@
+/* FQ / Editor shuttle HUD (easter egg, assets/editor-shuttle.js).
+ * A small transport bar like the bottom of an editing app: timecode, current
+ * clip, speed, J K L buttons and a mini timeline of the page's chapters. */
+.fq-shuttle{
+  position:fixed;left:50%;bottom:16px;z-index:60;width:min(640px,calc(100vw - 32px));
+  padding:10px 12px 12px;border-radius:var(--r-2,12px);
+  background:#060a12f2;border:1px solid #9ec0ff2e;box-shadow:0 18px 40px #000a;
+  color:var(--c-ice,#cfe0ff);font:600 12px/1 var(--font-text,system-ui);
+  transform:translate(-50%,calc(100% + 32px));opacity:0;visibility:hidden;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s .35s;
+}
+.fq-shuttle.is-open{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.fq-shuttle__bar{display:flex;align-items:center;gap:12px;min-height:44px}
+.fq-shuttle__tc{font-variant-numeric:tabular-nums;letter-spacing:.06em;color:#fff}
+.fq-shuttle__clip{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#aabbe4}
+.fq-shuttle__speed{font-variant-numeric:tabular-nums;color:var(--c-blue-soft,#7aa6ff);min-width:5.5ch;text-align:right}
+.fq-shuttle[data-fin="1"] .fq-shuttle__speed{color:#fff}
+.fq-shuttle__keys{display:flex;gap:6px}
+.fq-shuttle button{
+  min-width:44px;min-height:44px;padding:0 10px;border-radius:var(--r-1,6px);
+  border:1px solid #9ec0ff40;background:#0e1727;color:#fff;font:700 13px/1 var(--font-text,system-ui);cursor:pointer;
+}
+.fq-shuttle button:hover{border-color:#9ec0ff8c}
+.fq-shuttle button:focus-visible{outline:2px solid var(--c-ice,#cfe0ff);outline-offset:2px}
+.fq-shuttle[data-state="forward"] [data-shuttle="l"],
+.fq-shuttle[data-state="backward"] [data-shuttle="j"],
+.fq-shuttle[data-state="stopped"] [data-shuttle="k"]{background:var(--c-blue,#2563eb);border-color:var(--c-blue,#2563eb)}
+.fq-shuttle__close{font-size:18px!important;background:transparent!important}
+.fq-shuttle__track{position:relative;height:18px;margin-top:8px;border-radius:3px;background:#0b1220;overflow:hidden}
+.fq-shuttle__seg{position:absolute;top:2px;bottom:2px;border-radius:2px;box-shadow:inset -1px 0 0 #060a12}
+.fq-shuttle__seg[data-tone="0"]{background:#1d4ed8b3}
+.fq-shuttle__seg[data-tone="1"]{background:#2563eb80}
+.fq-shuttle__seg[data-tone="2"]{background:#7aa6ff59}
+.fq-shuttle__head{position:absolute;top:0;bottom:0;left:0;width:2px;margin-left:-1px;background:#fff;z-index:1}
+.fq-shuttle__status{display:block;font-weight:500;color:#aabbe4;min-height:0}
+.fq-shuttle[data-said="1"] .fq-shuttle__status:not(:empty){margin-top:8px}
+.directors-cut__shuttle{margin:22px 0 0;color:#aec6de;font:400 14px/1.6 var(--font-text,system-ui)}
+.directors-cut__shuttle kbd{display:inline-block;min-width:1.6em;padding:1px 6px;border:1px solid #9ec0ff59;border-radius:4px;font:700 12px/1.4 var(--font-text,system-ui);color:#fff;text-align:center}
+.directors-cut__play{
+  margin-top:12px;min-height:44px;padding:0 16px;border-radius:var(--r-2,12px);border:1px solid #9ec0ff59;
+  background:#0e1727;color:#fff;font:600 13px/1 var(--font-text,system-ui);cursor:pointer;
+}
+.directors-cut__play:focus-visible{outline:2px solid var(--c-ice,#cfe0ff);outline-offset:2px}
+@media(max-width:520px){
+  .fq-shuttle{bottom:10px;padding:8px 10px 10px}
+  .fq-shuttle__bar{gap:8px;flex-wrap:wrap}
+  .fq-shuttle__clip{order:3;flex-basis:100%}
+}
+@media(prefers-reduced-motion:reduce){.fq-shuttle{transition:none}}

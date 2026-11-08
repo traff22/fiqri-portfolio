@@ -146,6 +146,15 @@ Chapters meet on a slant, not a flat rule (`assets/section-cuts.css/.js`, test `
 - Selected Work does not overlap the pinned Chapter One scene above it (film controls sit near its bottom); it only takes the slant.
 - Reduced motion: the plane stays still. Decorative only (`aria-hidden`, no pointer events).
 
+## Easter egg: editor shuttle (J K L)
+
+Every editing app plays with J (back), K (stop), L (forward); tapping L again goes 2x, then 4x. On this site those keys play the page itself (`assets/editor-shuttle.css/.js`). Owner asked for "the best easter egg, better than before" (2026-11-08).
+- **What appears:** a transport bar at the bottom: timecode (the whole page reads as one minute), the current chapter as the clip name, speed, J K L buttons, and a mini timeline with the chapters as clips and a playhead.
+- **The end:** reaching Contact shows `FIN.` and "Rendered in mm:ss:ff" (how long the visitor's playback took).
+- **Discovery:** nothing on the page advertises it. The Director's Cut (triple-click `FQ.`) now ends with the hint and a "Play this page" button, which is the way in on touch. The console also whispers it to curious developers. K alone does nothing until editor mode is open.
+- **Control:** the visitor's own wheel or touch scroll stops the shuttle at once. Escape or × closes it. Keys are ignored while typing or while a dialog is open.
+- **Reduced motion:** no gliding. L and J jump-cut to the next or previous chapter.
+
 ## Share card and icons
 
 - `assets/og-card.jpg` (1200×630): the title card (condensed name, Newsreader "stories worth feeling.", timeline with IN and OUT, the real portrait).
