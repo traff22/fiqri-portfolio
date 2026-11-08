@@ -371,27 +371,57 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   // the hologram: a mask being traced around a subject, with a progress bar
   const holo=canvasTexture(96,64);
   const holoPlane=glow(5.4,3.6,holo.t,.92);holoPlane.material.transparent=true;holoPlane.material.opacity=0;
-  holoPlane.position.set(BOT_HOME.x+1.6,7.1,BOT_HOME.z-1.2);scene.add(holoPlane);
+  holoPlane.position.set(BOT_HOME.x+1.6,7.8,BOT_HOME.z-1.2);scene.add(holoPlane);
   let holoProgress=0,botWorking=false,botHappy=0;
+  // Two jobs, taken in turn: tracing a mask (the slow technical pass) and
+  // generating a shot nobody could film (a whale drifting over Jakarta at night).
+  let holoTask="mask";
+  const scene2d=document.createElement("canvas");scene2d.width=84;scene2d.height=42;
+  {
+    const g=scene2d.getContext("2d");
+    const sky=g.createLinearGradient(0,0,0,42);sky.addColorStop(0,"#0f1d46");sky.addColorStop(1,"#3a5bb8");
+    g.fillStyle=sky;g.fillRect(0,0,84,42);
+    g.fillStyle="#e8efff";g.fillRect(68,5,5,5);                       // moon
+    g.fillStyle="#cfe0ff";                                              // the whale
+    g.fillRect(18,10,26,7);g.fillRect(21,8,18,2);g.fillRect(22,17,16,2);
+    g.fillRect(44,11,4,4);g.fillRect(48,8,3,4);g.fillRect(48,14,3,4);   // tail flukes
+    g.fillStyle="#0f1d46";g.fillRect(22,12,2,2);                        // eye
+    g.fillStyle="#9ec0ff";g.fillRect(28,18,6,3);                        // fin
+    const towers=[[0,30,8],[8,24,6],[14,33,7],[21,20,5],[26,28,9],[35,22,6],[41,31,8],[49,18,5],[54,27,7],[61,23,6],[67,32,8],[75,26,9]];
+    towers.forEach(([x,y,w])=>{g.fillStyle="#0a1228";g.fillRect(x,y,w,42-y);
+      g.fillStyle="#f2d58a";for(let yy=y+2;yy<40;yy+=3)for(let xx=x+1;xx<x+w-1;xx+=2)if((xx*7+yy*3)%5===0)g.fillRect(xx,yy,1,1)});
+  }
+  const cellHash=(i,j)=>{const v=Math.sin(i*12.9898+j*78.233)*43758.5453;return v-Math.floor(v)};
   function paintHolo(){
     const g=holo.ctx,w=96,h=64;
     g.clearRect(0,0,w,h);
     g.fillStyle="rgba(10,22,52,.82)";g.fillRect(0,0,w,h);
     g.strokeStyle="#7aa6ff";g.lineWidth=1;g.strokeRect(.5,.5,w-1,h-1);
-    // the frame: a subject silhouette
-    g.fillStyle="#24365f";g.fillRect(6,6,84,42);
-    g.fillStyle="#3c5591";g.beginPath();g.arc(48,20,6,0,Math.PI*2);g.fill();g.fillRect(39,27,18,21);
-    // the mask outline, traced as progress grows
-    const pts=[[48,12],[56,17],[56,26],[60,30],[60,48],[36,48],[36,30],[40,26],[40,17]];
-    const n=Math.floor(holoProgress*pts.length);
-    g.strokeStyle="#cfe0ff";g.lineWidth=1.5;g.setLineDash([3,2]);g.beginPath();
-    pts.slice(0,n+1).forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
-    if(holoProgress>=1)g.closePath();
-    g.stroke();g.setLineDash([]);
+    let label;
+    if(holoTask==="generate"){
+      // the shot resolves out of noise, block by block
+      for(let i=0;i<21;i++)for(let j=0;j<11;j++){
+        const x=i*4,y=j*4;
+        if(cellHash(i,j)<holoProgress*1.05)g.drawImage(scene2d,x,y,4,4,6+x,6+y,4,4);
+        else{const n=Math.floor(40+cellHash(i+holoProgress*31|0,j)*70);g.fillStyle="rgb("+n+","+(n+12)+","+(n+40)+")";g.fillRect(6+x,6+y,4,4)}
+      }
+      label=holoProgress>=1?"SHOT READY":"GENERATING "+Math.round(holoProgress*100)+"%";
+    }else{
+      // the frame: a subject silhouette, and the mask outline traced around it
+      g.fillStyle="#24365f";g.fillRect(6,6,84,42);
+      g.fillStyle="#3c5591";g.beginPath();g.arc(48,20,6,0,Math.PI*2);g.fill();g.fillRect(39,27,18,21);
+      const pts=[[48,12],[56,17],[56,26],[60,30],[60,48],[36,48],[36,30],[40,26],[40,17]];
+      const n=Math.floor(holoProgress*pts.length);
+      g.strokeStyle="#cfe0ff";g.lineWidth=1.5;g.setLineDash([3,2]);g.beginPath();
+      pts.slice(0,n+1).forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));
+      if(holoProgress>=1)g.closePath();
+      g.stroke();g.setLineDash([]);
+      label=holoProgress>=1?"MASK READY":"TRACING "+Math.round(holoProgress*100)+"%";
+    }
     // progress bar + label
     g.fillStyle="#0b1220";g.fillRect(6,52,84,6);
     g.fillStyle=holoProgress>=1?"#cfe0ff":"#2563eb";g.fillRect(6,52,84*holoProgress,6);
-    g.fillStyle="#cfe0ff";g.font="7px monospace";g.fillText(holoProgress>=1?"MASK READY":"TRACING "+Math.round(holoProgress*100)+"%",8,62.5);
+    g.fillStyle="#cfe0ff";g.font="7px monospace";g.fillText(label,8,62.5);
     holo.t.needsUpdate=true;
   }
   paintHolo();
@@ -513,19 +543,21 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     if(wasSeated)yield* to(.7,[[chair.rotation,"y",0],[fiqri.rotation,"y",Math.PI],[armL.pivot.rotation,"x",-1.25]]);
   }
   function* aiAssist(){
-    // Fiqri hands the slow technical pass to the bot, watches it, nods, and
-    // takes the cut back.
+    // Fiqri hands a job to the bot (a mask one time, a generated shot the
+    // next), watches it, nods, and takes the cut back.
     if(!seated())yield* sitDown();
-    announce("ai",false);typing=false;
+    const task=holoTask;holoTask=task==="mask"?"generate":"mask";
+    announce(task==="mask"?"ai":"ai-gen",false);typing=false;
     const toBot=Math.atan2(bot.position.x-SEAT.x,bot.position.z-SEAT.z),turn=angle(toBot-Math.PI);
     yield* to(.6,[[chair.rotation,"y",turn],[fiqri.rotation,"y",Math.PI+turn],[armL.pivot.rotation,"x",-.4],[armR.pivot.rotation,"x",-.4]]);
-    botWorking=true;holoProgress=0;paintHolo();holoPlane.quaternion.copy(camera.quaternion);
+    holoTask=task;botWorking=true;holoProgress=0;paintHolo();holoPlane.quaternion.copy(camera.quaternion);
     yield* to(.4,[[botBody.position,"y",1.7],[holoPlane.material,"opacity",.92]]);
     let t=0;while(t<3.2){const dt=yield;t+=dt;holoProgress=Math.min(1,t/3);paintHolo()}
     botWorking=false;botHappy=1.6;
     yield* to(.3,[[armR.pivot.rotation,"x",-2.3],[head.pivot.rotation,"x",-.1]]); // a little "nice"
     yield* wait(.6);
     yield* to(.4,[[armR.pivot.rotation,"x",-.4],[head.pivot.rotation,"x",0],[holoPlane.material,"opacity",0],[botBody.position,"y",1.15]]);
+    holoTask=task==="mask"?"generate":"mask";
     yield* to(.6,[[chair.rotation,"y",0],[fiqri.rotation,"y",Math.PI],[armL.pivot.rotation,"x",-1.25],[armR.pivot.rotation,"x",-1.25]]);
   }
   function* life(){
@@ -558,9 +590,11 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     if(mugGroup.parent!==scene){scene.add(mugGroup);mugGroup.position.copy(mugHome);mugGroup.rotation.set(0,0,0)}
     typing=false;walking=false;sipping=false;
     botWorking=false;holoPlane.material.opacity=0;botBody.position.y=1.15;
+    // name the job the bot is about to do, before the choreography starts
+    const said=kind==="ai"&&holoTask==="generate"?"ai-gen":kind;
     const resume=function*(){yield* userAction(kind);yield* routine()};
     start(resume());
-    onState?.(kind,true);
+    onState?.(said,true);
   }
 
   /* ------------------------------------------------------------ screens */

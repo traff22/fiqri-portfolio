@@ -63,6 +63,11 @@ try{
     await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(8,false));
     await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(.05));
     assert(await studio.getAttribute("data-mode")==="edit",name+": AI assist did not hand back to editing");
+    // the next assist is the other job: generating a shot nobody could film
+    await page.locator('[data-studio-mode="ai"]').click();
+    assert((await page.locator("#fq-studio-note").innerText()).includes("generated in minutes"),name+": second AI assist should generate a shot");
+    assert(await page.locator('[data-studio-mode="ai"]').getAttribute("aria-pressed")==="true",name+": AI assist not pressed while generating");
+    await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(8,false));
 
     const frame=page.locator("#cinema-wrap");
     const blueprint=page.locator(".fq-blueprint");

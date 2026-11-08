@@ -444,3 +444,9 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 - **Shuttle hardening:** arrow keys, Space, PageUp/Down, Home and End now also stop the J/K/L shuttle; the takeover test waits instead of racing (one flaky local run).
 - **QA:** `creators-lab-smoke` adds the AI assist path (message, pressed state, hands back to edit). All suites pass locally; `prune-css --check` clean.
 
+### 2026-11-08 (WIB): AI is also for generating impossible, fast footage
+**Owner:** "coba add kaya bukan cuman buat masking or any, tapi juga generate imposibble dan fast footage".
+- **Robot:** `aiAssist()` alternates two jobs (`holoTask`): mask tracing, then generating a shot (a pixel whale over the Jakarta skyline at night resolves block by block out of noise, "GENERATING n%" then "SHOT READY"). New passing state `ai-gen` with its own note: "A shot nobody could film, generated in minutes. I still pick the take." `trigger()` now names the actual job before the choreography starts (the button's announcement used to overwrite it).
+- **Copy:** "Working with AI" now has a second paragraph on generated footage (impossible establishing shots, extra B-roll, effects plates, previs). Still a general list awaiting the owner's real tools and cases.
+- **QA:** `creators-lab-smoke` presses AI assist twice: mask first, then the generate message. Suites pass locally; `prune-css --check` clean.
+

@@ -16,9 +16,11 @@
     render:{title:"Rendering...",body:"Final_final_v7. Probably."},
     coffee:{title:"Coffee break.",body:"The best idea might arrive in five minutes."},
     wave:{title:"Oh, hey there!",body:"Back to the timeline in a second."},
-    ai:{title:"AI assist.",body:"The bot traces the mask in seconds. The cut is still mine."}
+    ai:{title:"AI assist.",body:"The bot traces the mask in seconds. The cut is still mine."},
+    "ai-gen":{title:"AI assist.",body:"A shot nobody could film, generated in minutes. I still pick the take."}
   };
-  const passing=m=>m==="wave"||m==="ai"; // short reactions; the room's mode stays put
+  const passing=m=>m==="wave"||m==="ai"||m==="ai-gen"; // short reactions; the room's mode stays put
+  const buttonFor=m=>m==="ai-gen"?"ai":m;
   let voxel=null;
   // Reflect what mini Fiqri is doing. Autonomous changes update the UI quietly;
   // only visitor-triggered changes are announced to screen readers.
@@ -27,7 +29,7 @@
     if(!passing(mode))studio.dataset.mode=mode;
     studio.dataset.state=mode;
     studio.querySelectorAll("[data-studio-mode]").forEach(button=>{
-      button.setAttribute("aria-pressed",String(button.dataset.studioMode===(passing(mode)?mode:studio.dataset.mode)));
+      button.setAttribute("aria-pressed",String(button.dataset.studioMode===(passing(mode)?buttonFor(mode):studio.dataset.mode)));
     });
     note.setAttribute("aria-live",byUser?"polite":"off");
     const bold=document.createElement("strong");
@@ -121,7 +123,7 @@
   function loadVoxelRoom(){
     if(!webgl){loadSvgRoom();return}
     studio.dataset.engine="loading";
-    import(new URL("assets/voxel-studio.js?v=1.4.0",document.baseURI).href)
+    import(new URL("assets/voxel-studio.js?v=1.5.0",document.baseURI).href)
       .then(({mountVoxelStudio})=>{
         art.replaceChildren();
         art.classList.add("fq-studio__art--voxel");
