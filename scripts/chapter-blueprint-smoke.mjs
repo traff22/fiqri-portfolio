@@ -20,8 +20,9 @@ try{
     await page.addInitScript(()=>{try{sessionStorage.setItem("fiqri-intro-seen","yes")}catch{}}); // skip the opening titles (tested in design-system-smoke)
     // The shot sync below is driven by dispatched fq:shot events; a real YouTube
     // montage (reachable in CI) would announce its own shots in between and race
-    // them. Montage playback has its own test (montage-smoke).
+    // them; so would the owner's own clips. Montage playback has its own test (montage-smoke).
     await page.route("**/youtube.com/**",r=>r.abort());
+    await page.route("**/assets/reel/about-*",r=>r.abort()); // the owner's own clips announce shots too
     const errors=[];page.on("pageerror",e=>errors.push(e.message));
     await page.goto("http://127.0.0.1:4173/",{waitUntil:"domcontentloaded"});
     const scene=page.locator("#cinema-wrap");

@@ -164,6 +164,15 @@ Every editing app plays with J (back), K (stop), L (forward); tapping L again go
 - All are rendered from `tools/og.html` with the site's fonts (`tools/render-brand.mjs`). Re-render after a name, tagline or palette change.
 - `noindex` stays until the owner approves publishing.
 
+## Chapter One: the owner's own clips in the mix
+
+Owner (2026-11-08): replace the Know More Bout Me YouTube segments with his own clips, shuffled with all the other films, Know More only now and then, so the opening introduces him better.
+- `assets/reel/about-1..4` (10 s, 720p, no audio, about 0.4 to 1.6 MB each) play as `<video>` in the same two panels as the YouTube embeds (`.is-native` shows the video and hides that panel's iframe).
+- **Opening:** `about-1`, his animated intro with his name, from its first frame, with no YouTube player, so Chapter One starts at once.
+- **Shuffle:** every cycle has all four clips plus the YouTube films; the YouTube Know More joins only about a third of cycles. Never two of his clips back to back, never the same shot twice in a row.
+- Same UI: title "Know More Bout Me (2024)", 5 s clock, Next, Pause (holds the exact frame), blueprint highlight (intro and talking-head clips light the longform card, the After Effects clip lights motion), and the voxel monitor link.
+- If YouTube is blocked, Chapter One keeps playing his four clips.
+
 ## Owner media slots (ready, waiting for footage)
 
 - **Native reel** (`assets/reel-native.js`, `assets/reel/clips.json`, spec in `assets/reel/README.md`). When the list has clips, Chapter One plays the owner's own 5 s excerpts as `<video>`, with no YouTube UI at all, the same Next / Pause / clock / blueprint sync and the voxel monitor link. It prefers WebM (VP9) with an MP4 fallback for Safari. An empty list, or every clip failing, leaves the YouTube montage in place.

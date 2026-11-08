@@ -1,5 +1,9 @@
-/* Chapter One V1.5 — actual video excerpts from published portfolio films.
-   Source: the existing YouTube video IDs in Selected Work (+ event extras).
+/* Chapter One V1.6 — actual video excerpts from published portfolio films.
+   Source: the existing YouTube video IDs in Selected Work (+ event extras),
+   mixed with four clips from the owner's own "Know More Bout Me" film served
+   as plain <video> (assets/reel/about-*.mp4|webm). The first of those, his
+   animated intro, always opens the chapter; the YouTube cut of the same film
+   only comes up now and then.
    No photo-animation assets are used. The official IFrame API remains inside
    YouTube's player and its branding cannot be disabled in every browser. */
 (()=>{"use strict";
@@ -57,9 +61,21 @@ const fromCards=[...document.querySelectorAll("#work .work-card[data-status='pub
 }).filter(Boolean);
 const catalog=[...new Map([...fromCards,...extraFilms].map(x=>[x.id,x])).values()]
  .filter(item=>item.format!=="portrait"&&item.category!=="reels");
-const openingFilm=catalog.find(item=>item.id===OPENING_VIDEO_ID)||null;
+// The owner's own clips (10 s each, no audio). They count as the Know More
+// Bout Me film: same title, same YouTube id for the voxel monitor and the link.
+const NATIVE=[
+ {id:"about-1",category:"longform",intro:true},
+ {id:"about-2",category:"motion"},
+ {id:"about-3",category:"longform"},
+ {id:"about-4",category:"longform"}
+].map(c=>({...c,title:"Know More Bout Me (2024)",youtube:OPENING_VIDEO_ID,native:true,format:"landscape",earliest:0,
+ src:"assets/reel/"+c.id+".mp4",webm:"assets/reel/"+c.id+".webm",poster:"assets/reel/"+c.id+".jpg"}));
+const KNOW_MORE_ODDS=.35; // the YouTube cut of Know More joins a shuffle cycle only sometimes
+const openingFilm=NATIVE.find(c=>c.intro)||catalog.find(item=>item.id===OPENING_VIDEO_ID)||null;
+const TOTAL=catalog.length+NATIVE.length;
 if(!catalog.length)return;
 stage.dataset.sourceCount=String(catalog.length);
+stage.dataset.nativeCount=String(NATIVE.length);
 stage.dataset.sourceFormat="landscape-only";
 stage.dataset.sourceIds=catalog.map(item=>item.id).join(",");
 stage.dataset.previewMode="original-video-embed";
@@ -71,6 +87,16 @@ let activeIndex=-1,current=null,bag=[],lastId="",lastCategory="",openingPending=
 let currentTimer=0,preloadTimer=0,watchdog=0,fadeTimer=0,clockRaf=0;
 let timeStart=0,playhead=0,requestId=0,pendingPreload=null;
 let userPaused=false; // the visitor pressed Pause (R-39: no endless motion without control)
+let lastNative=false;
+// one muted inline <video> per panel for the owner's own clips
+const canWebm=document.createElement("video").canPlayType('video/webm; codecs="vp9"')!=="";
+const nativeVideos=panels.map(panel=>{
+ const v=document.createElement("video");
+ v.className="montage-native";v.muted=true;v.playsInline=true;v.preload="auto";
+ v.setAttribute("muted","");v.setAttribute("playsinline","");v.setAttribute("aria-hidden","true");
+ panel.appendChild(v);return v;
+});
+const isNative=index=>panels[index].classList.contains("is-native");
 
 function safe(fn){try{return fn()}catch(_){return undefined}}
 // Tell the Chapter One blueprint which kind of film is on screen
@@ -79,7 +105,7 @@ function announce(category,item){
  if(category)scene.dataset.activeCategory=category;
  else delete scene.dataset.activeCategory;
  // id/title let other scenes (the voxel room's monitor) show the same film.
- scene.dispatchEvent(new CustomEvent("fq:shot",{detail:{category:category||null,id:item?.id||null,title:item?.title||null}}));
+ scene.dispatchEvent(new CustomEvent("fq:shot",{detail:{category:category||null,id:item?.youtube||item?.id||null,title:item?.title||null}}));
 }
 function clearTime(){
  clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);clearTimeout(fadeTimer);
@@ -99,34 +125,37 @@ function tick(now){
  clockRaf=requestAnimationFrame(tick);
 }
 function reshuffle(){
- bag=catalog.filter(x=>!failed.has(x.id));
+ bag=[...catalog.filter(x=>!failed.has(x.id)&&(x.id!==OPENING_VIDEO_ID||Math.random()<KNOW_MORE_ODDS)),
+  ...NATIVE.filter(x=>!failed.has(x.id))];
  for(let i=bag.length-1;i>0;i--){
   const j=Math.floor(Math.random()*(i+1));
   [bag[i],bag[j]]=[bag[j],bag[i]];
  }
 }
 function pick(){
- // Always introduce the Chapter One with the owner's own 2024 profile film.
- // Random shuffle applies only to subsequent five-second segments.
+ // Always introduce Chapter One with the owner's animated intro (his own clip,
+ // so it starts at once, with no YouTube player). Then everything shuffles.
  if(openingPending){
   openingPending=false;
-  if(openingFilm&&!failed.has(OPENING_VIDEO_ID)){
-   // Shuffle first, then take the opening film out, so it cannot come back
+  if(openingFilm&&!failed.has(openingFilm.id)){
+   // Shuffle first, then take the opening clip out, so it cannot come back
    // as the second or third shot of the same cycle.
    if(!bag.length)reshuffle();
-   bag=bag.filter(item=>item.id!==OPENING_VIDEO_ID);
-   lastId=OPENING_VIDEO_ID;
-   lastCategory=openingFilm.category;
+   bag=bag.filter(item=>item.id!==openingFilm.id);
+   lastId=openingFilm.id;lastCategory=openingFilm.category;lastNative=Boolean(openingFilm.native);
    return {...openingFilm,isOpening:true};
   }
  }
  if(!bag.length)reshuffle();
  if(!bag.length)return null;
- const preferred=bag.find(x=>x.id!==lastId&&x.category!==lastCategory);
+ // vary the edit: a different film, a different kind, and not two of the
+ // owner's own clips back to back
+ const preferred=bag.find(x=>x.id!==lastId&&x.category!==lastCategory&&!(x.native&&lastNative));
+ const mixed=bag.find(x=>x.id!==lastId&&!(x.native&&lastNative));
  const distinct=bag.find(x=>x.id!==lastId);
- const result=preferred||distinct||bag[0];
+ const result=preferred||mixed||distinct||bag[0];
  bag.splice(bag.indexOf(result),1);
- lastId=result.id;lastCategory=result.category;
+ lastId=result.id;lastCategory=result.category;lastNative=Boolean(result.native);
  return result;
 }
 function offsetFor(item,duration){
@@ -137,8 +166,15 @@ function offsetFor(item,duration){
  return Math.round(minimum+Math.random()*(upper-minimum));
 }
 function safePause(index){
+ nativeVideos[index]?.pause();
  const player=slots[index]?.player;
  if(player)safe(()=>{player.mute();player.pauseVideo()});
+}
+// Resume whatever the panel holds: the owner's clip or the YouTube player.
+function resumePanel(index,req){
+ if(req?.item?.native||(!req&&isNative(index))){
+  nativeVideos[index].play().then(()=>{if(req)settle(index,req)}).catch(()=>{if(req)onFailure(index,"native resume blocked")});
+ }else safe(()=>slots[index].player.playVideo());
 }
 function onFailure(index,error){
  const req=slots[index]?.request;
@@ -148,7 +184,7 @@ function onFailure(index,error){
  slots[index].request=null;
  if(req.mode==="activate"){
   clearTimeout(watchdog);
-  if(failed.size>=catalog.length){
+  if(failed.size>=TOTAL){
    enabled=false;
    title.textContent="Preview unavailable";
    clock.textContent="View selected work below";
@@ -172,6 +208,8 @@ function show(index,req){
  shell.classList.add("is-playing");
  if(skipText)skipText.textContent="Next";
  title.textContent=req.item.title;
+ stage.dataset.currentId=req.item.id;
+ stage.dataset.currentSource=req.item.native?"native":"youtube";
  announce(req.item.category,req.item);
  panels[index].dataset.format=req.item.format;
  panels[index].classList.add("is-current");
@@ -206,12 +244,17 @@ function setUserPaused(on){
   // A paused YouTube player shows its own play button and title. Show our
   // own still of the same project instead and keep the player out of sight.
   const fallback=stage.querySelector(".montage-fallback");
-  if(fallback&&current?.id)fallback.style.backgroundImage=`url("https://i.ytimg.com/vi/${current.id}/maxresdefault.jpg"),url("https://i.ytimg.com/vi/${current.id}/hqdefault.jpg")`;
+  if(fallback&&current?.native){
+   // the owner's clip: hold the exact frame it stopped on
+   const v=nativeVideos[activeIndex],c=document.createElement("canvas");c.width=640;c.height=360;
+   let still=current.poster;
+   try{c.getContext("2d").drawImage(v,0,0,640,360);still=c.toDataURL("image/jpeg",.82)}catch(_){}
+   fallback.style.backgroundImage=`url("${still}")`;
+  }else if(fallback&&current?.id)fallback.style.backgroundImage=`url("https://i.ytimg.com/vi/${current.id}/maxresdefault.jpg"),url("https://i.ytimg.com/vi/${current.id}/hqdefault.jpg")`;
   holdCurrent();return}
  if(!enabled){visible=true;start();return}
  if(activeIndex<0){nextVideo();return}
- const player=slots[activeIndex]?.player;
- safe(()=>player.playVideo());
+ resumePanel(activeIndex,null);
  timeStart=performance.now()-playhead;
  cancelAnimationFrame(clockRaf);clockRaf=requestAnimationFrame(tick);
  currentTimer=setTimeout(switchToNext,Math.max(400,FIVE_SECONDS-playhead));
@@ -248,9 +291,51 @@ function settle(index,req){
   show(index,req);
  }
 }
+function prepareNative(index,item,mode){
+ const slot=slots[index],v=nativeVideos[index];
+ const req={id:++requestId,item,mode,seeked:true,settled:false,shown:false};
+ slot.request=req;
+ panels[index].dataset.format=item.format;
+ panels[index].classList.add("is-native");
+ if(slot.player)safe(()=>slot.player.pauseVideo());
+ const src=canWebm&&item.webm?item.webm:item.src;
+ if(v.dataset.src!==src){v.dataset.src=src;v.poster=item.poster||"";v.src=src;v.load()}
+ const go=()=>{
+  if(slot.request!==req)return;
+  // the intro starts at its first frame; other clips at a random moment
+  const d=Number.isFinite(v.duration)?v.duration:10;
+  try{v.currentTime=item.isOpening?0:Math.random()*Math.max(0,d-5.4)}catch(_){}
+  if(req.mode==="preload"){settle(index,req);return}
+  v.play().then(()=>settle(index,req)).catch(()=>{if(slot.request===req)onFailure(index,"native playback blocked")});
+ };
+ v.onerror=()=>{if(slot.request===req)onFailure(index,"native clip unavailable")};
+ v.onended=()=>{if(slot.request===req&&req.mode==="current")switchToNext()};
+ if(v.readyState>=1)go();else v.addEventListener("loadedmetadata",go,{once:true});
+ if(mode==="activate"){
+  clearTimeout(watchdog);
+  watchdog=setTimeout(()=>{if(enabled&&slot.request===req&&!req.shown)onFailure(index,"timeout")},REVEAL_TIMEOUT);
+ }
+ return true;
+}
+// Pick the next shot for a panel. A YouTube film picked before the player is
+// ready waits in the bag; one of the owner's clips plays meanwhile.
+function launch(index,mode){
+ let item=pick();
+ if(!item)return null;
+ if(!item.native&&!(slots[index].ready&&slots[index].player)){
+  bag.push(item);
+  const alt=bag.find(x=>x.native&&x.id!==lastId)||NATIVE.find(x=>!failed.has(x.id)&&x.id!==item.id);
+  if(!alt)return null;
+  if(bag.includes(alt))bag.splice(bag.indexOf(alt),1);
+  item=alt;lastId=alt.id;lastCategory=alt.category;lastNative=true;
+ }
+ return prepare(index,item,mode)?item:null;
+}
 function prepare(index,item,mode){
+ if(item.native)return prepareNative(index,item,mode);
  const slot=slots[index];
  if(!slot.ready||!slot.player)return false;
+ panels[index].classList.remove("is-native");nativeVideos[index].pause();
  const req={id:++requestId,item,mode,seeked:false,settled:false,shown:false};
  slot.request=req;
  panels[index].dataset.format=item.format;
@@ -266,12 +351,10 @@ function prepare(index,item,mode){
  return true;
 }
 function prebufferNext(){
- if(!enabled||activeIndex<0||pendingPreload||catalog.length<2)return;
+ if(!enabled||activeIndex<0||pendingPreload||TOTAL<2)return;
  const other=1-activeIndex;
- const candidate=pick();
- if(!candidate)return;
- pendingPreload={index:other,item:candidate,ready:false};
- if(!prepare(other,candidate,"preload"))pendingPreload=null;
+ const item=launch(other,"preload");
+ if(item)pendingPreload={index:other,item,ready:Boolean(slots[other].request?.settled)};
 }
 function switchToNext(){
  clearTimeout(currentTimer);clearTimeout(preloadTimer);
@@ -284,23 +367,24 @@ function switchToNext(){
   req.mode="activate";
   if(req.settled){
    req.settled=false;
-   safe(()=>slots[next].player.playVideo());
+   resumePanel(next,req);
    watchdog=setTimeout(()=>{
     if(enabled&&slots[next].request===req&&!req.shown)onFailure(next,"resume blocked");
    },REVEAL_TIMEOUT);
   }
  }else{
-  const item=pick();
-  if(item)prepare(next,item,"activate");
+  launch(next,"activate");
  }
 }
 function nextVideo(){
  if(!enabled)return;
  clearTimeout(currentTimer);clearTimeout(preloadTimer);clearTimeout(watchdog);
  const next=activeIndex<0?0:1-activeIndex;
- const item=pick();
- pendingPreload=null;
- if(item)prepare(next,item,"activate");
+ // a skipped preload goes back to the front of the bag, and the variety
+ // rules compare against the shot actually on screen, not the dropped one
+ if(pendingPreload){bag.unshift(pendingPreload.item);pendingPreload=null}
+ if(current){lastId=current.id;lastCategory=current.category;lastNative=Boolean(current.native)}
+ launch(next,"activate");
 }
 function initAPI(){
  if(apiReady||!window.YT?.Player)return;
@@ -320,7 +404,8 @@ function initAPI(){
      onReady:e=>{
       slots[i].ready=true;
       safe(()=>{e.target.mute();e.target.setVolume(0)});
-      if(enabled&&slots.every(s=>s.ready))nextVideo();
+      // the montage may already be playing the owner's intro clip
+      if(enabled&&slots.every(s=>s.ready)&&activeIndex<0&&!slots.some(s=>s.request))nextVideo();
      },
      onStateChange:e=>{
       if(e.data===window.YT.PlayerState.PLAYING)handlePlaying(i);
@@ -370,9 +455,9 @@ function start(){
  if(nativeMode)return;
  if(enabled||!visible||document.hidden)return;
  enabled=true;stage.dataset.playback="loading";
- if(apiReady){
-  if(slots.every(s=>s.ready))nextVideo();
- }else loadAPI();
+ loadAPI();
+ // the intro is the owner's own clip: it can start before YouTube is ready
+ if(openingFilm?.native||(apiReady&&slots.every(s=>s.ready)))nextVideo();
 }
 function stop(){
  if(!enabled)return;

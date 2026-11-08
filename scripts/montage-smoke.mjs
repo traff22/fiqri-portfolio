@@ -31,6 +31,7 @@ try{
   }
   window.YT={Player:MockPlayer,PlayerState:{PLAYING:1,ENDED:0,PAUSED:2,BUFFERING:3}};
  });
+ await page.addInitScript(()=>{window.__shotIds=[];new MutationObserver(()=>{const id=document.querySelector(".showreel-montage")?.dataset.currentId;if(id&&window.__shotIds.at(-1)!==id)window.__shotIds.push(id)}).observe(document,{subtree:true,attributes:true,attributeFilter:["data-current-id"]})});
  await page.goto("http://127.0.0.1:4173",{waitUntil:"domcontentloaded"});
  await page.evaluate(()=>{
   document.documentElement.classList.remove("fq-splash-on");
@@ -47,8 +48,12 @@ try{
  const following=await page.evaluate(()=>({category:document.querySelector("#cinema-wrap").dataset.activeCategory,
   editorial:document.querySelector(".float-reel-card--two").classList.contains("is-source")}));
  if(following.category!=="longform"||!following.editorial)throw new Error("Blueprint does not follow the opening film: "+JSON.stringify(following));
- const firstSource=await page.evaluate(()=>window.__ytQA.loads[0]);
- if(firstSource!=="hEhRkIbH-Pg")throw new Error("Opening stream ID incorrect: "+firstSource);
+ // The opening is the owner's animated intro, played as his own clip (no YouTube player).
+ const opening=await page.evaluate(()=>({id:document.querySelector(".showreel-montage").dataset.currentId,
+  source:document.querySelector(".showreel-montage").dataset.currentSource,
+  native:!!document.querySelector(".montage-stream.is-current.is-native video.montage-native[src*='about-1']"),
+  playing:[...document.querySelectorAll(".montage-stream.is-current video.montage-native")].some(v=>!v.paused)}));
+ if(opening.id!=="about-1"||opening.source!=="native"||!opening.native||!opening.playing)throw new Error("Chapter One should open on the owner's intro clip: "+JSON.stringify(opening));
  const stage=await page.locator(".showreel-montage").evaluate(el=>({
   sourceCount:Number(el.dataset.sourceCount),mode:el.dataset.previewMode,playback:el.dataset.playback
  }));
@@ -71,17 +76,19 @@ try{
  if(caption.y < movie.y+movie.height-3)throw new Error("Own title overlaps YouTube player");
  const data=await page.evaluate(()=>structuredClone(window.__ytQA));
  // The fixed introduction starts at 00:00; random seeking begins with the next film.
- if(data.loads.length<2||data.seeks.length<1||data.mutes<2)throw Error("Player did not load and seek real videos: "+JSON.stringify(data));
+ if(data.loads.length<1||data.seeks.length<1||data.mutes<2)throw Error("Player did not load and seek real videos: "+JSON.stringify(data));
  if(data.loads.some(v=>!/^[A-Za-z0-9_-]{11}$/.test(v)))throw Error("Invalid video ID in shuffle");
  if(data.loads.some(id=>excluded.includes(id)))throw Error("Shorts/Reels video loaded in landscape montage: "+data.loads.join(","));
  await page.waitForFunction(previous=>document.querySelector(".montage-title")?.textContent!==previous,second,{timeout:7400});
  const third=await page.locator(".montage-title").textContent();
- if(third===first)throw Error("Shuffle immediately repeated the same previous project");
+ const shots=await page.evaluate(()=>window.__shotIds);
+ if(shots.length<3||shots[1]===shots[0]||shots[2]===shots[1])throw Error("Shuffle immediately repeated the same shot: "+shots.join(","));
+ if(shots[1].startsWith("about-"))throw Error("Two of the owner's own clips played back to back: "+shots.join(","));
  if(errors.length)throw Error("JS errors: "+errors.join("|"));
  await page.locator("#cinema-wrap").screenshot({path:"screenshots/chapter-original-video-montage.png"});
  console.log("MONTAGE_SMOKE_REPORT="+JSON.stringify({
   sources:stage.sourceCount,opening:first,classification,captionBelow:true,excludedReels:excluded.length,mode:stage.mode,playing:true,first,second,third,
-  clock:timer,loads:data.loads,seeks:data.seeks,mutedCalls:data.mutes,
+  clock:timer,shots,loads:data.loads,seeks:data.seeks,mutedCalls:data.mutes,
   clickSkip:true,autoNext:true,syntheticPhotoClips:false,jsErrors:errors
  }));
  await page.close();

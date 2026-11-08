@@ -1,5 +1,18 @@
 # Chapter One clips (your own footage, no YouTube player)
 
+## Mixed in now: `about-1` to `about-4`
+
+Four 10 s clips from "Know More Bout Me (2024)" (the owner's uploads, 2026-11-08), re-encoded to 1280x720, 25 fps, no audio, as `about-N.mp4` (H.264, faststart) + `about-N.webm` (VP9) + `about-N.jpg` (poster). `assets/chapter-montage.js` lists them in `NATIVE` and plays them as `<video>` **inside the YouTube montage**: `about-1` (the animated intro with his name) always opens Chapter One, then all four shuffle with the YouTube films, never two back to back, from a random moment in the clip. The YouTube cut of Know More only joins a shuffle cycle now and then (`KNOW_MORE_ODDS`). To add another clip: export it the same way and add an entry to `NATIVE`.
+
+Re-encode command used:
+
+```bash
+ffmpeg -i ABOUT_ME_2024_1.mp4 -an -vf "scale=1280:-2,fps=25" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart about-1.mp4
+ffmpeg -i ABOUT_ME_2024_1.mp4 -an -vf "scale=1280:-2,fps=25" -c:v libvpx-vp9 -crf 38 -b:v 0 -row-mt 1 about-1.webm
+```
+
+## Replacing YouTube entirely: `clips.json`
+
 Put short excerpts of your films here and list them in `clips.json`. While the list is empty (`[]`), Chapter One keeps using the YouTube montage. As soon as it lists playable clips, Chapter One plays them as plain video: no YouTube title, logo or play button.
 
 ## Export spec (per clip)
