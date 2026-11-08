@@ -58,15 +58,15 @@ try{
     assert(!through.length,name+": Fiqri passes through the chair back "+JSON.stringify(through.slice(0,4)));
     // The AI sidekick: the button (or a click on the bot) runs an assist and hands back to editing.
     await page.locator('[data-studio-mode="ai"]').click();
-    assert((await page.locator("#fq-studio-note").innerText()).startsWith("AI assist."),name+": AI assist message missing");
+    assert((await page.locator("#fq-studio-note").innerText()).includes("generated in minutes"),name+": first AI assist should generate a shot");
     assert(await page.locator('[data-studio-mode="ai"]').getAttribute("aria-pressed")==="true",name+": AI assist not pressed");
     await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(8,false));
     await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(.05));
     assert(await studio.getAttribute("data-mode")==="edit",name+": AI assist did not hand back to editing");
-    // the next assist is the other job: generating a shot nobody could film
+    // the next assist is the other job: tracing a mask
     await page.locator('[data-studio-mode="ai"]').click();
-    assert((await page.locator("#fq-studio-note").innerText()).includes("generated in minutes"),name+": second AI assist should generate a shot");
-    assert(await page.locator('[data-studio-mode="ai"]').getAttribute("aria-pressed")==="true",name+": AI assist not pressed while generating");
+    assert((await page.locator("#fq-studio-note").innerText()).includes("traces the mask"),name+": second AI assist should trace a mask");
+    assert(await page.locator('[data-studio-mode="ai"]').getAttribute("aria-pressed")==="true",name+": AI assist not pressed while tracing");
     await page.evaluate(()=>document.querySelector("#fq-studio-art").fqVoxel.advance(8,false));
 
     const frame=page.locator("#cinema-wrap");

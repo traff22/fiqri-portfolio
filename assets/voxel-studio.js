@@ -373,9 +373,9 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
   const holoPlane=glow(5.4,3.6,holo.t,.92);holoPlane.material.transparent=true;holoPlane.material.opacity=0;
   holoPlane.position.set(BOT_HOME.x+1.6,7.8,BOT_HOME.z-1.2);scene.add(holoPlane);
   let holoProgress=0,botWorking=false,botHappy=0;
-  // Two jobs, taken in turn: tracing a mask (the slow technical pass) and
-  // generating a shot nobody could film (a whale drifting over Jakarta at night).
-  let holoTask="mask";
+  // Two jobs, taken in turn: generating a shot nobody could film (a whale
+  // drifting over Jakarta at night), then tracing a mask (the technical pass).
+  let holoTask="generate"; // generate the shot first, then trace a mask
   const scene2d=document.createElement("canvas");scene2d.width=84;scene2d.height=42;
   {
     const g=scene2d.getContext("2d");
@@ -543,7 +543,7 @@ export function mountVoxelStudio(host,{reducedMotion,onState}={}){
     if(wasSeated)yield* to(.7,[[chair.rotation,"y",0],[fiqri.rotation,"y",Math.PI],[armL.pivot.rotation,"x",-1.25]]);
   }
   function* aiAssist(){
-    // Fiqri hands a job to the bot (a mask one time, a generated shot the
+    // Fiqri hands a job to the bot (a generated shot one time, a mask the
     // next), watches it, nods, and takes the cut back.
     if(!seated())yield* sitDown();
     const task=holoTask;holoTask=task==="mask"?"generate":"mask";

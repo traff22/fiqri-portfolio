@@ -449,4 +449,5 @@ Both items need the owner's own footage, which is not in the repo; YouTube is bl
 - **Robot:** `aiAssist()` alternates two jobs (`holoTask`): mask tracing, then generating a shot (a pixel whale over the Jakarta skyline at night resolves block by block out of noise, "GENERATING n%" then "SHOT READY"). New passing state `ai-gen` with its own note: "A shot nobody could film, generated in minutes. I still pick the take." `trigger()` now names the actual job before the choreography starts (the button's announcement used to overwrite it).
 - **Copy:** "Working with AI" now has a second paragraph on generated footage (impossible establishing shots, extra B-roll, effects plates, previs). Still a general list awaiting the owner's real tools and cases.
 - **QA:** `creators-lab-smoke` presses AI assist twice: mask first, then the generate message. Suites pass locally; `prune-css --check` clean.
+- **Order (owner follow-up, "generating dulu baru tracking"):** the bot generates first, then traces; the copy leads with generated footage, then the technical passes. Test updated to match.
 
