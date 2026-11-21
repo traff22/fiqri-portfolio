@@ -120,7 +120,7 @@ The opening titles play on the first open of a session (`assets/splash.css`, log
 ## Copy voice
 
 - Plain, first person, specific: name the formats (YouTube long-form, product ads, event films) and the tools. No slogans stacked on slogans.
-- No em or en dashes in site copy. Project titles use a colon ("ADS Astronacci: Bitcoin Almanac 2025"). Years read "2024 to now".
+- No em or en dashes in site copy. Project titles use a colon ("ADS Astronacci: Bitcoin Almanac 2025"). Years read "2024 to 2026"; use "to now" only for a role that is still current.
 - ↗ only on links that leave the site (email, WhatsApp, LinkedIn, YouTube). ↓ for in-page scrolls. Buttons get no arrow.
 - CTAs name the action: "See selected work", "Watch the showreel", "Start a project".
 - The owner's own lines are voice samples and stay as written: "Just a person who loves the art of life." (portrait back, alone, small, bottom-left corner) and "I make stories worth feeling."

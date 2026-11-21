@@ -472,3 +472,7 @@ Reproduced in Playwright with a slow YouTube mock (1.4 s load, like the real pla
 - **QA:** `montage-smoke` adds MONTAGE_NEXT_PASS: slow player with an impatient double press and a press right after each cut (4 rounds must each move on within 5 s), and YouTube blocked (6 presses must each change the shot, title never "Preview unavailable"). The old code fails the blocked case. Chapter One suites pass locally; `prune-css --check` clean.
 - **CI follow-up:** the first run of `d2f9011` failed in `design-system-smoke` (mobile: "room pause did not engage", focus on the skip link). Cause: the Pause button jumped about 120 px when the 3D room replaced its loading placeholder, so a tap could land elsewhere (also a real mis-tap risk for visitors). `voxel-studio.css` now reserves the room's aspect ratio before the engine loads (`.fq-studio:not([data-engine]) .fq-studio__art`), shift down to 1 px. The test also waits for the room to draw and the button to stop moving before clicking.
 
+### 2026-11-21 (WIB): career timeline update
+**Owner:** "bwt gw di astronacci sudah selesai 20 nov kemaren jadi update timeline kerjanya".
+- About career list: PT Astronacci International now reads "2024 to 2026" (ended 20 Nov 2026), no longer "to now". No other copy claimed a current employer; the hero still says "Open to remote work".
+
